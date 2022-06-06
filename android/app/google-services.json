@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "23632118686",
+    "project_id": "trams-app",
+    "storage_bucket": "trams-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:23632118686:android:9c48f739f3a8139a8c4c8f",
+        "android_client_info": {
+          "package_name": "com.example.mobile_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "23632118686-02s4oocclq3irjj4tge9cffnnrc0rhs9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBHmBjfgkmYy5QxiELA8n_Fh2ONuOy8DEE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "23632118686-02s4oocclq3irjj4tge9cffnnrc0rhs9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "23632118686-hhjbhlnlqj58jkpmi7ajgqh3jlcbjf6g.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.mobileApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
