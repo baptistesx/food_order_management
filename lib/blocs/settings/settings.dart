@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mobile_app/blocs/settings/settings.dart';
-import 'package:mobile_app/repositories/settings/settings.dart';
+import 'package:pom/blocs/settings/settings.dart';
+import 'package:pom/repositories/settings/settings.dart';
 
 export 'settings_events.dart';
 export 'settings_states.dart';

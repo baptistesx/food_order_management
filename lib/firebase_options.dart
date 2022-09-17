@@ -69,7 +69,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '23632118686',
     projectId: 'trams-app',
     storageBucket: 'trams-app.appspot.com',
-    iosClientId: '23632118686-hhjbhlnlqj58jkpmi7ajgqh3jlcbjf6g.apps.googleusercontent.com',
-    iosBundleId: 'com.example.mobileApp',
+    iosClientId:
+        '23632118686-hhjbhlnlqj58jkpmi7ajgqh3jlcbjf6g.apps.googleusercontent.com',
+    iosBundleId: 'com.example.pom',
   );
 }

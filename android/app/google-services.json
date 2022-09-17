@@ -1,41 +1,34 @@
 {
   "project_info": {
-    "project_number": "23632118686",
-    "project_id": "trams-app",
-    "storage_bucket": "trams-app.appspot.com"
+    "project_number": "325973755347",
+    "project_id": "pizzaordersmanagement",
+    "storage_bucket": "pizzaordersmanagement.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:23632118686:android:9c48f739f3a8139a8c4c8f",
+        "mobilesdk_app_id": "1:325973755347:android:88f48fc91271c8c4dcdb26",
         "android_client_info": {
-          "package_name": "com.example.mobile_app"
+          "package_name": "com.ludyb.pom"
         }
       },
       "oauth_client": [
         {
-          "client_id": "23632118686-02s4oocclq3irjj4tge9cffnnrc0rhs9.apps.googleusercontent.com",
+          "client_id": "325973755347-9k0qujhg83d45pmh0d5ida19gqo1necl.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBHmBjfgkmYy5QxiELA8n_Fh2ONuOy8DEE"
+          "current_key": "AIzaSyAexdBkHiPpHGgPb6Sb6vc54M73e6H_tdU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "23632118686-02s4oocclq3irjj4tge9cffnnrc0rhs9.apps.googleusercontent.com",
+              "client_id": "325973755347-9k0qujhg83d45pmh0d5ida19gqo1necl.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "23632118686-hhjbhlnlqj58jkpmi7ajgqh3jlcbjf6g.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.mobileApp"
-              }
             }
           ]
         }

@@ -1,4 +1,4 @@
-import 'package:mobile_app/models/settings_models.dart';
+import 'package:pom/models/settings_models.dart';
 
 abstract class SettingsEvent {}
 

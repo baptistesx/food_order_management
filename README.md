@@ -1,4 +1,4 @@
-# mobile_app
+# pom
 
 A new Flutter project.
 

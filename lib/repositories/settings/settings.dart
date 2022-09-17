@@ -1,8 +1,6 @@
-
-
-import 'package:mobile_app/models/settings_models.dart';
-import 'package:mobile_app/services/logger.dart';
-import 'package:mobile_app/services/preferences.dart';
+import 'package:pom/models/settings_models.dart';
+import 'package:pom/services/logger.dart';
+import 'package:pom/services/preferences.dart';
 
 class SettingsRepository {
   final Logger logger;
