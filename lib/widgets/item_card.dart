@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:pom/models/ingredient.dart';
+import 'package:pom/models/item.dart';
 
 class ItemCard extends StatelessWidget {
-  final Ingredient item;
+  final Item item;
   final void Function() onDelete;
-  final void Function() onEdit;
+  final void Function()? onEdit;
 
   const ItemCard({
     Key? key,
     required this.item,
     required this.onDelete,
-    required this.onEdit,
+    this.onEdit,
   }) : super(key: key);
 
   @override
@@ -21,10 +21,11 @@ class ItemCard extends StatelessWidget {
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            IconButton(
-              onPressed: onEdit,
-              icon: const Icon(Icons.edit),
-            ),
+            if (onEdit != null)
+              IconButton(
+                onPressed: onEdit,
+                icon: const Icon(Icons.edit),
+              ),
             IconButton(
               onPressed: onDelete,
               icon: const Icon(Icons.remove_circle_outline),
