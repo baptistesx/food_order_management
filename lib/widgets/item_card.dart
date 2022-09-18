@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pom/models/ingredient.dart';
 import 'package:pom/models/item.dart';
 import 'package:pom/models/pizza.dart';
 
@@ -19,13 +20,16 @@ class ItemCard extends StatelessWidget {
     return Card(
       child: ListTile(
         title: Text(
-            '${item.name}${item.runtimeType == Pizza ? " / ${(item as Pizza).price}€" : ""}'),
+          '${item.name}${item.runtimeType == Pizza ? " / ${(item as Pizza).price}€" : ""}',
+        ),
         subtitle: item.runtimeType == Pizza
-            ? Text((item as Pizza)
-                .ingredients
-                .map((e) => e.name)
-                .toList()
-                .toString())
+            ? Text(
+                (item as Pizza)
+                    .ingredients
+                    .map((Ingredient ingredient) => ingredient.name)
+                    .toList()
+                    .toString(),
+              )
             : null,
         trailing: Row(
           mainAxisSize: MainAxisSize.min,

@@ -24,9 +24,13 @@ class HomePage extends StatelessWidget {
             route: IngredientsPage.routeName,
           ),
           HomeSectionButton(
-              title: 'Carte des pizzas', route: PizzasPage.routeName),
+            title: 'Carte des pizzas',
+            route: PizzasPage.routeName,
+          ),
           HomeSectionButton(
-              title: 'Commandes du jour', route: OrdersPage.routeName),
+            title: 'Commandes du jour',
+            route: OrdersPage.routeName,
+          ),
           HomeSectionButton(
             title: 'Statistiques',
             route: StatisticsPage.routeName,

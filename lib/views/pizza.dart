@@ -22,7 +22,7 @@ class _PizzaPage extends State<PizzaPage> {
   late TextEditingController _priceController;
   late Pizza pizza;
 
-  final List<Ingredient> ingredients = [
+  final List<Ingredient> ingredients = <Ingredient>[
     const Ingredient(
       id: '1',
       name: 'Tomates',
@@ -55,6 +55,14 @@ class _PizzaPage extends State<PizzaPage> {
           price: 10.5,
           ingredients: <Ingredient>[],
         );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    _nameController.dispose();
+    _priceController.dispose();
   }
 
   @override
@@ -100,7 +108,7 @@ class _PizzaPage extends State<PizzaPage> {
                   ),
                   hintText: 'Prix',
                   labelText: 'Prix*',
-                  suffix: Text('€'),
+                  suffix: const Text('€'),
                 ),
                 inputFormatters: <TextInputFormatter>[
                   // for below version 2 use this
@@ -141,7 +149,9 @@ class _PizzaPage extends State<PizzaPage> {
                     (Ingredient ingredient) => IngredientWithCheckbox(
                       ingredient: ingredient,
                       isSelected: pizza.ingredients
-                          .where((element) => element.id == ingredient.id)
+                          .where(
+                            (Ingredient element) => element.id == ingredient.id,
+                          )
                           .isNotEmpty,
                       onClick: (bool? isSelected) {
                         if (isSelected != null) {

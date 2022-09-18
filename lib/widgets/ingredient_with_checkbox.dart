@@ -11,12 +11,12 @@ class IngredientWithCheckbox extends StatelessWidget {
     required this.ingredient,
     required this.isSelected,
     required this.onClick,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: [
+      children: <Widget>[
         Checkbox(value: isSelected, onChanged: onClick),
         Text(ingredient.name),
       ],

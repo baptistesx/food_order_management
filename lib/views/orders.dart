@@ -1,17 +1,229 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:pom/models/ingredient.dart';
+import 'package:pom/models/order.dart';
+import 'package:pom/models/pizza.dart';
 
-class OrdersPage extends StatelessWidget {
+class OrdersPage extends StatefulWidget {
   static const String routeName = '/orders';
 
   const OrdersPage({Key? key}) : super(key: key);
 
   @override
+  State<OrdersPage> createState() => _OrdersPageState();
+}
+
+class _OrdersPageState extends State<OrdersPage> {
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  final List<Order> orders = <Order>[
+    Order(
+      id: '0',
+      status: OrderStatus.toDo,
+      timeToDeliver: DateTime.now(),
+      pizzas: <Pizza>[
+        Pizza(
+          id: '1',
+          name: 'Reine',
+          price: 10.5,
+          ingredients: <Ingredient>[
+            const Ingredient(
+              id: '1',
+              name: 'Tomates',
+            ),
+            const Ingredient(
+              id: '2',
+              name: 'Mozza',
+            ),
+            const Ingredient(
+              id: '3',
+              name: 'Olives',
+            ),
+          ],
+        ),
+        Pizza(
+          id: '2',
+          name: 'Royale',
+          price: 10.5,
+          ingredients: <Ingredient>[
+            const Ingredient(
+              id: '1',
+              name: 'Tomates',
+            ),
+            const Ingredient(
+              id: '2',
+              name: 'Mozza',
+            ),
+            const Ingredient(
+              id: '3',
+              name: 'Olives',
+            ),
+          ],
+        ),
+      ],
+      clientName: 'Seux',
+    ),
+    Order(
+      id: '1',
+      status: OrderStatus.toDo,
+      timeToDeliver: DateTime.now(),
+      pizzas: <Pizza>[
+        Pizza(
+          id: '1',
+          name: 'Reine',
+          price: 10.5,
+          ingredients: <Ingredient>[
+            const Ingredient(
+              id: '1',
+              name: 'Tomates',
+            ),
+            const Ingredient(
+              id: '2',
+              name: 'Mozza',
+            ),
+            const Ingredient(
+              id: '3',
+              name: 'Olives',
+            ),
+          ],
+        ),
+        Pizza(
+          id: '2',
+          name: 'Royale',
+          price: 10.5,
+          ingredients: <Ingredient>[
+            const Ingredient(
+              id: '1',
+              name: 'Tomates',
+            ),
+            const Ingredient(
+              id: '2',
+              name: 'Mozza',
+            ),
+            const Ingredient(
+              id: '3',
+              name: 'Olives',
+            ),
+          ],
+        ),
+      ],
+      clientName: 'Seux',
+    )
+  ];
+  late final List<Widget> _pages;
+  @override
+  void initState() {
+    super.initState();
+
+    _pages = <Widget>[
+      OrderTab(
+        orders: orders
+            .where((Order order) => order.status == OrderStatus.toDo)
+            .toList(),
+      ),
+      OrderTab(
+        orders: orders
+            .where((Order order) => order.status == OrderStatus.done)
+            .toList(),
+      ),
+      OrderTab(
+        orders: orders
+            .where((Order order) => order.status == OrderStatus.delivered)
+            .toList(),
+      ),
+    ];
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Commandes'),
+        title: Text(
+          'Commandes ${_selectedIndex == 0 ? "A faire" : _selectedIndex == 1 ? "Faites" : "Livrées"}',
+        ),
       ),
-      body: const Text('Commandes'),
+      body: Center(
+        child: _pages.elementAt(_selectedIndex),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.play_arrow_outlined),
+            label: 'A faire',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.done),
+            label: 'Faites',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.done_all_rounded),
+            label: 'Livrées',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        // selectedItemColor: Colors.amber[800],
+        onTap: _onItemTapped,
+      ),
+    );
+  }
+}
+
+class OrderTab extends StatelessWidget {
+  const OrderTab({
+    Key? key,
+    required this.orders,
+  }) : super(key: key);
+
+  final List<Order> orders;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      children: orders
+          .map(
+            (Order order) => Card(
+              child: ExpansionTile(
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <IconButton>[
+                    IconButton(onPressed: () {}, icon: const Icon(Icons.edit)),
+                    IconButton(
+                      onPressed: () {},
+                      icon: const Icon(Icons.remove_circle_outline),
+                    )
+                  ],
+                ),
+                title: Text('♯${order.id} - ${order.clientName}'),
+                subtitle: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Chip>[
+                    Chip(
+                      label: Text(DateFormat.Hm().format(order.timeToDeliver)),
+                    ),
+                    Chip(
+                      label: Text(order.pizzas.length.toString()),
+                    ),
+                    Chip(
+                      label: Text(
+                        '${order.pizzas.map((Pizza pizza) => pizza.price).reduce((double value, double element) => value + element).toString()}€',
+                      ),
+                    ),
+                  ],
+                ),
+                controlAffinity: ListTileControlAffinity.leading,
+                children: const <Widget>[
+                  ListTile(title: Text('This is tile number 3')),
+                ],
+              ),
+            ),
+          )
+          .toList(),
     );
   }
 }

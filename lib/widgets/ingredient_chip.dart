@@ -9,13 +9,13 @@ class IngredientChip extends StatelessWidget {
     Key? key,
     required this.ingredient,
     required this.onDelete,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Chip(
       label: Text(ingredient.name),
-      deleteIcon: Icon(Icons.remove_circle_outline),
+      deleteIcon: const Icon(Icons.remove_circle_outline),
       onDeleted: onDelete,
     );
   }
