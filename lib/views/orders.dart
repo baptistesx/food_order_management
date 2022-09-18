@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:pom/models/ingredient.dart';
 import 'package:pom/models/order.dart';
 import 'package:pom/models/pizza.dart';
+import 'package:pom/widgets/order_tab.dart';
 
 class OrdersPage extends StatefulWidget {
   static const String routeName = '/orders';
@@ -145,7 +145,7 @@ class _OrdersPageState extends State<OrdersPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Commandes ${_selectedIndex == 0 ? "A faire" : _selectedIndex == 1 ? "Faites" : "Livrées"}',
+          'Commandes ${_selectedIndex == 0 ? "A faire (${orders.where((Order order) => order.status == OrderStatus.toDo).toList().length})" : _selectedIndex == 1 ? "Faites (${orders.where((Order order) => order.status == OrderStatus.done).toList().length})" : "Livrées (${orders.where((Order order) => order.status == OrderStatus.delivered).toList().length})"}',
         ),
       ),
       body: Center(
@@ -170,60 +170,12 @@ class _OrdersPageState extends State<OrdersPage> {
         // selectedItemColor: Colors.amber[800],
         onTap: _onItemTapped,
       ),
-    );
-  }
-}
-
-class OrderTab extends StatelessWidget {
-  const OrderTab({
-    Key? key,
-    required this.orders,
-  }) : super(key: key);
-
-  final List<Order> orders;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      children: orders
-          .map(
-            (Order order) => Card(
-              child: ExpansionTile(
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <IconButton>[
-                    IconButton(onPressed: () {}, icon: const Icon(Icons.edit)),
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.remove_circle_outline),
-                    )
-                  ],
-                ),
-                title: Text('♯${order.id} - ${order.clientName}'),
-                subtitle: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Chip>[
-                    Chip(
-                      label: Text(DateFormat.Hm().format(order.timeToDeliver)),
-                    ),
-                    Chip(
-                      label: Text(order.pizzas.length.toString()),
-                    ),
-                    Chip(
-                      label: Text(
-                        '${order.pizzas.map((Pizza pizza) => pizza.price).reduce((double value, double element) => value + element).toString()}€',
-                      ),
-                    ),
-                  ],
-                ),
-                controlAffinity: ListTileControlAffinity.leading,
-                children: const <Widget>[
-                  ListTile(title: Text('This is tile number 3')),
-                ],
-              ),
-            ),
-          )
-          .toList(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Navigator.pushNamed(context, PizzaPage.routeName);
+        },
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }
