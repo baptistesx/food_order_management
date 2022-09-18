@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:pom/models/ingredient.dart';
+import 'package:pom/models/order.dart';
 import 'package:pom/models/pizza.dart';
 import 'package:pom/views/home.dart';
 import 'package:pom/views/ingredient.dart';
 import 'package:pom/views/ingredients.dart';
+import 'package:pom/views/order.dart';
 import 'package:pom/views/orders.dart';
 import 'package:pom/views/pizza.dart';
 import 'package:pom/views/pizzas.dart';
@@ -31,6 +33,16 @@ class MainRouter {
         return MaterialPageRoute<dynamic>(
           settings: settings,
           builder: (BuildContext context) => const OrdersPage(),
+        );
+      case OrderPage.routeName:
+        final Map<String, dynamic>? args =
+            settings.arguments as Map<String, dynamic>?;
+
+        return MaterialPageRoute<dynamic>(
+          settings: settings,
+          builder: (BuildContext context) =>  OrderPage(
+            order: args?['order'] as Order?,
+          ),
         );
       case StatisticsPage.routeName:
         return MaterialPageRoute<dynamic>(

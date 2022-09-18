@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pom/blocs/orders/orders.dart';
+import 'package:pom/blocs/orders/orders_events.dart';
+import 'package:pom/blocs/orders/orders_states.dart';
 import 'package:pom/models/order.dart';
+import 'package:pom/views/order.dart';
 import 'package:pom/widgets/order_tab.dart';
 
 class OrdersPage extends StatefulWidget {
@@ -20,137 +25,36 @@ class _OrdersPageState extends State<OrdersPage> {
     });
   }
 
-  final List<Order> orders = <Order>[];
-  // <Order>[
-  //   Order(
-  //     id: '0',
-  //     status: OrderStatus.toDo,
-  //     timeToDeliver: DateTime.now(),
-  //     pizzas: <Pizza>[
-  //       Pizza(
-  //         id: '1',
-  //         name: 'Reine',
-  //         price: 10.5,
-  //         ingredients: <Ingredient>[
-  //           const Ingredient(
-  //             id: '1',
-  //             name: 'Tomates',
-  //           ),
-  //           const Ingredient(
-  //             id: '2',
-  //             name: 'Mozza',
-  //           ),
-  //           const Ingredient(
-  //             id: '3',
-  //             name: 'Olives',
-  //           ),
-  //         ],
-  //       ),
-  //       Pizza(
-  //         id: '2',
-  //         name: 'Royale',
-  //         price: 10.5,
-  //         ingredients: <Ingredient>[
-  //           const Ingredient(
-  //             id: '1',
-  //             name: 'Tomates',
-  //           ),
-  //           const Ingredient(
-  //             id: '2',
-  //             name: 'Mozza',
-  //           ),
-  //           const Ingredient(
-  //             id: '3',
-  //             name: 'Olives',
-  //           ),
-  //         ],
-  //       ),
-  //     ],
-  //     clientName: 'Seux',
-  //   ),
-  //   Order(
-  //     id: '1',
-  //     status: OrderStatus.toDo,
-  //     timeToDeliver: DateTime.now(),
-  //     pizzas: <Pizza>[
-  //       Pizza(
-  //         id: '1',
-  //         name: 'Reine',
-  //         price: 10.5,
-  //         ingredients: <Ingredient>[
-  //           const Ingredient(
-  //             id: '1',
-  //             name: 'Tomates',
-  //           ),
-  //           const Ingredient(
-  //             id: '2',
-  //             name: 'Mozza',
-  //           ),
-  //           const Ingredient(
-  //             id: '3',
-  //             name: 'Olives',
-  //           ),
-  //         ],
-  //       ),
-  //       Pizza(
-  //         id: '2',
-  //         name: 'Royale',
-  //         price: 10.5,
-  //         ingredients: <Ingredient>[
-  //           const Ingredient(
-  //             id: '1',
-  //             name: 'Tomates',
-  //           ),
-  //           const Ingredient(
-  //             id: '2',
-  //             name: 'Mozza',
-  //           ),
-  //           const Ingredient(
-  //             id: '3',
-  //             name: 'Olives',
-  //           ),
-  //         ],
-  //       ),
-  //     ],
-  //     clientName: 'Seux',
-  //   )
-  // ];
+  final List<Widget> _pages = <Widget>[
+    const OrderTab(status: OrderStatus.toDo),
+    const OrderTab(status: OrderStatus.done),
+    const OrderTab(status: OrderStatus.delivered),
+  ];
 
-  late final List<Widget> _pages;
   @override
   void initState() {
     super.initState();
 
-    _pages = <Widget>[
-      OrderTab(
-        orders: orders
-            .where((Order order) => order.status == OrderStatus.toDo)
-            .toList(),
-      ),
-      OrderTab(
-        orders: orders
-            .where((Order order) => order.status == OrderStatus.done)
-            .toList(),
-      ),
-      OrderTab(
-        orders: orders
-            .where((Order order) => order.status == OrderStatus.delivered)
-            .toList(),
-      ),
-    ];
+    context.read<OrdersBloc>().add(GetOrdersEvent());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Commandes ${_selectedIndex == 0 ? "A faire (${orders.where((Order order) => order.status == OrderStatus.toDo).toList().length})" : _selectedIndex == 1 ? "Faites (${orders.where((Order order) => order.status == OrderStatus.done).toList().length})" : "Livrées (${orders.where((Order order) => order.status == OrderStatus.delivered).toList().length})"}',
+        title: BlocBuilder<OrdersBloc, OrdersState>(
+          builder: (BuildContext context, OrdersState ordersState) {
+            if (ordersState is OrdersFetchedState) {
+              return Text(
+                'Commandes ${_selectedIndex == 0 ? "A faire (${ordersState.orders.where((Order order) => order.status == OrderStatus.toDo).toList().length})" : _selectedIndex == 1 ? "Faites (${ordersState.orders.where((Order order) => order.status == OrderStatus.done).toList().length})" : "Livrées (${ordersState.orders.where((Order order) => order.status == OrderStatus.delivered).toList().length})"}',
+              );
+            } else {
+              return const Text('Commandes');
+            }
+          },
         ),
       ),
-      body: Center(
-        child: _pages.elementAt(_selectedIndex),
-      ),
+      body: _pages.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -170,12 +74,14 @@ class _OrdersPageState extends State<OrdersPage> {
         // selectedItemColor: Colors.amber[800],
         onTap: _onItemTapped,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Navigator.pushNamed(context, PizzaPage.routeName);
-        },
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: _selectedIndex == 0
+          ? FloatingActionButton(
+              onPressed: () {
+                Navigator.pushNamed(context, OrderPage.routeName);
+              },
+              child: const Icon(Icons.add),
+            )
+          : null,
     );
   }
 }

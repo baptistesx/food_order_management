@@ -11,6 +11,11 @@ import 'package:pom/blocs/ingredient/ingredient_states.dart';
 import 'package:pom/blocs/ingredients/ingredients.dart';
 import 'package:pom/blocs/ingredients/ingredients_events.dart';
 import 'package:pom/blocs/ingredients/ingredients_states.dart';
+import 'package:pom/blocs/order/order.dart';
+import 'package:pom/blocs/order/order_states.dart';
+import 'package:pom/blocs/orders/orders.dart';
+import 'package:pom/blocs/orders/orders_events.dart';
+import 'package:pom/blocs/orders/orders_states.dart';
 import 'package:pom/blocs/pizza/pizza.dart';
 import 'package:pom/blocs/pizza/pizza_states.dart';
 import 'package:pom/blocs/pizzas/pizzas.dart';
@@ -21,6 +26,8 @@ import 'package:pom/firebase_options.dart';
 import 'package:pom/models/settings_models.dart';
 import 'package:pom/repositories/ingredient/ingredient.dart';
 import 'package:pom/repositories/ingredients/ingredients.dart';
+import 'package:pom/repositories/order/order.dart';
+import 'package:pom/repositories/orders/orders.dart';
 import 'package:pom/repositories/pizza/pizza.dart';
 import 'package:pom/repositories/pizzas/pizzas.dart';
 import 'package:pom/repositories/settings/settings.dart';
@@ -80,6 +87,18 @@ Future<void> main() async {
               create: (BuildContext context) => PizzaBloc(
                 PizzaRepository(),
                 initialState: PizzaInitialState(),
+              ),
+            ),
+            BlocProvider<OrdersBloc>(
+              create: (BuildContext context) => OrdersBloc(
+                OrdersRepository(),
+                initialState: OrdersInitialState(),
+              )..add(GetOrdersEvent()),
+            ),
+            BlocProvider<OrderBloc>(
+              create: (BuildContext context) => OrderBloc(
+                OrderRepository(),
+                initialState: OrderInitialState(),
               ),
             ),
           ],

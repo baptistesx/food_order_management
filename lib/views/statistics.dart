@@ -12,7 +12,8 @@ class StatisticsPage extends StatelessWidget {
     Order(
       id: '0',
       status: OrderStatus.toDo,
-      timeToDeliver: DateTime.now(),
+      createdAt: DateTime.now(),
+      timeToDeliver: TimeOfDay.now(),
       pizzas: <Pizza>[
         Pizza(
           id: '1',
@@ -58,7 +59,8 @@ class StatisticsPage extends StatelessWidget {
     Order(
       id: '1',
       status: OrderStatus.delivered,
-      timeToDeliver: DateTime.now(),
+      createdAt: DateTime.now(),
+      timeToDeliver: TimeOfDay.now(),
       pizzas: <Pizza>[
         Pizza(
           id: '1',
