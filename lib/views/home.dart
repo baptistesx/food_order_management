@@ -20,11 +20,13 @@ class HomePage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: const <HomeSectionButton>[
           HomeSectionButton(
-            title: 'Ingrédients',
+            title: 'Liste des ingrédients',
             route: IngredientsPage.routeName,
           ),
-          HomeSectionButton(title: 'Pizzas', route: PizzasPage.routeName),
-          HomeSectionButton(title: 'Commandes', route: OrdersPage.routeName),
+          HomeSectionButton(
+              title: 'Carte des pizzas', route: PizzasPage.routeName),
+          HomeSectionButton(
+              title: 'Commandes du jour', route: OrdersPage.routeName),
           HomeSectionButton(
             title: 'Statistiques',
             route: StatisticsPage.routeName,

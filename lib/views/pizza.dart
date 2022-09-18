@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pom/models/ingredient.dart';
 import 'package:pom/models/pizza.dart';
-import 'package:pom/widgets/item_card.dart';
+import 'package:pom/widgets/ingredient_chip.dart';
+import 'package:pom/widgets/ingredient_with_checkbox.dart';
 import 'package:pom/widgets/layout/scrollable_column_space_between.dart';
 
 class PizzaPage extends StatefulWidget {
@@ -17,7 +19,23 @@ class PizzaPage extends StatefulWidget {
 class _PizzaPage extends State<PizzaPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late TextEditingController _nameController;
+  late TextEditingController _priceController;
   late Pizza pizza;
+
+  final List<Ingredient> ingredients = [
+    const Ingredient(
+      id: '1',
+      name: 'Tomates',
+    ),
+    const Ingredient(
+      id: '2',
+      name: 'Mozza',
+    ),
+    const Ingredient(
+      id: '3',
+      name: 'Olives',
+    ),
+  ];
 
   @override
   void initState() {
@@ -26,9 +44,17 @@ class _PizzaPage extends State<PizzaPage> {
     _nameController = TextEditingController(
       text: widget.pizza != null ? widget.pizza!.name : '',
     );
+    _priceController = TextEditingController(
+      text: widget.pizza != null ? widget.pizza!.price.toString() : '0',
+    );
 
-    pizza =
-        widget.pizza ?? Pizza(id: '0', name: '', ingredients: <Ingredient>[]);
+    pizza = widget.pizza ??
+        Pizza(
+          id: '0',
+          name: '',
+          price: 10.5,
+          ingredients: <Ingredient>[],
+        );
   }
 
   @override
@@ -63,31 +89,78 @@ class _PizzaPage extends State<PizzaPage> {
                   return null;
                 },
               ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _priceController,
+                keyboardType: TextInputType.number,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  hintText: 'Prix',
+                  labelText: 'Prix*',
+                  suffix: Text('€'),
+                ),
+                inputFormatters: <TextInputFormatter>[
+                  // for below version 2 use this
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+// for version 2 and greater youcan also use this
+                  FilteringTextInputFormatter.digitsOnly
+                ],
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Merci de remplir ce champ';
+                  }
+                  return null;
+                },
+              ),
               const SizedBox(height: 24),
               const Text('Ingrédients:'),
               if (pizza.ingredients.isEmpty) const Text('Aucun ingrédient'),
-              ...pizza.ingredients
+              Wrap(
+                children: pizza.ingredients
+                    .map(
+                      (Ingredient ingredient) => IngredientChip(
+                        ingredient: ingredient,
+                        onDelete: () {
+                          if (mounted) {
+                            setState(() {
+                              pizza.ingredients.removeWhere(
+                                (Ingredient e) => e.id == ingredient.id,
+                              );
+                            });
+                          }
+                        },
+                      ),
+                    )
+                    .toList(),
+              ),
+              ...ingredients
                   .map(
-                    (Ingredient ingredient) => ItemCard(
-                      item: ingredient,
-                      onDelete: () {
-                        if (mounted) {
-                          setState(() {
-                            pizza.ingredients.removeWhere(
-                              (Ingredient e) => e.id == ingredient.id,
-                            );
-                          });
+                    (Ingredient ingredient) => IngredientWithCheckbox(
+                      ingredient: ingredient,
+                      isSelected: pizza.ingredients
+                          .where((element) => element.id == ingredient.id)
+                          .isNotEmpty,
+                      onClick: (bool? isSelected) {
+                        if (isSelected != null) {
+                          if (mounted) {
+                            setState(() {
+                              if (isSelected) {
+                                pizza.ingredients.add(ingredient);
+                              } else {
+                                pizza.ingredients.removeWhere(
+                                  (Ingredient e) => e.id == ingredient.id,
+                                );
+                              }
+                            });
+                          }
                         }
                       },
                     ),
                   )
                   .toList(),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Ajouter un ingrédient'),
-                ),
-              )
             ],
           ),
         ),

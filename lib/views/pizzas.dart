@@ -20,6 +20,7 @@ class _PizzasPageState extends State<PizzasPage> {
     Pizza(
       id: '1',
       name: 'Reine',
+      price: 10.5,
       ingredients: <Ingredient>[
         const Ingredient(
           id: '1',
@@ -38,6 +39,7 @@ class _PizzasPageState extends State<PizzasPage> {
     Pizza(
       id: '2',
       name: 'Royale',
+      price: 10.5,
       ingredients: <Ingredient>[
         const Ingredient(
           id: '1',
