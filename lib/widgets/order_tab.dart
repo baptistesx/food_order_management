@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:pom/models/ingredient.dart';
 import 'package:pom/models/order.dart';
 import 'package:pom/models/pizza.dart';
 
@@ -45,18 +46,21 @@ class OrderTab extends StatelessWidget {
                       ),
                       Chip(
                         label: Text(
-                          '${order.pizzas.map((Pizza pizza) => pizza.price).reduce((double value, double element) => value + element).toString()}€',
+                          '${order.pizzas.map((Pizza pizza) => pizza.price).reduce((double? value, double? element) => value! + element!).toString()}€',
                         ),
                       ),
                     ],
                   ),
                   controlAffinity: ListTileControlAffinity.leading,
                   children: order.pizzas
-                      .map((pizza) => OrderPizzaCard(
+                      .map(
+                        (Pizza pizza) => OrderPizzaCard(
                           pizza: pizza,
                           count: 1,
                           isChecked: true,
-                          onCheck: (bool? isChecked) {}))
+                          onCheck: (bool? isChecked) {},
+                        ),
+                      )
                       .toList(),
                 ),
               ),
@@ -88,7 +92,12 @@ class OrderPizzaCard extends StatelessWidget {
         leading: Text('$count x '),
         title: Text(pizza.name ?? 'Error'),
         subtitle: Text(
-            pizza.ingredients.map((ingredient) => ingredient.name).toString()),
+          pizza.ingredients == null
+              ? 'Erreur'
+              : pizza.ingredients!
+                  .map((Ingredient ingredient) => ingredient.name)
+                  .toString(),
+        ),
         trailing: Checkbox(value: isChecked, onChanged: onCheck),
       ),
     );

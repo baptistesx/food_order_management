@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:http/http.dart' as http;
 import 'package:pom/models/ingredient.dart';
 
 class IngredientsRepository {
+  http.Client client = http.Client();
   FirebaseFirestore db = FirebaseFirestore.instance;
   IngredientsRepository();
 
@@ -16,9 +18,6 @@ class IngredientsRepository {
         ingredients.add(Ingredient.fromMap(doc.data(), doc.id));
       }
     });
-
-    ingredients
-        .sort((Ingredient a, Ingredient b) => a.name!.compareTo(b.name!));
 
     return ingredients;
   }

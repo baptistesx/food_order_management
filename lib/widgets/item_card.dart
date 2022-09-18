@@ -24,11 +24,13 @@ class ItemCard extends StatelessWidget {
         ),
         subtitle: item.runtimeType == Pizza
             ? Text(
-                (item as Pizza)
-                    .ingredients
-                    .map((Ingredient ingredient) => ingredient.name)
-                    .toList()
-                    .toString(),
+                (item as Pizza).ingredients == null
+                    ? 'Erreur'
+                    : (item as Pizza)
+                        .ingredients!
+                        .map((Ingredient ingredient) => ingredient.name)
+                        .toList()
+                        .toString(),
               )
             : null,
         trailing: Row(

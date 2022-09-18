@@ -46,7 +46,7 @@ class IngredientBloc extends Bloc<IngredientEvent, IngredientState> {
     try {
       emit(IngredientLoadingState());
 
-      await ingredientRepository.deleteIngredientById(event.id);
+      await ingredientRepository.deleteIngredientById(event.ingredient);
 
       emit(IngredientDeletedState());
     } on StandardException catch (e) {

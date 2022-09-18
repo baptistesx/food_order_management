@@ -9,9 +9,9 @@ class GetIngredientByIdEvent extends IngredientEvent {
 }
 
 class DeleteIngredientByIdEvent extends IngredientEvent {
-  final String id;
+  final Ingredient ingredient;
 
-  DeleteIngredientByIdEvent(this.id);
+  DeleteIngredientByIdEvent(this.ingredient);
 }
 
 class UpdateIngredientByIdEvent extends IngredientEvent {

@@ -1,16 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pom/models/exceptions.dart';
 import 'package:pom/models/ingredient.dart';
+import 'package:pom/models/pizza.dart';
+import 'package:pom/repositories/pizza/pizza.dart';
+import 'package:pom/repositories/pizzas/pizzas.dart';
 
 class IngredientRepository {
-  var db = FirebaseFirestore.instance;
+  FirebaseFirestore db = FirebaseFirestore.instance;
+  PizzasRepository pizzasRepository = PizzasRepository();
+  PizzaRepository pizzaRepository = PizzaRepository();
 
   IngredientRepository();
 
   Future<Ingredient> getIngredientById(String id) async {
-    Ingredient ingredient =
-        await db.collection("ingredients").doc(id).get().then((event) {
-      print("${event.id} => ${event.data()}");
+    final Ingredient ingredient = await db
+        .collection('ingredients')
+        .doc(id)
+        .get()
+        .then((DocumentSnapshot<Map<String, dynamic>> event) {
       if (!event.exists) {
         throw ApiResponseException(message: 'Ingrédient $id non trouvé');
       }
@@ -20,23 +27,31 @@ class IngredientRepository {
     return ingredient;
   }
 
-  Future<void> deleteIngredientById(String id) async {
-    await db.collection("ingredients").doc(id).delete();
+  Future<void> deleteIngredientById(Ingredient ingredient) async {
+    final List<Pizza> pizzas = await pizzasRepository.getPizzas();
+
+    pizzas
+        .where((Pizza pizza) => pizza.ingredients!.contains(ingredient))
+        .forEach((Pizza pizza) async {
+      pizza.ingredients!.removeWhere(
+        (Ingredient ingredientToUpdate) =>
+            ingredientToUpdate.id == ingredient.id,
+      );
+
+      await pizzaRepository.updatePizzaById(pizza);
+    });
+
+    await db.collection('ingredients').doc(ingredient.id).delete();
   }
 
   Future<void> updateIngredientById(Ingredient ingredient) async {
     await db
-        .collection("ingredients")
+        .collection('ingredients')
         .doc(ingredient.id)
-        .update(ingredient.toMap())
-        .then((event) {})
-        .catchError((onError) {
-      print("onError");
-    });
-    ;
+        .update(ingredient.toMap());
   }
 
   Future<void> createIngredient(Ingredient ingredient) async {
-    await db.collection("ingredients").add(ingredient.toMap());
+    await db.collection('ingredients').add(ingredient.toMap());
   }
 }

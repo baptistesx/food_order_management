@@ -17,9 +17,6 @@ class IngredientsRepository {
       }
     });
 
-    ingredients
-        .sort((Ingredient a, Ingredient b) => a.name!.compareTo(b.name!));
-
     return ingredients;
   }
 }

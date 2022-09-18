@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pom/models/ingredient.dart';
 import 'package:pom/models/order.dart';
-import 'package:pom/models/pizza.dart';
 import 'package:pom/widgets/order_tab.dart';
 
 class OrdersPage extends StatefulWidget {
@@ -22,7 +20,7 @@ class _OrdersPageState extends State<OrdersPage> {
     });
   }
 
-  final List<Order> orders = [];
+  final List<Order> orders = <Order>[];
   // <Order>[
   //   Order(
   //     id: '0',
@@ -117,7 +115,7 @@ class _OrdersPageState extends State<OrdersPage> {
   //     clientName: 'Seux',
   //   )
   // ];
-  
+
   late final List<Widget> _pages;
   @override
   void initState() {

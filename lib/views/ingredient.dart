@@ -3,12 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pom/blocs/ingredient/ingredient.dart';
 import 'package:pom/blocs/ingredient/ingredient_events.dart';
 import 'package:pom/blocs/ingredient/ingredient_states.dart';
+import 'package:pom/blocs/ingredients/ingredients.dart';
 import 'package:pom/blocs/ingredients/ingredients_events.dart';
 import 'package:pom/models/ingredient.dart';
 import 'package:pom/widgets/layout/scrollable_column_space_between.dart';
 
-import '../blocs/ingredients/ingredients.dart';
-
+// TODO: remove useless stateful
 class IngredientPage extends StatefulWidget {
   static const String routeName = '/ingredient';
   final Ingredient? ingredient;
@@ -33,6 +33,13 @@ class _IngredientPage extends State<IngredientPage> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+
+    _nameController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -45,8 +52,9 @@ class _IngredientPage extends State<IngredientPage> {
       body: ScrollableColumnSpaceBetween(
         padding: const EdgeInsets.all(24.0),
         content: BlocListener<IngredientBloc, IngredientState>(
-          listener: (context, state) {
-            if (state is IngredientAddedState) {
+          listener: (BuildContext context, IngredientState state) {
+            if (state is IngredientAddedState ||
+                state is IngredientUpdatedState) {
               context.read<IngredientsBloc>().add(GetIngredientsEvent());
               Navigator.pop(context);
             }
@@ -86,13 +94,19 @@ class _IngredientPage extends State<IngredientPage> {
                     if (_formKey.currentState!.validate()) {
                       if (widget.ingredient == null) {
                         context.read<IngredientBloc>().add(
-                            CreateIngredientEvent(
-                                Ingredient(name: _nameController.text)));
+                              CreateIngredientEvent(
+                                Ingredient(name: _nameController.text),
+                              ),
+                            );
                       } else if (widget.ingredient!.id != null) {
                         context.read<IngredientBloc>().add(
-                            UpdateIngredientByIdEvent(Ingredient(
-                                id: widget.ingredient!.id,
-                                name: _nameController.text)));
+                              UpdateIngredientByIdEvent(
+                                Ingredient(
+                                  id: widget.ingredient!.id,
+                                  name: _nameController.text,
+                                ),
+                              ),
+                            );
                       }
                     }
                   },

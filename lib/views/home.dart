@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pom/blocs/ingredients/ingredients.dart';
 import 'package:pom/blocs/ingredients/ingredients_events.dart';
+import 'package:pom/blocs/pizzas/pizzas.dart';
+import 'package:pom/blocs/pizzas/pizzas_events.dart';
 import 'package:pom/views/ingredients.dart';
 import 'package:pom/views/orders.dart';
 import 'package:pom/views/pizzas.dart';
@@ -23,22 +25,28 @@ class HomePage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <HomeSectionButton>[
           HomeSectionButton(
-              title: 'Liste des ingrédients',
-              route: IngredientsPage.routeName,
-              onClick: () {
-                context.read<IngredientsBloc>().add(
-                      GetIngredientsEvent(),
-                    );
-              }),
+            title: 'Liste des ingrédients',
+            route: IngredientsPage.routeName,
+            onClick: () {
+              context.read<IngredientsBloc>().add(
+                    GetIngredientsEvent(),
+                  );
+            },
+          ),
           HomeSectionButton(
             title: 'Carte des pizzas',
             route: PizzasPage.routeName,
+            onClick: () {
+              context.read<PizzasBloc>().add(
+                    GetPizzasEvent(),
+                  );
+            },
           ),
-          HomeSectionButton(
+          const HomeSectionButton(
             title: 'Commandes du jour',
             route: OrdersPage.routeName,
           ),
-          HomeSectionButton(
+          const HomeSectionButton(
             title: 'Statistiques',
             route: StatisticsPage.routeName,
           ),

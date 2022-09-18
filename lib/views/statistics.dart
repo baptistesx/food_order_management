@@ -152,16 +152,17 @@ class StatisticsPage extends StatelessWidget {
         .map((Order order) => order.pizzas.length)
         .toList();
 
-    final double incomes = orders
-        .where((Order order) => order.status == OrderStatus.delivered)
-        .toList()
-        .map(
-          (Order order) => order.pizzas
-              .map((Pizza pizza) => pizza.price)
-              .toList()
-              .reduce((double value, double element) => value + element),
-        )
-        .reduce((double value, double element) => value + element);
+    const double incomes = 100;
+    //  orders
+    //     .where((Order order) => order.status == OrderStatus.delivered)
+    //     .toList()
+    //     .map(
+    //       (Order order) => order.pizzas
+    //           .map((Pizza pizza) => pizza.price)
+    //           .toList()
+    //           .reduce((double value, double element) => value + element),
+    //     )
+    //     .reduce((double value, double element) => value + element);
 
     return Scaffold(
       appBar: AppBar(

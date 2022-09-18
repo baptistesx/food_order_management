@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:pom/models/ingredient.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pom/blocs/pizza/pizza.dart';
+import 'package:pom/blocs/pizza/pizza_events.dart';
+import 'package:pom/blocs/pizza/pizza_states.dart';
+import 'package:pom/blocs/pizzas/pizzas.dart';
+import 'package:pom/blocs/pizzas/pizzas_events.dart';
+import 'package:pom/blocs/pizzas/pizzas_states.dart';
 import 'package:pom/models/pizza.dart';
 import 'package:pom/views/pizza.dart';
 import 'package:pom/widgets/item_card.dart';
@@ -16,46 +22,8 @@ class PizzasPage extends StatefulWidget {
 }
 
 class _PizzasPageState extends State<PizzasPage> {
-  List<Pizza> pizzas = <Pizza>[
-    Pizza(
-      id: '1',
-      name: 'Reine',
-      price: 10.5,
-      ingredients: <Ingredient>[
-         Ingredient(
-          id: '1',
-          name: 'Tomates',
-        ),
-         Ingredient(
-          id: '2',
-          name: 'Mozza',
-        ),
-         Ingredient(
-          id: '3',
-          name: 'Olives',
-        ),
-      ],
-    ),
-    Pizza(
-      id: '2',
-      name: 'Royale',
-      price: 10.5,
-      ingredients: <Ingredient>[
-         Ingredient(
-          id: '1',
-          name: 'Tomates',
-        ),
-         Ingredient(
-          id: '2',
-          name: 'Mozza',
-        ),
-         Ingredient(
-          id: '3',
-          name: 'Olives',
-        ),
-      ],
-    ),
-  ];
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
 
   @override
   Widget build(BuildContext context) {
@@ -63,31 +31,59 @@ class _PizzasPageState extends State<PizzasPage> {
       appBar: AppBar(
         title: const Text('Pizzas'),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: pizzas
-            .map(
-              (Pizza pizza) => ItemCard(
-                item: pizza,
-                onDelete: () {
-                  if (mounted) {
-                    setState(() {
-                      pizzas.removeWhere(
-                        (Pizza e) => e.id == pizza.id,
-                      );
-                    });
-                  }
+      body: BlocListener<PizzaBloc, PizzaState>(
+        listener: (BuildContext context, PizzaState pizzaState) {
+          if (pizzaState is PizzaDeletedState ||
+              pizzaState is PizzaUpdatedState) {
+            context.read<PizzasBloc>().add(
+                  GetPizzasEvent(),
+                );
+          }
+        },
+        child: BlocBuilder<PizzasBloc, PizzasState>(
+          builder: (BuildContext context, PizzasState pizzasState) {
+            if (pizzasState is PizzasLoadingState) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (pizzasState is PizzasFetchedState) {
+              return RefreshIndicator(
+                key: _refreshIndicatorKey,
+                onRefresh: () async {
+                  context.read<PizzasBloc>().add(GetPizzasEvent());
                 },
-                onEdit: () {
-                  Navigator.pushNamed(
-                    context,
-                    PizzaPage.routeName,
-                    arguments: <String, dynamic>{'pizza': pizza},
-                  );
-                },
-              ),
-            )
-            .toList(),
+                child: ListView(
+                  padding: const EdgeInsets.all(24),
+                  children: pizzasState.pizzas.isEmpty
+                      ? <Widget>[const Text('Aucune pizza trouvée.')]
+                      : pizzasState.pizzas
+                          .map(
+                            (Pizza pizza) => ItemCard(
+                              item: pizza,
+                              onDelete: () {
+                                if (pizza.id != null) {
+                                  context.read<PizzaBloc>().add(
+                                        DeletePizzaByIdEvent(pizza.id!),
+                                      );
+                                }
+                              },
+                              onEdit: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  PizzaPage.routeName,
+                                  arguments: <String, dynamic>{'pizza': pizza},
+                                );
+                              },
+                            ),
+                          )
+                          .toList(),
+                ),
+              );
+            } else {
+              return const Center(
+                child: Text('Erreur'),
+              );
+            }
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

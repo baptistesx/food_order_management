@@ -10,7 +10,7 @@ class Ingredient extends Item {
         );
 
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'name': name,
     };
   }

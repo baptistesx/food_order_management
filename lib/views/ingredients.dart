@@ -36,53 +36,48 @@ class _IngredientsPageState extends State<IngredientsPage> {
             context.read<IngredientsBloc>().add(
                   GetIngredientsEvent(),
                 );
-            Navigator.pop(context);
           }
         },
         child: BlocBuilder<IngredientsBloc, IngredientsState>(
           builder: (BuildContext context, IngredientsState ingredientsState) {
             if (ingredientsState is IngredientsLoadingState) {
-              return const Center(child: const CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             } else if (ingredientsState is IngredientsFetchedState) {
               return RefreshIndicator(
                 key: _refreshIndicatorKey,
                 onRefresh: () async {
                   context.read<IngredientsBloc>().add(GetIngredientsEvent());
                 },
-                child: ingredientsState.ingredients.isEmpty
-                    ? Center(
-                        child: Text('Aucun ingrédient trouvé.'),
-                      )
-                    : ListView(
-                        children: ingredientsState.ingredients
-                            .map(
-                              (Ingredient ingredient) => ItemCard(
-                                item: ingredient,
-                                onDelete: () {
-                                  if (ingredient.id != null) {
-                                    context.read<IngredientBloc>().add(
-                                          DeleteIngredientByIdEvent(
-                                              ingredient.id!),
-                                        );
-                                  }
-                                },
-                                onEdit: () {
-                                  Navigator.pushNamed(
-                                    context,
-                                    IngredientPage.routeName,
-                                    arguments: <String, dynamic>{
-                                      'ingredient': ingredient
-                                    },
-                                  );
-                                },
-                              ),
-                            )
-                            .toList(),
-                      ),
+                child: ListView(
+                  padding: const EdgeInsets.all(24),
+                  children: ingredientsState.ingredients.isEmpty
+                      ? <Widget>[const Text('Aucun ingrédient trouvé.')]
+                      : ingredientsState.ingredients
+                          .map(
+                            (Ingredient ingredient) => ItemCard(
+                              item: ingredient,
+                              onDelete: () {
+                                context.read<IngredientBloc>().add(
+                                      DeleteIngredientByIdEvent(ingredient),
+                                    );
+                              },
+                              onEdit: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  IngredientPage.routeName,
+                                  arguments: <String, dynamic>{
+                                    'ingredient': ingredient
+                                  },
+                                );
+                              },
+                            ),
+                          )
+                          .toList(),
+                ),
               );
             } else {
               return const Center(
-                child: const Text('Erreur'),
+                child: Text('Erreur'),
               );
             }
           },
