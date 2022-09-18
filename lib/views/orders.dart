@@ -22,100 +22,102 @@ class _OrdersPageState extends State<OrdersPage> {
     });
   }
 
-  final List<Order> orders = <Order>[
-    Order(
-      id: '0',
-      status: OrderStatus.toDo,
-      timeToDeliver: DateTime.now(),
-      pizzas: <Pizza>[
-        Pizza(
-          id: '1',
-          name: 'Reine',
-          price: 10.5,
-          ingredients: <Ingredient>[
-            const Ingredient(
-              id: '1',
-              name: 'Tomates',
-            ),
-            const Ingredient(
-              id: '2',
-              name: 'Mozza',
-            ),
-            const Ingredient(
-              id: '3',
-              name: 'Olives',
-            ),
-          ],
-        ),
-        Pizza(
-          id: '2',
-          name: 'Royale',
-          price: 10.5,
-          ingredients: <Ingredient>[
-            const Ingredient(
-              id: '1',
-              name: 'Tomates',
-            ),
-            const Ingredient(
-              id: '2',
-              name: 'Mozza',
-            ),
-            const Ingredient(
-              id: '3',
-              name: 'Olives',
-            ),
-          ],
-        ),
-      ],
-      clientName: 'Seux',
-    ),
-    Order(
-      id: '1',
-      status: OrderStatus.toDo,
-      timeToDeliver: DateTime.now(),
-      pizzas: <Pizza>[
-        Pizza(
-          id: '1',
-          name: 'Reine',
-          price: 10.5,
-          ingredients: <Ingredient>[
-            const Ingredient(
-              id: '1',
-              name: 'Tomates',
-            ),
-            const Ingredient(
-              id: '2',
-              name: 'Mozza',
-            ),
-            const Ingredient(
-              id: '3',
-              name: 'Olives',
-            ),
-          ],
-        ),
-        Pizza(
-          id: '2',
-          name: 'Royale',
-          price: 10.5,
-          ingredients: <Ingredient>[
-            const Ingredient(
-              id: '1',
-              name: 'Tomates',
-            ),
-            const Ingredient(
-              id: '2',
-              name: 'Mozza',
-            ),
-            const Ingredient(
-              id: '3',
-              name: 'Olives',
-            ),
-          ],
-        ),
-      ],
-      clientName: 'Seux',
-    )
-  ];
+  final List<Order> orders = [];
+  // <Order>[
+  //   Order(
+  //     id: '0',
+  //     status: OrderStatus.toDo,
+  //     timeToDeliver: DateTime.now(),
+  //     pizzas: <Pizza>[
+  //       Pizza(
+  //         id: '1',
+  //         name: 'Reine',
+  //         price: 10.5,
+  //         ingredients: <Ingredient>[
+  //           const Ingredient(
+  //             id: '1',
+  //             name: 'Tomates',
+  //           ),
+  //           const Ingredient(
+  //             id: '2',
+  //             name: 'Mozza',
+  //           ),
+  //           const Ingredient(
+  //             id: '3',
+  //             name: 'Olives',
+  //           ),
+  //         ],
+  //       ),
+  //       Pizza(
+  //         id: '2',
+  //         name: 'Royale',
+  //         price: 10.5,
+  //         ingredients: <Ingredient>[
+  //           const Ingredient(
+  //             id: '1',
+  //             name: 'Tomates',
+  //           ),
+  //           const Ingredient(
+  //             id: '2',
+  //             name: 'Mozza',
+  //           ),
+  //           const Ingredient(
+  //             id: '3',
+  //             name: 'Olives',
+  //           ),
+  //         ],
+  //       ),
+  //     ],
+  //     clientName: 'Seux',
+  //   ),
+  //   Order(
+  //     id: '1',
+  //     status: OrderStatus.toDo,
+  //     timeToDeliver: DateTime.now(),
+  //     pizzas: <Pizza>[
+  //       Pizza(
+  //         id: '1',
+  //         name: 'Reine',
+  //         price: 10.5,
+  //         ingredients: <Ingredient>[
+  //           const Ingredient(
+  //             id: '1',
+  //             name: 'Tomates',
+  //           ),
+  //           const Ingredient(
+  //             id: '2',
+  //             name: 'Mozza',
+  //           ),
+  //           const Ingredient(
+  //             id: '3',
+  //             name: 'Olives',
+  //           ),
+  //         ],
+  //       ),
+  //       Pizza(
+  //         id: '2',
+  //         name: 'Royale',
+  //         price: 10.5,
+  //         ingredients: <Ingredient>[
+  //           const Ingredient(
+  //             id: '1',
+  //             name: 'Tomates',
+  //           ),
+  //           const Ingredient(
+  //             id: '2',
+  //             name: 'Mozza',
+  //           ),
+  //           const Ingredient(
+  //             id: '3',
+  //             name: 'Olives',
+  //           ),
+  //         ],
+  //       ),
+  //     ],
+  //     clientName: 'Seux',
+  //   )
+  // ];
+  
   late final List<Widget> _pages;
   @override
   void initState() {

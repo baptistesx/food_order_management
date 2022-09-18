@@ -18,7 +18,7 @@ class IngredientWithCheckbox extends StatelessWidget {
     return Row(
       children: <Widget>[
         Checkbox(value: isSelected, onChanged: onClick),
-        Text(ingredient.name),
+        Text(ingredient.name ?? 'Error'),
       ],
     );
   }

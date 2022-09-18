@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -46,31 +49,21 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDfBuvqYyr8HSX8cgP4ip-atrJoXkp_WGM',
-    appId: '1:23632118686:web:cf16e318d845faca8c4c8f',
-    messagingSenderId: '23632118686',
-    projectId: 'trams-app',
-    authDomain: 'trams-app.firebaseapp.com',
-    storageBucket: 'trams-app.appspot.com',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBHmBjfgkmYy5QxiELA8n_Fh2ONuOy8DEE',
-    appId: '1:23632118686:android:9c48f739f3a8139a8c4c8f',
-    messagingSenderId: '23632118686',
-    projectId: 'trams-app',
-    storageBucket: 'trams-app.appspot.com',
+    apiKey: 'AIzaSyAexdBkHiPpHGgPb6Sb6vc54M73e6H_tdU',
+    appId: '1:325973755347:android:88f48fc91271c8c4dcdb26',
+    messagingSenderId: '325973755347',
+    projectId: 'pizzaordersmanagement',
+    storageBucket: 'pizzaordersmanagement.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBHfpArc-f4n3NwU1LFy6Bpn8vEL_48XII',
-    appId: '1:23632118686:ios:4b233cd03c1fc7fa8c4c8f',
-    messagingSenderId: '23632118686',
-    projectId: 'trams-app',
-    storageBucket: 'trams-app.appspot.com',
-    iosClientId:
-        '23632118686-hhjbhlnlqj58jkpmi7ajgqh3jlcbjf6g.apps.googleusercontent.com',
+    apiKey: 'AIzaSyDP2Vai0xyhW1JgKHwobO4wqMzI3HQR4qo',
+    appId: '1:325973755347:ios:9485e817cc1d5657dcdb26',
+    messagingSenderId: '325973755347',
+    projectId: 'pizzaordersmanagement',
+    storageBucket: 'pizzaordersmanagement.appspot.com',
+    iosClientId: '325973755347-9v670ke775bbh3fsb0cdhu0kqqncc0vp.apps.googleusercontent.com',
     iosBundleId: 'com.example.pom',
   );
 }

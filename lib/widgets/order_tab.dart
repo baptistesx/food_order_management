@@ -51,14 +51,46 @@ class OrderTab extends StatelessWidget {
                     ],
                   ),
                   controlAffinity: ListTileControlAffinity.leading,
-                  children: const <Widget>[
-                    ListTile(title: Text('This is tile number 3')),
-                  ],
+                  children: order.pizzas
+                      .map((pizza) => OrderPizzaCard(
+                          pizza: pizza,
+                          count: 1,
+                          isChecked: true,
+                          onCheck: (bool? isChecked) {}))
+                      .toList(),
                 ),
               ),
             )
             .toList()
       ],
+    );
+  }
+}
+
+class OrderPizzaCard extends StatelessWidget {
+  final Pizza pizza;
+  final int count;
+  final bool isChecked;
+  final void Function(bool?) onCheck;
+
+  const OrderPizzaCard({
+    Key? key,
+    required this.pizza,
+    required this.count,
+    required this.isChecked,
+    required this.onCheck,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        leading: Text('$count x '),
+        title: Text(pizza.name ?? 'Error'),
+        subtitle: Text(
+            pizza.ingredients.map((ingredient) => ingredient.name).toString()),
+        trailing: Checkbox(value: isChecked, onChanged: onCheck),
+      ),
     );
   }
 }

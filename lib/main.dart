@@ -6,9 +6,16 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pom/app.dart';
+import 'package:pom/blocs/ingredient/ingredient.dart';
+import 'package:pom/blocs/ingredient/ingredient_states.dart';
+import 'package:pom/blocs/ingredients/ingredients.dart';
+import 'package:pom/blocs/ingredients/ingredients_events.dart';
+import 'package:pom/blocs/ingredients/ingredients_states.dart';
 import 'package:pom/blocs/settings/settings.dart';
 import 'package:pom/firebase_options.dart';
 import 'package:pom/models/settings_models.dart';
+import 'package:pom/repositories/ingredient/ingredient.dart';
+import 'package:pom/repositories/ingredients/ingredients.dart';
 import 'package:pom/repositories/settings/settings.dart';
 import 'package:pom/services/logger.dart';
 import 'package:pom/theme/themes.dart';
@@ -42,6 +49,18 @@ Future<void> main() async {
                 initialState: settings == null
                     ? null
                     : SettingsUpdatedState(settings: settings),
+              ),
+            ),
+            BlocProvider<IngredientsBloc>(
+              create: (BuildContext context) => IngredientsBloc(
+                IngredientsRepository(),
+                initialState: IngredientsInitialState(),
+              )..add(GetIngredientsEvent()),
+            ),
+            BlocProvider<IngredientBloc>(
+              create: (BuildContext context) => IngredientBloc(
+                IngredientRepository(),
+                initialState: IngredientInitialState(),
               ),
             ),
           ],

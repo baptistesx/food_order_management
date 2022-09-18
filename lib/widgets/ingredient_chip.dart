@@ -14,7 +14,7 @@ class IngredientChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Chip(
-      label: Text(ingredient.name),
+      label: Text(ingredient.name ?? 'Error'),
       deleteIcon: const Icon(Icons.remove_circle_outline),
       onDeleted: onDelete,
     );

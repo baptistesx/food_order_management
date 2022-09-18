@@ -22,15 +22,15 @@ class _PizzasPageState extends State<PizzasPage> {
       name: 'Reine',
       price: 10.5,
       ingredients: <Ingredient>[
-        const Ingredient(
+         Ingredient(
           id: '1',
           name: 'Tomates',
         ),
-        const Ingredient(
+         Ingredient(
           id: '2',
           name: 'Mozza',
         ),
-        const Ingredient(
+         Ingredient(
           id: '3',
           name: 'Olives',
         ),
@@ -41,15 +41,15 @@ class _PizzasPageState extends State<PizzasPage> {
       name: 'Royale',
       price: 10.5,
       ingredients: <Ingredient>[
-        const Ingredient(
+         Ingredient(
           id: '1',
           name: 'Tomates',
         ),
-        const Ingredient(
+         Ingredient(
           id: '2',
           name: 'Mozza',
         ),
-        const Ingredient(
+         Ingredient(
           id: '3',
           name: 'Olives',
         ),

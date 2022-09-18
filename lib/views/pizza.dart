@@ -23,15 +23,15 @@ class _PizzaPage extends State<PizzaPage> {
   late Pizza pizza;
 
   final List<Ingredient> ingredients = <Ingredient>[
-    const Ingredient(
+     Ingredient(
       id: '1',
       name: 'Tomates',
     ),
-    const Ingredient(
+     Ingredient(
       id: '2',
       name: 'Mozza',
     ),
-    const Ingredient(
+     Ingredient(
       id: '3',
       name: 'Olives',
     ),

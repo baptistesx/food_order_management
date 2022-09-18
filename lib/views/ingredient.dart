@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pom/blocs/ingredient/ingredient.dart';
+import 'package:pom/blocs/ingredient/ingredient_events.dart';
+import 'package:pom/blocs/ingredient/ingredient_states.dart';
+import 'package:pom/blocs/ingredients/ingredients_events.dart';
 import 'package:pom/models/ingredient.dart';
 import 'package:pom/widgets/layout/scrollable_column_space_between.dart';
+
+import '../blocs/ingredients/ingredients.dart';
 
 class IngredientPage extends StatefulWidget {
   static const String routeName = '/ingredient';
@@ -37,29 +44,37 @@ class _IngredientPage extends State<IngredientPage> {
       ),
       body: ScrollableColumnSpaceBetween(
         padding: const EdgeInsets.all(24.0),
-        content: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              TextFormField(
-                controller: _nameController,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
+        content: BlocListener<IngredientBloc, IngredientState>(
+          listener: (context, state) {
+            if (state is IngredientAddedState) {
+              context.read<IngredientsBloc>().add(GetIngredientsEvent());
+              Navigator.pop(context);
+            }
+          },
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                TextFormField(
+                  controller: _nameController,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    hintText: 'Nom',
+                    labelText: 'Nom*',
                   ),
-                  hintText: 'Nom',
-                  labelText: 'Nom*',
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Merci de remplir ce champ';
+                    }
+                    return null;
+                  },
                 ),
-                validator: (String? value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Merci de remplir ce champ';
-                  }
-                  return null;
-                },
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         bottom: SafeArea(
@@ -68,7 +83,18 @@ class _IngredientPage extends State<IngredientPage> {
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    if (_formKey.currentState!.validate()) {
+                      if (widget.ingredient == null) {
+                        context.read<IngredientBloc>().add(
+                            CreateIngredientEvent(
+                                Ingredient(name: _nameController.text)));
+                      } else if (widget.ingredient!.id != null) {
+                        context.read<IngredientBloc>().add(
+                            UpdateIngredientByIdEvent(Ingredient(
+                                id: widget.ingredient!.id,
+                                name: _nameController.text)));
+                      }
+                    }
                   },
                   child: const Text('Valider'),
                 ),
