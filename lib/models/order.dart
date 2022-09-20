@@ -25,8 +25,8 @@ class Order {
       'id': id,
       'status': status.name,
       'createdAt': createdAt.toString(),
-      'timeToDeliver': timeToDeliver.toString(),
-      'pizzas': pizzas.map((Pizza x) => x.toMap()).toList(),
+      'timeToDeliver': '${timeToDeliver.hour}:${timeToDeliver.minute}',
+      'pizzas': pizzas.map((Pizza x) => x.toMap(true)).toList(),
       'clientName': clientName,
     };
   }
@@ -37,10 +37,19 @@ class Order {
       status: OrderStatus.values
           .firstWhere((OrderStatus element) => element.name == map['status']),
       createdAt: DateTime.parse(map['createdAt']),
-      timeToDeliver: TimeOfDay.fromDateTime(map['timeToDeliver']),
-      pizzas: <
-          Pizza>[], //TODO List<Pizza>.from(map['pizzas']?.map((x) => Pizza.fromMap(x.id))),
-      clientName: map['clientName'] ?? '',
+      timeToDeliver: TimeOfDay(
+        hour: int.parse(map['timeToDeliver'].split(':')[0]),
+        minute: int.parse(map['timeToDeliver'].split(':')[1]),
+      ),
+      pizzas: List<Pizza>.from(
+        map['pizzas']?.map((x) => Pizza.fromMap(x, x['id'])),
+      ),
+      clientName: map['clientName'],
     );
+  }
+
+  @override
+  String toString() {
+    return 'Order(id: $id, status: $status, createdAt: $createdAt, timeToDeliver: $timeToDeliver, pizzas: $pizzas, clientName: $clientName)';
   }
 }

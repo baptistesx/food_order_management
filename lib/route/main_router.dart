@@ -40,7 +40,7 @@ class MainRouter {
 
         return MaterialPageRoute<dynamic>(
           settings: settings,
-          builder: (BuildContext context) =>  OrderPage(
+          builder: (BuildContext context) => OrderPage(
             order: args?['order'] as Order?,
           ),
         );

@@ -11,6 +11,7 @@ class Ingredient extends Item {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'id': id,
       'name': name,
     };
   }

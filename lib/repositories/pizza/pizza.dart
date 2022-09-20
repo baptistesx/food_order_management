@@ -35,7 +35,7 @@ class PizzaRepository {
           .add(db.collection('ingredient').doc(pizza.ingredients![i].id));
     }
 
-    final Map<String, dynamic> map = pizza.toMap();
+    final Map<String, dynamic> map = pizza.toMap(false);
     map['ingredients'] = ingredientsRefs;
 
     await db
@@ -52,7 +52,7 @@ class PizzaRepository {
           .add(db.collection('ingredient').doc(pizza.ingredients![i].id));
     }
 
-    final Map<String, dynamic> map = pizza.toMap();
+    final Map<String, dynamic> map = pizza.toMap(false);
     map['ingredients'] = ingredientsRefs;
 
     await db.collection('pizzas').add(map);

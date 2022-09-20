@@ -5,8 +5,12 @@ import 'package:pom/blocs/order/order_events.dart';
 import 'package:pom/blocs/order/order_states.dart';
 import 'package:pom/blocs/orders/orders.dart';
 import 'package:pom/blocs/orders/orders_events.dart';
+import 'package:pom/blocs/pizzas/pizzas.dart';
+import 'package:pom/blocs/pizzas/pizzas_states.dart';
+import 'package:pom/models/ingredient.dart';
 import 'package:pom/models/order.dart';
 import 'package:pom/models/pizza.dart';
+import 'package:pom/widgets/add_pizza_to_order_dialog.dart';
 import 'package:pom/widgets/layout/scrollable_column_space_between.dart';
 
 class OrderPage extends StatefulWidget {
@@ -22,8 +26,7 @@ class OrderPage extends StatefulWidget {
 class _OrderPage extends State<OrderPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController _clientNameController = TextEditingController();
-  final TextEditingController _timeToDeliverController =
-      TextEditingController();
+  TextEditingController _timeToDeliverController = TextEditingController();
   TimeOfDay? _timeToDeliver;
   List<Pizza> pizzas = <Pizza>[];
 
@@ -35,8 +38,17 @@ class _OrderPage extends State<OrderPage> {
       _clientNameController = TextEditingController(
         text: widget.order!.clientName ?? '',
       );
-
-      pizzas = widget.order != null ? widget.order!.pizzas : <Pizza>[];
+      _timeToDeliverController = TextEditingController(
+        text:
+            '${widget.order!.timeToDeliver.hour}:${widget.order!.timeToDeliver.minute}',
+      );
+      _timeToDeliver = TimeOfDay(
+        hour: widget.order!.timeToDeliver.hour,
+        minute: widget.order!.timeToDeliver.minute,
+      );
+      pizzas = widget.order != null
+          ? widget.order!.pizzas.map((Pizza e) => e).toList()
+          : <Pizza>[];
     }
   }
 
@@ -87,8 +99,7 @@ class _OrderPage extends State<OrderPage> {
                   },
                 ),
                 const SizedBox(height: 16),
-
-                TextField(
+                TextFormField(
                   controller: _timeToDeliverController,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
@@ -100,6 +111,12 @@ class _OrderPage extends State<OrderPage> {
                     prefixIcon: const Icon(Icons.calendar_today),
                     hintText: 'Heure de livaison',
                   ),
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Merci de remplir ce champ';
+                    }
+                    return null;
+                  },
                   readOnly: true,
                   onTap: () async {
                     final TimeOfDay? pickedTime = await showTimePicker(
@@ -125,115 +142,173 @@ class _OrderPage extends State<OrderPage> {
                 ),
                 const SizedBox(height: 16),
                 const SizedBox(height: 24),
-                // const Text('Ingrédients:'),
-                // if (pizza.ingredients != null && pizza.ingredients!.isEmpty)
-                //   const Text('Aucun ingrédient')
-                // else
-                //   Wrap(
-                //     children: pizza.ingredients!
-                //         .map(
-                //           (Ingredient ingredient) => IngredientChip(
-                //             ingredient: ingredient,
-                //             onDelete: () {
-                //               if (mounted) {
-                //                 setState(() {
-                //                   pizza.ingredients!.removeWhere(
-                //                     (Ingredient e) => e.id == ingredient.id,
-                //                   );
-                //                 });
-                //               }
-                //             },
-                //           ),
-                //         )
-                //         .toList(),
-                //   ),
-                // BlocBuilder<IngredientsBloc, IngredientsState>(
-                //   builder: (
-                //     BuildContext context,
-                //     IngredientsState ingredientsState,
-                //   ) {
-                //     if (ingredientsState is! IngredientsFetchedState) {
-                //       return const Center(
-                //         child: Text(
-                //           'Erreur lors de l\'obtention des ingrédients',
-                //         ),
-                //       );
-                //     } else {
-                //       return Column(
-                //         children: ingredientsState.ingredients
-                //             .map(
-                //               (Ingredient ingredient) => IngredientWithCheckbox(
-                //                 ingredient: ingredient,
-                //                 isSelected: pizza.ingredients!
-                //                     .where(
-                //                       (Ingredient element) =>
-                //                           element.id == ingredient.id,
-                //                     )
-                //                     .isNotEmpty,
-                //                 onClick: (bool? isSelected) {
-                //                   if (isSelected != null) {
-                //                     if (mounted) {
-                //                       setState(() {
-                //                         if (isSelected) {
-                //                           pizza.ingredients!.add(ingredient);
-                //                         } else {
-                //                           pizza.ingredients!.removeWhere(
-                //                             (Ingredient e) =>
-                //                                 e.id == ingredient.id,
-                //                           );
-                //                         }
-                //                       });
-                //                     }
-                //                   }
-                //                 },
-                //               ),
-                //             )
-                //             .toList(),
-                //       );
-                //     }
-                //   },
-                // ),
-                const Text('Total: ${50}€')
+                Wrap(
+                  children: pizzas
+                      .map(
+                        (Pizza pizza) => Chip(
+                          label: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              if (pizza.ingredientsToAdd!.isNotEmpty ||
+                                  pizza.ingredientsToRemove!.isNotEmpty)
+                                const Icon(
+                                  Icons.warning_amber_rounded,
+                                  color: Colors.red,
+                                ),
+                              Text(pizza.name ?? 'Error'),
+                              if (pizza.ingredientsToRemove!.isNotEmpty)
+                                Text(
+                                  pizza.ingredientsToRemove!
+                                      .map(
+                                        (Ingredient ingredient) =>
+                                            ingredient.name,
+                                      )
+                                      .toList()
+                                      .toString(),
+                                  style: const TextStyle(
+                                    decoration: TextDecoration.lineThrough,
+                                  ),
+                                ),
+                              if (pizza.ingredientsToAdd!.isNotEmpty)
+                                Text(
+                                  pizza.ingredientsToAdd!
+                                      .map(
+                                        (Ingredient ingredient) =>
+                                            ingredient.name,
+                                      )
+                                      .toList()
+                                      .toString(),
+                                  style: const TextStyle(
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                )
+                            ],
+                          ),
+                          deleteIcon: const Icon(Icons.remove_circle_outline),
+                          onDeleted: () {
+                            if (mounted) {
+                              setState(() {
+                                pizzas.removeWhere(
+                                  (Pizza pizzaToCheck) => pizza == pizzaToCheck,
+                                );
+                              });
+                            }
+                          },
+                        ),
+                      )
+                      .toList(),
+                ),
+                BlocBuilder<PizzasBloc, PizzasState>(
+                  builder: (BuildContext context, PizzasState pizzasState) {
+                    if (pizzasState is! PizzasFetchedState) {
+                      return const Center(
+                        child: Text('Center'),
+                      );
+                    } else {
+                      return Wrap(
+                        children: pizzasState.pizzas
+                            .map(
+                              (Pizza pizza) => SizedBox(
+                                width: 300,
+                                child: Card(
+                                  child: ListTile(
+                                    onTap: () async {
+                                      final pizzaToAdd = await showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AddPizzaToOrderDialog(
+                                            pizza: pizza,
+                                          );
+                                        },
+                                      );
+                                      if (pizzaToAdd != null) {
+                                        if (mounted) {
+                                          setState(() {
+                                            pizzas.add(pizzaToAdd);
+                                          });
+                                        }
+                                      }
+                                    },
+                                    title: Text(
+                                      '${pizza.name}${pizza.runtimeType == Pizza ? " / ${(pizza).price}€" : ""}',
+                                    ),
+                                    subtitle: pizza.runtimeType == Pizza
+                                        ? Text(
+                                            (pizza).ingredients == null
+                                                ? 'Erreur'
+                                                : (pizza)
+                                                    .ingredients!
+                                                    .map(
+                                                      (
+                                                        Ingredient ingredient,
+                                                      ) =>
+                                                          ingredient.name,
+                                                    )
+                                                    .toList()
+                                                    .toString(),
+                                          )
+                                        : null,
+                                  ),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      );
+                    }
+                  },
+                ),
               ],
             ),
           ),
         ),
         bottom: SafeArea(
-          child: Row(
+          child: Column(
             children: <Widget>[
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      if (widget.order == null) {
-                        context.read<OrderBloc>().add(
-                              CreateOrderEvent(
-                                Order(
-                                  status: OrderStatus.toDo,
-                                  createdAt: DateTime.now(),
-                                  timeToDeliver: _timeToDeliver!,
-                                  clientName: _clientNameController.text,
-                                  pizzas: pizzas,
-                                ),
-                              ),
-                            );
-                      } else if (widget.order!.id != null) {
-                        context.read<OrderBloc>().add(
-                              UpdateOrderByIdEvent(
-                                Order(
-                                  status: OrderStatus.toDo,
-                                  createdAt: DateTime.now(),
-                                  timeToDeliver: _timeToDeliver!,
-                                  clientName: _clientNameController.text,
-                                  pizzas: pizzas,
-                                ),
-                              ),
-                            );
-                      }
-                    }
-                  },
-                  child: const Text('Valider'),
-                ),
+              Text(
+                'Total: ${pizzas.isEmpty ? "0" : pizzas.map((Pizza pizza) => pizza.price!).toList().reduce((double value, double element) => value + element)}€',
+              ),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: pizzas.isEmpty
+                          ? null
+                          : () {
+                              if (_formKey.currentState!.validate()) {
+                                if (widget.order == null) {
+                                  context.read<OrderBloc>().add(
+                                        CreateOrderEvent(
+                                          Order(
+                                            status: OrderStatus.toDo,
+                                            createdAt: DateTime.now(),
+                                            timeToDeliver: _timeToDeliver!,
+                                            clientName:
+                                                _clientNameController.text,
+                                            pizzas: pizzas,
+                                          ),
+                                        ),
+                                      );
+                                } else if (widget.order!.id != null) {
+                                  context.read<OrderBloc>().add(
+                                        UpdateOrderByIdEvent(
+                                          Order(
+                                            id: widget.order!.id,
+                                            status: OrderStatus.toDo,
+                                            createdAt: DateTime.now(),
+                                            timeToDeliver: _timeToDeliver!,
+                                            clientName:
+                                                _clientNameController.text,
+                                            pizzas: pizzas,
+                                          ),
+                                        ),
+                                      );
+                                }
+                              }
+                            },
+                      child: const Text('Valider'),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
