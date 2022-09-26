@@ -12,6 +12,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
   OrdersBloc(this.ordersRepository, {OrdersState? initialState})
       : super(initialState ?? OrdersInitialState()) {
     on<GetOrdersEvent>(getOrders);
+    on<UpdateOrdersEvent>(updateOrders);
   }
 
   Future<void> getOrders(
@@ -21,10 +22,28 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     try {
       emit(OrdersLoadingState());
 
-      final List<Order> orders =
-          await ordersRepository.getOrders();
+      final List<Order> orders = await ordersRepository.getOrders();
 
       emit(OrdersFetchedState(orders: orders));
+    } on StandardException catch (e) {
+      emit(OrdersFetchedErrorState(e.message));
+      emit(OrdersInitialState());
+    } on ApiResponseException catch (e) {
+      emit(OrdersFetchedErrorState(e.message));
+      emit(OrdersInitialState());
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> updateOrders(
+    UpdateOrdersEvent event,
+    Emitter<OrdersState> emit,
+  ) async {
+    try {
+      emit(OrdersLoadingState());
+
+      emit(OrdersFetchedState(orders: event.orders));
     } on StandardException catch (e) {
       emit(OrdersFetchedErrorState(e.message));
       emit(OrdersInitialState());

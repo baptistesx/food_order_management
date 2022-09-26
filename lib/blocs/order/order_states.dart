@@ -10,7 +10,16 @@ class OrderDeletedState extends OrderState {}
 
 class OrderAddedState extends OrderState {}
 
-class OrderUpdatedState extends OrderState {}
+class OrderUpdatedState extends OrderState {
+  final Order orderUpdated;
+
+  OrderUpdatedState({required this.orderUpdated});
+}
+class OrderStatusUpdatedState extends OrderState {
+  final Order orderUpdated;
+
+  OrderStatusUpdatedState({required this.orderUpdated});
+}
 
 class OrderFetchedState extends OrderState {
   final Order order;

@@ -6,6 +6,7 @@ class Pizza extends Item {
   List<Ingredient>? ingredientsToRemove;
   List<Ingredient>? ingredientsToAdd;
   double? price;
+  bool? isDone;
 
   Pizza({
     String? id,
@@ -14,6 +15,7 @@ class Pizza extends Item {
     this.ingredients,
     this.ingredientsToRemove,
     this.ingredientsToAdd,
+    this.isDone,
   }) : super(
           id: id,
           name: name,
@@ -39,6 +41,7 @@ class Pizza extends Item {
           : <Ingredient>[],
       'name': name,
       'price': price,
+      'isDone': isDone,
     };
   }
 
@@ -56,23 +59,27 @@ class Pizza extends Item {
         map['ingredientsToAdd']?.map((x) => Ingredient.fromMap(x, x['id'])),
       ),
       price: map['price'],
+      isDone: map['isDone'],
     );
   }
 
   Pizza copyWith({
     List<Ingredient>? ingredients,
+    List<Ingredient>? ingredientsToRemove,
+    List<Ingredient>? ingredientsToAdd,
     double? price,
+    bool? isDone,
+    String? id,
+    String? name,
   }) {
     return Pizza(
-      id: id,
-      name: name,
       ingredients: ingredients ?? this.ingredients,
+      ingredientsToRemove: ingredientsToRemove ?? this.ingredientsToRemove,
+      ingredientsToAdd: ingredientsToAdd ?? this.ingredientsToAdd,
       price: price ?? this.price,
+      isDone: isDone ?? this.isDone,
+      name: name ?? this.name,
+      id: id ?? this.id,
     );
-  }
-
-  @override
-  String toString() {
-    return 'Pizza(ingredients: $ingredients, ingredientsToRemove: $ingredientsToRemove, ingredientsToAdd: $ingredientsToAdd, price: $price)';
   }
 }

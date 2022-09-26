@@ -24,8 +24,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     try {
       emit(OrderLoadingState());
 
-      final Order order =
-          await orderRepository.getOrderById(event.id);
+      final Order order = await orderRepository.getOrderById(event.id);
 
       emit(OrderFetchedState(order: order));
     } on StandardException catch (e) {
@@ -69,7 +68,28 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
 
       await orderRepository.updateOrderById(event.order);
 
-      emit(OrderUpdatedState());
+      emit(OrderUpdatedState(orderUpdated: event.order));
+    } on StandardException catch (e) {
+      emit(OrderFetchedErrorState(e.message));
+      emit(OrderInitialState());
+    } on ApiResponseException catch (e) {
+      emit(OrderFetchedErrorState(e.message));
+      emit(OrderInitialState());
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> updateOrderStatus(
+    UpdateOrderByIdEvent event,
+    Emitter<OrderState> emit,
+  ) async {
+    try {
+      emit(OrderLoadingState());
+
+      await orderRepository.updateOrderById(event.order);
+
+      emit(OrderStatusUpdatedState(orderUpdated: event.order));
     } on StandardException catch (e) {
       emit(OrderFetchedErrorState(e.message));
       emit(OrderInitialState());

@@ -271,7 +271,7 @@ class _OrderPage extends State<OrderPage> {
                 children: <Widget>[
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: pizzas.isEmpty
+                      onPressed: pizzas.isEmpty || _timeToDeliver == null
                           ? null
                           : () {
                               if (_formKey.currentState!.validate()) {
