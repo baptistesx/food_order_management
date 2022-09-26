@@ -9,6 +9,7 @@ import 'package:pom/blocs/pizzas/pizzas_states.dart';
 import 'package:pom/models/pizza.dart';
 import 'package:pom/theme/themes.dart';
 import 'package:pom/views/pizza.dart';
+import 'package:pom/widgets/confirm_action_dialog.dart';
 import 'package:pom/widgets/item_card.dart';
 
 class PizzasPage extends StatefulWidget {
@@ -59,11 +60,19 @@ class _PizzasPageState extends State<PizzasPage> {
                           .map(
                             (Pizza pizza) => ItemCard(
                               item: pizza,
-                              onDelete: () {
-                                if (pizza.id != null) {
-                                  context.read<PizzaBloc>().add(
-                                        DeletePizzaByIdEvent(pizza.id!),
-                                      );
+                              onDelete: () async {
+                                final shouldDelete = await showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return const ConfirmActionDialog();
+                                  },
+                                );
+                                if (shouldDelete != null && shouldDelete) {
+                                  if (pizza.id != null) {
+                                    context.read<PizzaBloc>().add(
+                                          DeletePizzaByIdEvent(pizza.id!),
+                                        );
+                                  }
                                 }
                               },
                               onEdit: () {

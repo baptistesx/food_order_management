@@ -8,7 +8,9 @@ import 'package:pom/blocs/pizzas/pizzas_states.dart';
 import 'package:pom/models/ingredient.dart';
 import 'package:pom/models/order.dart';
 import 'package:pom/models/pizza.dart';
+import 'package:pom/theme/themes.dart';
 import 'package:pom/widgets/add_pizza_to_order_dialog.dart';
+import 'package:pom/widgets/confirm_action_dialog.dart';
 import 'package:pom/widgets/layout/scrollable_column_space_between.dart';
 
 class OrderPage extends StatefulWidget {
@@ -89,8 +91,9 @@ class _OrderPage extends State<OrderPage> {
         padding: const EdgeInsets.all(24.0),
         content: BlocListener<OrderBloc, OrderState>(
           listener: (BuildContext context, OrderState state) {
-            if (state is OrderAddedState || state is OrderUpdatedState) {
-              // context.read<OrdersBloc>().add(GetOrdersEvent());
+            if (state is OrderAddedState ||
+                state is OrderUpdatedState ||
+                state is OrderDeletedState) {
               Navigator.pop(context);
             }
           },
@@ -176,7 +179,8 @@ class _OrderPage extends State<OrderPage> {
                                   Icons.warning_amber_rounded,
                                   color: Colors.red,
                                 ),
-                              Text('${pizza.value.toString()} x '),
+                              Text(
+                                  '${pizza.value.toString()} x ${pizza.key.isBig != null && pizza.key.isBig! ? "Grande(s)" : "Petite(s)"}'),
                               Text(
                                 pizza.key.name ?? 'Error',
                                 style: const TextStyle(
@@ -270,7 +274,7 @@ class _OrderPage extends State<OrderPage> {
                                       }
                                     },
                                     title: Text(
-                                      '${pizza.name}${pizza.runtimeType == Pizza ? " / ${(pizza).price}€" : ""}',
+                                      '${pizza.name}${pizza.runtimeType == Pizza ? " / ${pizza.priceSmall}€ / ${pizza.priceBig}€" : ""}',
                                     ),
                                     subtitle: pizza.runtimeType == Pizza
                                         ? Text(
@@ -305,8 +309,10 @@ class _OrderPage extends State<OrderPage> {
           child: Column(
             children: <Widget>[
               Text(
-                'Total: ${pizzas.isEmpty ? "0" : pizzas.map((Pizza pizza) => pizza.price!).toList().reduce((double value, double element) => value + element)}€',
+                'Total: ${pizzas.isEmpty ? "0" : pizzas.map((Pizza pizza) => pizza.isBig != null && pizza.isBig! ? pizza.priceBig! : pizza.priceSmall!).toList().reduce((double value, double element) => value + element)}€',
+                style: TextStyle(fontSize: 20.0),
               ),
+              const SizedBox(height: 16),
               Row(
                 children: <Widget>[
                   Expanded(
@@ -333,7 +339,7 @@ class _OrderPage extends State<OrderPage> {
                                         UpdateOrderByIdEvent(
                                           Order(
                                             id: widget.order!.id,
-                                            status: OrderStatus.toDo,
+                                            status: widget.order!.status,
                                             createdAt: DateTime.now(),
                                             timeToDeliver: _timeToDeliver!,
                                             clientName:
@@ -346,6 +352,33 @@ class _OrderPage extends State<OrderPage> {
                               }
                             },
                       child: const Text('Valider'),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () async {
+                        final shouldDelete = await showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return ConfirmActionDialog();
+                          },
+                        );
+                        if (widget.order != null &&
+                            shouldDelete != null &&
+                            shouldDelete) {
+                          context
+                              .read<OrderBloc>()
+                              .add(DeleteOrderByIdEvent(widget.order!));
+                        }
+                      },
+                      child: Text(
+                        'Supprimer',
+                        style: TextStyle(color: context.theme.errorColor),
+                      ),
                     ),
                   ),
                 ],

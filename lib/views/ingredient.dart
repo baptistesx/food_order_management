@@ -61,6 +61,7 @@ class _IngredientPage extends State<IngredientPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 TextFormField(
+                  autofocus: true,
                   controller: _nameController,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   decoration: InputDecoration(

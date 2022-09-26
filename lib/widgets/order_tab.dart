@@ -76,7 +76,7 @@ class _OrderTabState extends State<OrderTab> {
                                       ),
                                     );
                               },
-                              child: const Text('Livré'),
+                              child: const Text('Livrée'),
                             ),
                         ],
                       ),
@@ -85,20 +85,23 @@ class _OrderTabState extends State<OrderTab> {
                       ),
                       subtitle: Row(
                         mainAxisSize: MainAxisSize.min,
-                        children: <Chip>[
+                        children: <Widget>[
                           Chip(
                             label: Text(
                               '${order.timeToDeliver.hour}:${order.timeToDeliver.minute}',
                             ),
                           ),
+                          const SizedBox(width: 5),
                           Chip(
-                            label: Text(order.pizzas.length.toString()),
+                            label: Text(
+                                '${order.pizzas.length.toString()} pizzas (${order.pizzas.where((pizza) => pizza.isBig != null && pizza.isBig!).length} grande(s), ${order.pizzas.where((pizza) => pizza.isBig == null || !pizza.isBig!).length} petite(s))'),
                           ),
+                          const SizedBox(width: 5),
                           Chip(
                             label: Text(
                               order.pizzas.isEmpty
                                   ? '0'
-                                  : '${order.pizzas.map((Pizza pizza) => pizza.price).reduce((double? value, double? element) => value! + element!).toString()}€',
+                                  : '${order.pizzas.map((Pizza pizza) => pizza.isBig != null && pizza.isBig! ? pizza.priceBig : pizza.priceSmall).reduce((double? value, double? element) => value! + element!).toString()}€',
                             ),
                           ),
                         ],
@@ -240,7 +243,8 @@ class OrderPizzaCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        leading: Text('$count x '),
+        leading: Text(
+            '$count x ${pizza.isBig != null && pizza.isBig! ? "Grande" : "Petite"}'),
         title: Text(pizza.name ?? 'Error'),
         subtitle: Row(
           mainAxisSize: MainAxisSize.min,

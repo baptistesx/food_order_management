@@ -7,17 +7,21 @@ class Pizza extends Item {
   List<Ingredient>? ingredients;
   List<Ingredient>? ingredientsToRemove;
   List<Ingredient>? ingredientsToAdd;
-  double? price;
+  double? priceSmall;
+  double? priceBig;
   bool? isDone;
+  bool? isBig;
 
   Pizza({
     String? id,
     String? name,
-    this.price,
+    this.priceSmall,
+    this.priceBig,
     this.ingredients,
     this.ingredientsToRemove,
     this.ingredientsToAdd,
     this.isDone,
+    this.isBig,
   }) : super(
           id: id,
           name: name,
@@ -42,8 +46,10 @@ class Pizza extends Item {
               .toList()
           : <Ingredient>[],
       'name': name?.trim().toCapitalized(),
-      'price': price,
+      'priceSmall': priceSmall,
+      'priceBig': priceBig,
       'isDone': isDone,
+      'isBig': isBig,
     };
   }
 
@@ -75,8 +81,10 @@ class Pizza extends Item {
                     Ingredient.fromMap(x, (x as Map<String, dynamic>)['id']),
               ),
             ),
-      price: map['price'],
+      priceSmall: map['priceSmall'],
+      priceBig: map['priceBig'],
       isDone: map['isDone'],
+      isBig: map['isBig'],
     );
   }
 
@@ -84,17 +92,21 @@ class Pizza extends Item {
     List<Ingredient>? ingredients,
     List<Ingredient>? ingredientsToRemove,
     List<Ingredient>? ingredientsToAdd,
-    double? price,
+    double? priceSmall,
+    double? priceBig,
     bool? isDone,
     String? id,
     String? name,
+    bool? isBig,
   }) {
     return Pizza(
       ingredients: ingredients ?? this.ingredients,
       ingredientsToRemove: ingredientsToRemove ?? this.ingredientsToRemove,
       ingredientsToAdd: ingredientsToAdd ?? this.ingredientsToAdd,
-      price: price ?? this.price,
+      priceSmall: priceSmall ?? this.priceSmall,
+      priceBig: priceBig ?? this.priceBig,
       isDone: isDone ?? this.isDone,
+      isBig: isBig ?? this.isBig,
       name: name ?? this.name,
       id: id ?? this.id,
     );
@@ -108,8 +120,8 @@ class Pizza extends Item {
         listEquals(other.ingredients, ingredients) &&
         listEquals(other.ingredientsToRemove, ingredientsToRemove) &&
         listEquals(other.ingredientsToAdd, ingredientsToAdd) &&
-        other.price == price &&
-        other.isDone == isDone;
+        other.isDone == isDone &&
+        other.isBig == isBig;
   }
 
   @override
@@ -117,7 +129,7 @@ class Pizza extends Item {
     return ingredients.hashCode ^
         ingredientsToRemove.hashCode ^
         ingredientsToAdd.hashCode ^
-        price.hashCode ^
-        isDone.hashCode;
+        isDone.hashCode ^
+        isBig.hashCode;
   }
 }

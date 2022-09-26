@@ -20,7 +20,7 @@ class ItemCard extends StatelessWidget {
     return Card(
       child: ListTile(
         title: Text(
-          '${item.name}${item.runtimeType == Pizza ? " / ${(item as Pizza).price}€" : ""}',
+          '${item.name}${item.runtimeType == Pizza ? " / ${(item as Pizza).priceSmall}€ / ${(item as Pizza).priceBig}€" : ""}',
         ),
         subtitle: item.runtimeType == Pizza
             ? Text(

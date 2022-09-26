@@ -27,7 +27,8 @@ class PizzaPage extends StatefulWidget {
 class _PizzaPage extends State<PizzaPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late TextEditingController _nameController;
-  late TextEditingController _priceController;
+  late TextEditingController _priceSmallController;
+  late TextEditingController _priceBigController;
   late Pizza pizza;
 
   @override
@@ -37,14 +38,18 @@ class _PizzaPage extends State<PizzaPage> {
     _nameController = TextEditingController(
       text: widget.pizza != null ? widget.pizza!.name : '',
     );
-    _priceController = TextEditingController(
-      text: widget.pizza != null ? widget.pizza!.price.toString() : '0',
+    _priceSmallController = TextEditingController(
+      text: widget.pizza != null ? widget.pizza!.priceSmall.toString() : '0',
+    );
+    _priceBigController = TextEditingController(
+      text: widget.pizza != null ? widget.pizza!.priceBig.toString() : '0',
     );
 
     pizza = widget.pizza ??
         Pizza(
           name: '',
-          price: 0,
+          priceSmall: 0,
+          priceBig: 0,
           ingredients: <Ingredient>[],
         );
   }
@@ -54,7 +59,8 @@ class _PizzaPage extends State<PizzaPage> {
     super.dispose();
 
     _nameController.dispose();
-    _priceController.dispose();
+    _priceSmallController.dispose();
+    _priceBigController.dispose();
   }
 
   @override
@@ -98,14 +104,40 @@ class _PizzaPage extends State<PizzaPage> {
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
-                  controller: _priceController,
+                  controller: _priceSmallController,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
-                    hintText: 'Prix',
-                    labelText: 'Prix*',
+                    hintText: 'Prix petite taille',
+                    labelText: 'Prix petite taille*',
+                    suffix: const Text('€'),
+                  ),
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'^\d+\.?\d{0,2}'),
+                    ),
+                  ],
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Merci de remplir ce champ';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _priceBigController,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    hintText: 'Prix grande taille',
+                    labelText: 'Prix grande taille*',
                     suffix: const Text('€'),
                   ),
                   keyboardType:
@@ -208,7 +240,10 @@ class _PizzaPage extends State<PizzaPage> {
                               CreatePizzaEvent(
                                 Pizza(
                                   name: _nameController.text,
-                                  price: double.parse(_priceController.text),
+                                  priceSmall:
+                                      double.parse(_priceSmallController.text),
+                                  priceBig:
+                                      double.parse(_priceBigController.text),
                                   ingredients: pizza.ingredients,
                                 ),
                               ),
@@ -219,7 +254,10 @@ class _PizzaPage extends State<PizzaPage> {
                                 Pizza(
                                   id: widget.pizza!.id,
                                   name: _nameController.text,
-                                  price: double.parse(_priceController.text),
+                                  priceSmall:
+                                      double.parse(_priceSmallController.text),
+                                  priceBig:
+                                      double.parse(_priceBigController.text),
                                   ingredients: pizza.ingredients,
                                 ),
                               ),

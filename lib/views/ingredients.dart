@@ -6,6 +6,7 @@ import 'package:pom/blocs/ingredient/ingredient_events.dart';
 import 'package:pom/models/ingredient.dart';
 import 'package:pom/theme/themes.dart';
 import 'package:pom/views/ingredient.dart';
+import 'package:pom/widgets/confirm_action_dialog.dart';
 import 'package:pom/widgets/item_card.dart';
 
 class IngredientsPage extends StatefulWidget {
@@ -52,10 +53,18 @@ class _IngredientsPageState extends State<IngredientsPage> {
                     .map(
                       (Ingredient ingredient) => ItemCard(
                         item: ingredient,
-                        onDelete: () {
-                          context.read<IngredientBloc>().add(
-                                DeleteIngredientByIdEvent(ingredient),
-                              );
+                        onDelete: () async {
+                          final shouldDelete = await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return const ConfirmActionDialog();
+                            },
+                          );
+                          if (shouldDelete != null && shouldDelete) {
+                            context.read<IngredientBloc>().add(
+                                  DeleteIngredientByIdEvent(ingredient),
+                                );
+                          }
                         },
                         onEdit: () {
                           Navigator.pushNamed(

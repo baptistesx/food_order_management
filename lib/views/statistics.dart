@@ -44,7 +44,9 @@ class _StatisticsPageState extends State<StatisticsPage> {
               final double totalDayIncomes = allOrdersDeliveredPizzas.isEmpty
                   ? 0.0
                   : allOrdersDeliveredPizzas
-                      .map((Pizza pizza) => pizza.price!)
+                      .map((Pizza pizza) => pizza.isBig != null && pizza.isBig!
+                          ? pizza.priceBig!
+                          : pizza.priceSmall!)
                       .reduce(
                         (double value, double element) => value + element,
                       );

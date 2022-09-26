@@ -24,7 +24,9 @@ class PizzasRepository {
           (QueryDocumentSnapshot<Map<String, dynamic>> e) => Pizza(
             id: e.id,
             name: e['name'],
-            price: e['price'],
+            priceSmall: e['priceSmall'],
+            priceBig: e['priceBig'],
+            isBig: e['isBig'],
             ingredients: (e['ingredients'] as List<dynamic>)
                 .map(
                   (dynamic e) => ingredients.firstWhere(
