@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pom/blocs/ingredient/ingredient.dart';
 import 'package:pom/blocs/ingredient/ingredient_events.dart';
 import 'package:pom/models/ingredient.dart';
+import 'package:pom/theme/themes.dart';
 import 'package:pom/views/ingredient.dart';
 import 'package:pom/widgets/item_card.dart';
 
@@ -72,6 +73,7 @@ class _IngredientsPageState extends State<IngredientsPage> {
         },
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: context.themeColors.secondaryColor,
         onPressed: () {
           Navigator.pushNamed(context, IngredientPage.routeName);
         },

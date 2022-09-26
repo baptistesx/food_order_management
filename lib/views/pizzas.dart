@@ -7,6 +7,7 @@ import 'package:pom/blocs/pizzas/pizzas.dart';
 import 'package:pom/blocs/pizzas/pizzas_events.dart';
 import 'package:pom/blocs/pizzas/pizzas_states.dart';
 import 'package:pom/models/pizza.dart';
+import 'package:pom/theme/themes.dart';
 import 'package:pom/views/pizza.dart';
 import 'package:pom/widgets/item_card.dart';
 
@@ -86,6 +87,7 @@ class _PizzasPageState extends State<PizzasPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: context.themeColors.secondaryColor,
         onPressed: () {
           Navigator.pushNamed(context, PizzaPage.routeName);
         },

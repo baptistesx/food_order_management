@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pom/blocs/orders/orders.dart';
 import 'package:pom/blocs/orders/orders_events.dart';
 import 'package:pom/models/order.dart';
+import 'package:pom/theme/themes.dart';
 import 'package:pom/views/order.dart';
 import 'package:pom/widgets/order_tab.dart';
 
@@ -94,6 +95,7 @@ class _OrdersPageState extends State<OrdersPage> {
       ),
       floatingActionButton: _selectedIndex == 0
           ? FloatingActionButton(
+              backgroundColor: context.themeColors.secondaryColor,
               onPressed: () {
                 Navigator.pushNamed(context, OrderPage.routeName);
               },

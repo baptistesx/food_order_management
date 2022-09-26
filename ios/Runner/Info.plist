@@ -44,6 +44,8 @@
 		<key>UIViewControllerBasedStatusBarAppearance</key>
 		<false/>
 		<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-</dict>
+		<true/>
+		<key>UIStatusBarHidden</key>
+		<false/>
+	</dict>
 </plist>

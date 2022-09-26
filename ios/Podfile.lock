@@ -78,6 +78,8 @@ PODS:
     - GoogleUtilities/UserDefaults (~> 7.7)
     - PromisesObjC (~> 2.1)
   - Flutter (1.0.0)
+  - flutter_native_splash (0.0.1):
+    - Flutter
   - GoogleAppMeasurement (9.5.0):
     - GoogleAppMeasurement/AdIdSupport (= 9.5.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
@@ -137,6 +139,7 @@ DEPENDENCIES:
   - firebase_crashlytics (from `.symlinks/plugins/firebase_crashlytics/ios`)
   - FirebaseFirestore (from `https://github.com/invertase/firestore-ios-sdk-frameworks.git`, tag `9.5.0`)
   - Flutter (from `Flutter`)
+  - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
   - shared_preferences_ios (from `.symlinks/plugins/shared_preferences_ios/ios`)
 
 SPEC REPOS:
@@ -168,6 +171,8 @@ EXTERNAL SOURCES:
     :tag: 9.5.0
   Flutter:
     :path: Flutter
+  flutter_native_splash:
+    :path: ".symlinks/plugins/flutter_native_splash/ios"
   shared_preferences_ios:
     :path: ".symlinks/plugins/shared_preferences_ios/ios"
 
@@ -190,6 +195,7 @@ SPEC CHECKSUMS:
   FirebaseFirestore: cbb150095370d64f1f021e3a7eecd2b543356ae3
   FirebaseInstallations: 0a115432c4e223c5ab20b0dbbe4cbefa793a0e8e
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
+  flutter_native_splash: 52501b97d1c0a5f898d687f1646226c1f93c56ef
   GoogleAppMeasurement: 6ee231473fbd75c11221dfce489894334024eead
   GoogleDataTransport: 1c8145da7117bd68bbbed00cf304edb6a24de00f
   GoogleUtilities: 1d20a6ad97ef46f67bbdec158ce00563a671ebb7
