@@ -1,7 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pom/blocs/ingredients/ingredients.dart';
-import 'package:pom/blocs/ingredients/ingredients_states.dart';
 import 'package:pom/models/ingredient.dart';
 import 'package:pom/models/pizza.dart';
 import 'package:pom/widgets/ingredient_with_checkbox.dart';
@@ -32,7 +30,7 @@ class _AddPizzaToOrderDialogState extends State<AddPizzaToOrderDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text('${pizza.name} / ${pizza.priceSmall} / ${pizza.priceBig}€'),
-      content: Container(
+      content: SizedBox(
         width: MediaQuery.of(context).size.width > 500
             ? MediaQuery.of(context).size.width * 0.7
             : MediaQuery.of(context).size.width,
@@ -41,17 +39,18 @@ class _AddPizzaToOrderDialogState extends State<AddPizzaToOrderDialog> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Row(
-                children: [
+                children: <Widget>[
                   Text(
                     'Petite',
                     style: TextStyle(
-                        fontWeight: pizza.isBig != null && !pizza.isBig!
-                            ? FontWeight.bold
-                            : FontWeight.normal),
+                      fontWeight: pizza.isBig != null && !pizza.isBig!
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                    ),
                   ),
                   Switch(
                     value: pizza.isBig ?? false,
-                    onChanged: (value) {
+                    onChanged: (bool value) {
                       if (mounted) {
                         setState(() {
                           pizza.isBig = value;
@@ -64,9 +63,10 @@ class _AddPizzaToOrderDialogState extends State<AddPizzaToOrderDialog> {
                   Text(
                     'Grande',
                     style: TextStyle(
-                        fontWeight: pizza.isBig != null && pizza.isBig!
-                            ? FontWeight.bold
-                            : FontWeight.normal),
+                      fontWeight: pizza.isBig != null && pizza.isBig!
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                    ),
                   ),
                 ],
               ),
@@ -141,69 +141,78 @@ class _AddPizzaToOrderDialogState extends State<AddPizzaToOrderDialog> {
                         .toList(),
                   ],
                 ),
-              BlocBuilder<IngredientsBloc, IngredientsState>(
+              StreamBuilder<QuerySnapshot<Object?>>(
+                stream: FirebaseFirestore.instance
+                    .collection('ingredients')
+                    .orderBy('name')
+                    .snapshots(),
                 builder: (
                   BuildContext context,
-                  IngredientsState ingredientsState,
+                  AsyncSnapshot<QuerySnapshot<Object?>> snapshot,
                 ) {
-                  if (ingredientsState is! IngredientsFetchedState) {
-                    return const Center(
-                      child: Text(
-                        'Erreur lors de l\'obtention des ingrédients',
-                      ),
-                    );
-                  } else {
-                    return Column(
-                      children: ingredientsState.ingredients
+                  if (!snapshot.hasData) {
+                    return const LinearProgressIndicator();
+                  }
+                  final List<Ingredient> ingredients = snapshot.data == null
+                      ? <Ingredient>[]
+                      : snapshot.data!.docs
                           .map(
-                            (Ingredient ingredient) => IngredientWithCheckbox(
-                              ingredient: ingredient,
-                              isSelected: (pizza.ingredients!
-                                          .where(
-                                            (Ingredient element) =>
-                                                element.id == ingredient.id,
-                                          )
-                                          .isNotEmpty &&
-                                      !pizza.ingredientsToRemove!
-                                          .contains(ingredient)) ||
-                                  pizza.ingredientsToAdd!.contains(ingredient),
-                              onClick: (bool? isSelected) {
-                                if (isSelected != null) {
-                                  if (mounted) {
-                                    setState(() {
-                                      if (isSelected) {
-                                        if (pizza.ingredients!
-                                            .contains(ingredient)) {
-                                          pizza.ingredientsToRemove!
-                                              .removeWhere(
-                                            (Ingredient element) =>
-                                                element.id == ingredient.id,
-                                          );
-                                        } else {
-                                          pizza.ingredientsToAdd!
-                                              .add(ingredient);
-                                        }
-                                      } else {
-                                        if (pizza.ingredients!
-                                            .contains(ingredient)) {
-                                          pizza.ingredientsToRemove!
-                                              .add(ingredient);
-                                        } else {
-                                          pizza.ingredientsToAdd!.removeWhere(
-                                            (Ingredient element) =>
-                                                element.id == ingredient.id,
-                                          );
-                                        }
-                                      }
-                                    });
-                                  }
-                                }
-                              },
+                            (QueryDocumentSnapshot<Object?> e) =>
+                                Ingredient.fromMap(
+                              e.data() as Map<String, dynamic>,
+                              e.reference.id,
                             ),
                           )
-                          .toList(),
-                    );
-                  }
+                          .toList();
+
+                  return Column(
+                    children: ingredients
+                        .map(
+                          (Ingredient ingredient) => IngredientWithCheckbox(
+                            ingredient: ingredient,
+                            isSelected: (pizza.ingredients!
+                                        .where(
+                                          (Ingredient element) =>
+                                              element.id == ingredient.id,
+                                        )
+                                        .isNotEmpty &&
+                                    !pizza.ingredientsToRemove!
+                                        .contains(ingredient)) ||
+                                pizza.ingredientsToAdd!.contains(ingredient),
+                            onClick: (bool? isSelected) {
+                              if (isSelected != null) {
+                                if (mounted) {
+                                  setState(() {
+                                    if (isSelected) {
+                                      if (pizza.ingredients!
+                                          .contains(ingredient)) {
+                                        pizza.ingredientsToRemove!.removeWhere(
+                                          (Ingredient element) =>
+                                              element.id == ingredient.id,
+                                        );
+                                      } else {
+                                        pizza.ingredientsToAdd!.add(ingredient);
+                                      }
+                                    } else {
+                                      if (pizza.ingredients!
+                                          .contains(ingredient)) {
+                                        pizza.ingredientsToRemove!
+                                            .add(ingredient);
+                                      } else {
+                                        pizza.ingredientsToAdd!.removeWhere(
+                                          (Ingredient element) =>
+                                              element.id == ingredient.id,
+                                        );
+                                      }
+                                    }
+                                  });
+                                }
+                              }
+                            },
+                          ),
+                        )
+                        .toList(),
+                  );
                 },
               ),
             ],

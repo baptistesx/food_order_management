@@ -24,7 +24,7 @@ class HomePage extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <HomeSectionButton>[
-          HomeSectionButton(
+          const HomeSectionButton(
             title: 'Liste des ingrédients',
             route: IngredientsPage.routeName,
           ),

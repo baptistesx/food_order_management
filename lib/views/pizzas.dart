@@ -53,7 +53,8 @@ class _PizzasPageState extends State<PizzasPage> {
                   context.read<PizzasBloc>().add(GetPizzasEvent());
                 },
                 child: ListView(
-                  padding: const EdgeInsets.all(24),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
                   children: pizzasState.pizzas.isEmpty
                       ? <Widget>[const Text('Aucune pizza trouvée.')]
                       : pizzasState.pizzas
@@ -61,6 +62,7 @@ class _PizzasPageState extends State<PizzasPage> {
                             (Pizza pizza) => ItemCard(
                               item: pizza,
                               onDelete: () async {
+                                // ignore: always_specify_types
                                 final shouldDelete = await showDialog(
                                   context: context,
                                   builder: (BuildContext context) {

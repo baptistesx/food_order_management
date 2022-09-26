@@ -47,7 +47,7 @@ class _IngredientPage extends State<IngredientPage> {
         ),
       ),
       body: ScrollableColumnSpaceBetween(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         content: BlocListener<IngredientBloc, IngredientState>(
           listener: (BuildContext context, IngredientState state) {
             if (state is IngredientAddedState ||
@@ -68,8 +68,8 @@ class _IngredientPage extends State<IngredientPage> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
-                    hintText: 'Nom',
-                    labelText: 'Nom*',
+                    hintText: 'Nom de l\'ingrédient',
+                    labelText: 'Nom de l\'ingrédient*',
                   ),
                   validator: (String? value) {
                     if (value == null || value.isEmpty) {

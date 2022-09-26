@@ -28,7 +28,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
         title: const Text('Statistiques'),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         child: BlocBuilder<OrdersBloc, OrdersState>(
           builder: (BuildContext context, OrdersState ordersState) {
             if (ordersState is OrdersFetchedState) {
@@ -44,9 +44,11 @@ class _StatisticsPageState extends State<StatisticsPage> {
               final double totalDayIncomes = allOrdersDeliveredPizzas.isEmpty
                   ? 0.0
                   : allOrdersDeliveredPizzas
-                      .map((Pizza pizza) => pizza.isBig != null && pizza.isBig!
-                          ? pizza.priceBig!
-                          : pizza.priceSmall!)
+                      .map(
+                        (Pizza pizza) => pizza.isBig != null && pizza.isBig!
+                            ? pizza.priceBig!
+                            : pizza.priceSmall!,
+                      )
                       .reduce(
                         (double value, double element) => value + element,
                       );

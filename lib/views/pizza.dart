@@ -1,8 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pom/blocs/ingredients/ingredients.dart';
-import 'package:pom/blocs/ingredients/ingredients_states.dart';
 import 'package:pom/blocs/pizza/pizza.dart';
 import 'package:pom/blocs/pizza/pizza_events.dart';
 import 'package:pom/blocs/pizza/pizza_states.dart';
@@ -72,7 +71,7 @@ class _PizzaPage extends State<PizzaPage> {
         ),
       ),
       body: ScrollableColumnSpaceBetween(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         content: BlocListener<PizzaBloc, PizzaState>(
           listener: (BuildContext context, PizzaState state) {
             if (state is PizzaAddedState || state is PizzaUpdatedState) {
@@ -92,8 +91,8 @@ class _PizzaPage extends State<PizzaPage> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
-                    hintText: 'Nom',
-                    labelText: 'Nom*',
+                    hintText: 'Nom de la pizza',
+                    labelText: 'Nom de la pizza*',
                   ),
                   validator: (String? value) {
                     if (value == null || value.isEmpty) {
@@ -178,50 +177,61 @@ class _PizzaPage extends State<PizzaPage> {
                         )
                         .toList(),
                   ),
-                BlocBuilder<IngredientsBloc, IngredientsState>(
+                StreamBuilder<QuerySnapshot<Object?>>(
+                  stream: FirebaseFirestore.instance
+                      .collection('ingredients')
+                      .orderBy('name')
+                      .snapshots(),
                   builder: (
                     BuildContext context,
-                    IngredientsState ingredientsState,
+                    AsyncSnapshot<QuerySnapshot<Object?>> snapshot,
                   ) {
-                    if (ingredientsState is! IngredientsFetchedState) {
-                      return const Center(
-                        child: Text(
-                          'Erreur lors de l\'obtention des ingrédients',
-                        ),
-                      );
-                    } else {
-                      return Column(
-                        children: ingredientsState.ingredients
+                    if (!snapshot.hasData) {
+                      return const LinearProgressIndicator();
+                    }
+                    final List<Ingredient> ingredients = snapshot.data == null
+                        ? <Ingredient>[]
+                        : snapshot.data!.docs
                             .map(
-                              (Ingredient ingredient) => IngredientWithCheckbox(
-                                ingredient: ingredient,
-                                isSelected: pizza.ingredients!
-                                    .where(
-                                      (Ingredient element) =>
-                                          element.id == ingredient.id,
-                                    )
-                                    .isNotEmpty,
-                                onClick: (bool? isSelected) {
-                                  if (isSelected != null) {
-                                    if (mounted) {
-                                      setState(() {
-                                        if (isSelected) {
-                                          pizza.ingredients!.add(ingredient);
-                                        } else {
-                                          pizza.ingredients!.removeWhere(
-                                            (Ingredient e) =>
-                                                e.id == ingredient.id,
-                                          );
-                                        }
-                                      });
-                                    }
-                                  }
-                                },
+                              (QueryDocumentSnapshot<Object?> e) =>
+                                  Ingredient.fromMap(
+                                e.data() as Map<String, dynamic>,
+                                e.reference.id,
                               ),
                             )
-                            .toList(),
-                      );
-                    }
+                            .toList();
+
+                    return Column(
+                      children: ingredients
+                          .map(
+                            (Ingredient ingredient) => IngredientWithCheckbox(
+                              ingredient: ingredient,
+                              isSelected: pizza.ingredients!
+                                  .where(
+                                    (Ingredient element) =>
+                                        element.id == ingredient.id,
+                                  )
+                                  .isNotEmpty,
+                              onClick: (bool? isSelected) {
+                                if (isSelected != null) {
+                                  if (mounted) {
+                                    setState(() {
+                                      if (isSelected) {
+                                        pizza.ingredients!.add(ingredient);
+                                      } else {
+                                        pizza.ingredients!.removeWhere(
+                                          (Ingredient e) =>
+                                              e.id == ingredient.id,
+                                        );
+                                      }
+                                    });
+                                  }
+                                }
+                              },
+                            ),
+                          )
+                          .toList(),
+                    );
                   },
                 ),
               ],

@@ -46,7 +46,7 @@ class _IngredientsPageState extends State<IngredientsPage> {
                   )
                   .toList();
           return ListView(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
             children: ingredients.isEmpty
                 ? <Widget>[const Text('Aucun ingrédient trouvé.')]
                 : ingredients
@@ -54,6 +54,7 @@ class _IngredientsPageState extends State<IngredientsPage> {
                       (Ingredient ingredient) => ItemCard(
                         item: ingredient,
                         onDelete: () async {
+                          // ignore: always_specify_types
                           final shouldDelete = await showDialog(
                             context: context,
                             builder: (BuildContext context) {

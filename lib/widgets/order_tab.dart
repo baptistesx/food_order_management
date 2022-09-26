@@ -83,8 +83,7 @@ class _OrderTabState extends State<OrderTab> {
                       title: Text(
                         '♯${order.id!.substring(0, 4)} - ${order.clientName}',
                       ),
-                      subtitle: Row(
-                        mainAxisSize: MainAxisSize.min,
+                      subtitle: Wrap(
                         children: <Widget>[
                           Chip(
                             label: Text(
@@ -94,7 +93,8 @@ class _OrderTabState extends State<OrderTab> {
                           const SizedBox(width: 5),
                           Chip(
                             label: Text(
-                                '${order.pizzas.length.toString()} pizzas (${order.pizzas.where((pizza) => pizza.isBig != null && pizza.isBig!).length} grande(s), ${order.pizzas.where((pizza) => pizza.isBig == null || !pizza.isBig!).length} petite(s))'),
+                              '${order.pizzas.length.toString()} pizzas (${order.pizzas.where((Pizza pizza) => pizza.isBig != null && pizza.isBig!).length} grande(s), ${order.pizzas.where((Pizza pizza) => pizza.isBig == null || !pizza.isBig!).length} petite(s))',
+                            ),
                           ),
                           const SizedBox(width: 5),
                           Chip(
@@ -244,10 +244,10 @@ class OrderPizzaCard extends StatelessWidget {
     return Card(
       child: ListTile(
         leading: Text(
-            '$count x ${pizza.isBig != null && pizza.isBig! ? "Grande" : "Petite"}'),
+          '$count x ${pizza.isBig != null && pizza.isBig! ? "Grande" : "Petite"}',
+        ),
         title: Text(pizza.name ?? 'Error'),
-        subtitle: Row(
-          mainAxisSize: MainAxisSize.min,
+        subtitle: Wrap(
           children: <Widget>[
             if (pizza.ingredientsToAdd!.isNotEmpty ||
                 pizza.ingredientsToRemove!.isNotEmpty)

@@ -88,7 +88,7 @@ class _OrderPage extends State<OrderPage> {
         ),
       ),
       body: ScrollableColumnSpaceBetween(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         content: BlocListener<OrderBloc, OrderState>(
           listener: (BuildContext context, OrderState state) {
             if (state is OrderAddedState ||
@@ -169,9 +169,7 @@ class _OrderPage extends State<OrderPage> {
                       .entries
                       .map(
                         (MapEntry<Pizza, int> pizza) => Chip(
-                          label: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
+                          label: Wrap(
                             children: <Widget>[
                               if (pizza.key.ingredientsToAdd!.isNotEmpty ||
                                   pizza.key.ingredientsToRemove!.isNotEmpty)
@@ -180,7 +178,8 @@ class _OrderPage extends State<OrderPage> {
                                   color: Colors.red,
                                 ),
                               Text(
-                                  '${pizza.value.toString()} x ${pizza.key.isBig != null && pizza.key.isBig! ? "Grande(s)" : "Petite(s)"}'),
+                                '${pizza.value.toString()} x ${pizza.key.isBig != null && pizza.key.isBig! ? "Grande(s)" : "Petite(s)"}',
+                              ),
                               Text(
                                 pizza.key.name ?? 'Error',
                                 style: const TextStyle(
@@ -310,7 +309,7 @@ class _OrderPage extends State<OrderPage> {
             children: <Widget>[
               Text(
                 'Total: ${pizzas.isEmpty ? "0" : pizzas.map((Pizza pizza) => pizza.isBig != null && pizza.isBig! ? pizza.priceBig! : pizza.priceSmall!).toList().reduce((double value, double element) => value + element)}€',
-                style: TextStyle(fontSize: 20.0),
+                style: const TextStyle(fontSize: 20.0),
               ),
               const SizedBox(height: 16),
               Row(
@@ -361,10 +360,11 @@ class _OrderPage extends State<OrderPage> {
                   Expanded(
                     child: TextButton(
                       onPressed: () async {
+                        // ignore: always_specify_types
                         final shouldDelete = await showDialog(
                           context: context,
                           builder: (BuildContext context) {
-                            return ConfirmActionDialog();
+                            return const ConfirmActionDialog();
                           },
                         );
                         if (widget.order != null &&

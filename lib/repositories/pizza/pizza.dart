@@ -10,7 +10,7 @@ class PizzaRepository {
   PizzaRepository();
 
   Future<Pizza> getPizzaById(String id) async {
-    Pizza pizza = await db
+    final Pizza pizza = await db
         .collection('pizzas')
         .doc(id)
         .get()
