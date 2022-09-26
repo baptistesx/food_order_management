@@ -30,20 +30,24 @@ class _StatisticsPageState extends State<StatisticsPage> {
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: BlocBuilder<OrdersBloc, OrdersState>(
-          builder: (context, ordersState) {
+          builder: (BuildContext context, OrdersState ordersState) {
             if (ordersState is OrdersFetchedState) {
               final List<Order> ordersDelivered = ordersState.orders
                   .where((Order order) => order.status == OrderStatus.delivered)
                   .toList();
 
               final List<Pizza> allOrdersDeliveredPizzas = ordersDelivered
-                  .map((order) => order.pizzas)
-                  .expand((element) => element)
+                  .map((Order order) => order.pizzas)
+                  .expand((List<Pizza> element) => element)
                   .toList();
 
-              final double totalDayIncomes = allOrdersDeliveredPizzas
-                  .map((pizza) => pizza.price!)
-                  .reduce((value, element) => value + element);
+              final double totalDayIncomes = allOrdersDeliveredPizzas.isEmpty
+                  ? 0.0
+                  : allOrdersDeliveredPizzas
+                      .map((Pizza pizza) => pizza.price!)
+                      .reduce(
+                        (double value, double element) => value + element,
+                      );
 
               return RefreshIndicator(
                 key: _refreshIndicatorKey,
@@ -60,41 +64,44 @@ class _StatisticsPageState extends State<StatisticsPage> {
                     ),
                     Text('CA total: ${totalDayIncomes.toString()}€'),
                     BlocBuilder<PizzasBloc, PizzasState>(
-                        builder: (context, pizzasState) {
-                      if (pizzasState is PizzasFetchedState) {
-                        return Column(
-                          children: pizzasState.pizzas
-                              .map(
-                                (Pizza pizza) => allOrdersDeliveredPizzas
-                                        .where(
-                                            (element) => element.id == pizza.id)
-                                        .isEmpty
-                                    ? SizedBox()
-                                    : Card(
-                                        child: ListTile(
-                                          title: Text(
-                                            '${allOrdersDeliveredPizzas.where((element) => element.id == pizza.id).length} x ${pizza.name}',
+                      builder: (BuildContext context, PizzasState pizzasState) {
+                        if (pizzasState is PizzasFetchedState) {
+                          return Column(
+                            children: pizzasState.pizzas
+                                .map(
+                                  (Pizza pizza) => allOrdersDeliveredPizzas
+                                          .where(
+                                            (Pizza element) =>
+                                                element.id == pizza.id,
+                                          )
+                                          .isEmpty
+                                      ? const SizedBox()
+                                      : Card(
+                                          child: ListTile(
+                                            title: Text(
+                                              '${allOrdersDeliveredPizzas.where((Pizza element) => element.id == pizza.id).length} x ${pizza.name}',
+                                            ),
                                           ),
                                         ),
-                                      ),
-                              )
-                              .toList(),
-                        );
-                      } else {
-                        return (Center(
-                          child: Text('Erreur'),
-                        ));
-                      }
-                    }),
+                                )
+                                .toList(),
+                          );
+                        } else {
+                          return (const Center(
+                            child: Text('Erreur'),
+                          ));
+                        }
+                      },
+                    ),
                   ],
                 ),
               );
             } else if (ordersState is OrdersLoadingState) {
-              return Center(
+              return const Center(
                 child: CircularProgressIndicator(),
               );
             } else {
-              return Center(
+              return const Center(
                 child: Text('Erreur'),
               );
             }

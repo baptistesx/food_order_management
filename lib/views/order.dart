@@ -3,8 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pom/blocs/order/order.dart';
 import 'package:pom/blocs/order/order_events.dart';
 import 'package:pom/blocs/order/order_states.dart';
-import 'package:pom/blocs/orders/orders.dart';
-import 'package:pom/blocs/orders/orders_events.dart';
 import 'package:pom/blocs/pizzas/pizzas.dart';
 import 'package:pom/blocs/pizzas/pizzas_states.dart';
 import 'package:pom/models/ingredient.dart';
@@ -59,6 +57,26 @@ class _OrderPage extends State<OrderPage> {
     _clientNameController.dispose();
   }
 
+  Map<Pizza, int> getPizzasSorted(List<Pizza> pizzas) {
+    final Map<Pizza, int> distinct = <Pizza, int>{};
+
+    for (int i = 0; i < pizzas.length; i++) {
+      if (distinct.keys
+          .where((Pizza element) => element == pizzas[i])
+          .isEmpty) {
+        distinct[pizzas[i].copyWith()] = 1;
+      } else {
+        distinct[distinct.keys
+            .firstWhere((Pizza element) => element == pizzas[i])] = distinct[
+                distinct.keys
+                    .firstWhere((Pizza element) => element == pizzas[i])]! +
+            1;
+      }
+    }
+
+    return distinct;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,7 +90,7 @@ class _OrderPage extends State<OrderPage> {
         content: BlocListener<OrderBloc, OrderState>(
           listener: (BuildContext context, OrderState state) {
             if (state is OrderAddedState || state is OrderUpdatedState) {
-              context.read<OrdersBloc>().add(GetOrdersEvent());
+              // context.read<OrdersBloc>().add(GetOrdersEvent());
               Navigator.pop(context);
             }
           },
@@ -143,43 +161,63 @@ class _OrderPage extends State<OrderPage> {
                 const SizedBox(height: 16),
                 const SizedBox(height: 24),
                 Wrap(
-                  children: pizzas
+                  spacing: 5,
+                  children: getPizzasSorted(pizzas)
+                      .entries
                       .map(
-                        (Pizza pizza) => Chip(
+                        (MapEntry<Pizza, int> pizza) => Chip(
                           label: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
-                              if (pizza.ingredientsToAdd!.isNotEmpty ||
-                                  pizza.ingredientsToRemove!.isNotEmpty)
+                              if (pizza.key.ingredientsToAdd!.isNotEmpty ||
+                                  pizza.key.ingredientsToRemove!.isNotEmpty)
                                 const Icon(
                                   Icons.warning_amber_rounded,
                                   color: Colors.red,
                                 ),
-                              Text(pizza.name ?? 'Error'),
-                              if (pizza.ingredientsToRemove!.isNotEmpty)
+                              Text('${pizza.value.toString()} x '),
+                              Text(
+                                pizza.key.name ?? 'Error',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(width: 5),
+                              if (pizza.key.ingredientsToRemove!.isNotEmpty)
                                 Text(
-                                  pizza.ingredientsToRemove!
+                                  pizza.key.ingredientsToRemove!
                                       .map(
                                         (Ingredient ingredient) =>
                                             ingredient.name,
                                       )
                                       .toList()
-                                      .toString(),
-                                  style: const TextStyle(
+                                      .toString()
+                                      .replaceFirst('[', '')
+                                      .replaceFirst(']', ''),
+                                  style: TextStyle(
+                                    color: Colors.red[300],
                                     decoration: TextDecoration.lineThrough,
+                                    decorationThickness: 2,
                                   ),
                                 ),
-                              if (pizza.ingredientsToAdd!.isNotEmpty)
+                              const SizedBox(width: 5),
+                              if (pizza.key.ingredientsToAdd!.isNotEmpty)
                                 Text(
-                                  pizza.ingredientsToAdd!
+                                  pizza.key.ingredientsToAdd!
                                       .map(
                                         (Ingredient ingredient) =>
                                             ingredient.name,
                                       )
                                       .toList()
-                                      .toString(),
-                                  style: const TextStyle(
+                                      .toString()
+                                      .replaceFirst('[', '')
+                                      .replaceFirst(']', ''),
+                                  style: TextStyle(
+                                    color: Colors.blue[300],
                                     decoration: TextDecoration.underline,
+                                    decorationThickness: 3,
                                   ),
                                 )
                             ],
@@ -189,7 +227,8 @@ class _OrderPage extends State<OrderPage> {
                             if (mounted) {
                               setState(() {
                                 pizzas.removeWhere(
-                                  (Pizza pizzaToCheck) => pizza == pizzaToCheck,
+                                  (Pizza pizzaToCheck) =>
+                                      pizza.key == pizzaToCheck,
                                 );
                               });
                             }
@@ -202,7 +241,7 @@ class _OrderPage extends State<OrderPage> {
                   builder: (BuildContext context, PizzasState pizzasState) {
                     if (pizzasState is! PizzasFetchedState) {
                       return const Center(
-                        child: Text('Center'),
+                        child: Text('Erreur'),
                       );
                     } else {
                       return Wrap(
@@ -213,6 +252,7 @@ class _OrderPage extends State<OrderPage> {
                                 child: Card(
                                   child: ListTile(
                                     onTap: () async {
+                                      // ignore: always_specify_types
                                       final pizzaToAdd = await showDialog(
                                         context: context,
                                         builder: (BuildContext context) {

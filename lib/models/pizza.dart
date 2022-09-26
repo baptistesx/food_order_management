@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+import 'package:pom/extensions/text_helper.dart';
 import 'package:pom/models/ingredient.dart';
 import 'package:pom/models/item.dart';
 
@@ -39,7 +41,7 @@ class Pizza extends Item {
               .map((Ingredient x) => isInOrder ? x.toMap() : x.id)
               .toList()
           : <Ingredient>[],
-      'name': name,
+      'name': name?.trim().toCapitalized(),
       'price': price,
       'isDone': isDone,
     };
@@ -49,15 +51,30 @@ class Pizza extends Item {
     return Pizza(
       id: id,
       name: map['name'],
-      ingredients: List<Ingredient>.from(
-        map['ingredients']?.map((x) => Ingredient.fromMap(x, x['id'])),
-      ),
-      ingredientsToRemove: List<Ingredient>.from(
-        map['ingredientsToRemove']?.map((x) => Ingredient.fromMap(x, x['id'])),
-      ),
-      ingredientsToAdd: List<Ingredient>.from(
-        map['ingredientsToAdd']?.map((x) => Ingredient.fromMap(x, x['id'])),
-      ),
+      ingredients: map['ingredients'] == null
+          ? <Ingredient>[]
+          : List<Ingredient>.from(
+              (map['ingredients'] as List<dynamic>?)!.map(
+                (dynamic x) =>
+                    Ingredient.fromMap(x, (x as Map<String, dynamic>)['id']),
+              ),
+            ),
+      ingredientsToRemove: map['ingredientsToRemove'] == null
+          ? <Ingredient>[]
+          : List<Ingredient>.from(
+              (map['ingredientsToRemove'] as List<dynamic>?)!.map(
+                (dynamic x) =>
+                    Ingredient.fromMap(x, (x as Map<String, dynamic>)['id']),
+              ),
+            ),
+      ingredientsToAdd: map['ingredientsToAdd'] == null
+          ? <Ingredient>[]
+          : List<Ingredient>.from(
+              (map['ingredientsToAdd'] as List<dynamic>?)!.map(
+                (dynamic x) =>
+                    Ingredient.fromMap(x, (x as Map<String, dynamic>)['id']),
+              ),
+            ),
       price: map['price'],
       isDone: map['isDone'],
     );
@@ -81,5 +98,26 @@ class Pizza extends Item {
       name: name ?? this.name,
       id: id ?? this.id,
     );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Pizza &&
+        listEquals(other.ingredients, ingredients) &&
+        listEquals(other.ingredientsToRemove, ingredientsToRemove) &&
+        listEquals(other.ingredientsToAdd, ingredientsToAdd) &&
+        other.price == price &&
+        other.isDone == isDone;
+  }
+
+  @override
+  int get hashCode {
+    return ingredients.hashCode ^
+        ingredientsToRemove.hashCode ^
+        ingredientsToAdd.hashCode ^
+        price.hashCode ^
+        isDone.hashCode;
   }
 }

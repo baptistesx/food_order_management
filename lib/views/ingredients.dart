@@ -17,28 +17,31 @@ class IngredientsPage extends StatefulWidget {
 }
 
 class _IngredientsPageState extends State<IngredientsPage> {
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-      GlobalKey<RefreshIndicatorState>();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Ingrédients'),
       ),
-      body: StreamBuilder<QuerySnapshot>(
+      body: StreamBuilder<QuerySnapshot<Object?>>(
         stream: FirebaseFirestore.instance
             .collection('ingredients')
             .orderBy('name')
             .snapshots(),
-        builder: (BuildContext context,
-            AsyncSnapshot<QuerySnapshot<Object?>> snapshot) {
-          if (!snapshot.hasData) return LinearProgressIndicator();
+        builder: (
+          BuildContext context,
+          AsyncSnapshot<QuerySnapshot<Object?>> snapshot,
+        ) {
+          if (!snapshot.hasData) return const LinearProgressIndicator();
           final List<Ingredient> ingredients = snapshot.data == null
-              ? []
+              ? <Ingredient>[]
               : snapshot.data!.docs
-                  .map((QueryDocumentSnapshot<Object?> e) => Ingredient.fromMap(
-                      e.data() as Map<String, dynamic>, e.reference.id))
+                  .map(
+                    (QueryDocumentSnapshot<Object?> e) => Ingredient.fromMap(
+                      e.data() as Map<String, dynamic>,
+                      e.reference.id,
+                    ),
+                  )
                   .toList();
           return ListView(
             padding: const EdgeInsets.all(24),

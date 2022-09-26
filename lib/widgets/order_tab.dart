@@ -1,11 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pom/blocs/order/order.dart';
 import 'package:pom/blocs/order/order_events.dart';
-import 'package:pom/blocs/order/order_states.dart';
-import 'package:pom/blocs/orders/orders.dart';
-import 'package:pom/blocs/orders/orders_events.dart';
-import 'package:pom/blocs/orders/orders_states.dart';
 import 'package:pom/models/ingredient.dart';
 import 'package:pom/models/order.dart';
 import 'package:pom/models/pizza.dart';
@@ -24,212 +21,202 @@ class OrderTab extends StatefulWidget {
 }
 
 class _OrderTabState extends State<OrderTab> {
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-      GlobalKey<RefreshIndicatorState>();
-
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<OrdersBloc, OrdersState>(
-      builder: (BuildContext context, OrdersState ordersState) {
-        if (ordersState is OrdersFetchedState) {
-          List<Order> orders = ordersState.orders
-              .where((order) => order.status == widget.status)
-              .toList();
+    return StreamBuilder<QuerySnapshot<Object?>>(
+      stream: FirebaseFirestore.instance
+          .collection('orders')
+          .orderBy('timeToDeliver')
+          .snapshots(),
+      builder: (
+        BuildContext context,
+        AsyncSnapshot<QuerySnapshot<Object?>> snapshot,
+      ) {
+        if (!snapshot.hasData) return const LinearProgressIndicator();
+        final List<Order> orders = snapshot.data == null
+            ? <Order>[]
+            : snapshot.data!.docs
+                .map(
+                  (QueryDocumentSnapshot<Object?> e) => Order.fromMap(
+                    e.data() as Map<String, dynamic>,
+                    e.reference.id,
+                  ),
+                )
+                .toList()
+                .where((Order order) => order.status == widget.status)
+                .toList();
 
-          return RefreshIndicator(
-            key: _refreshIndicatorKey,
-            onRefresh: () async {
-              context.read<OrdersBloc>().add(GetOrdersEvent());
-            },
-            child: BlocListener<OrderBloc, OrderState>(
-              listener: (BuildContext context, OrderState orderState) {
-                if (orderState is OrderUpdatedState) {
-                  context.read<OrdersBloc>().add(UpdateOrdersEvent(ordersState
-                      .orders
-                      .map((Order order) =>
-                          order.id == orderState.orderUpdated.id
-                              ? orderState.orderUpdated
-                              : order)
-                      .toList()));
-                }
-              },
-              child: ListView(
-                children: <Widget>[
-                  ...orders
-                      .map(
-                        (Order order) => Card(
-                          child: ExpansionTile(
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                IconButton(
-                                  onPressed: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      OrderPage.routeName,
-                                      arguments: <String, dynamic>{
-                                        'order': order
-                                      },
+        return ListView(
+          children: <Widget>[
+            ...orders
+                .map(
+                  (Order order) => Card(
+                    child: ExpansionTile(
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          IconButton(
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                context,
+                                OrderPage.routeName,
+                                arguments: <String, dynamic>{'order': order},
+                              );
+                            },
+                            icon: const Icon(Icons.edit),
+                          ),
+                          if (widget.status == OrderStatus.done)
+                            ElevatedButton(
+                              onPressed: () {
+                                context.read<OrderBloc>().add(
+                                      UpdateOrderByIdEvent(
+                                        order.copyWith(
+                                          status: OrderStatus.delivered,
+                                        ),
+                                      ),
                                     );
-                                  },
-                                  icon: const Icon(Icons.edit),
-                                ),
-                                if (widget.status == OrderStatus.done)
-                                  ElevatedButton(
-                                      onPressed: () {
-                                        print('pass order to delivered');
-                                        context.read<OrderBloc>().add(
-                                              UpdateOrderByIdEvent(
-                                                  order.copyWith(
-                                                      status: OrderStatus
-                                                          .delivered)),
-                                            );
-                                      },
-                                      child: Text('Livré')),
-                              ],
+                              },
+                              child: const Text('Livré'),
                             ),
-                            title: Text(
-                              '♯${order.id!.substring(0, 4)} - ${order.clientName}',
+                        ],
+                      ),
+                      title: Text(
+                        '♯${order.id!.substring(0, 4)} - ${order.clientName}',
+                      ),
+                      subtitle: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Chip>[
+                          Chip(
+                            label: Text(
+                              '${order.timeToDeliver.hour}:${order.timeToDeliver.minute}',
                             ),
-                            subtitle: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Chip>[
-                                Chip(
-                                  label: Text(
-                                    '${order.timeToDeliver.hour}:${order.timeToDeliver.minute}',
-                                  ),
-                                ),
-                                Chip(
-                                  label: Text(order.pizzas.length.toString()),
-                                ),
-                                Chip(
-                                  label: Text(
-                                    order.pizzas.isEmpty
-                                        ? '0'
-                                        : '${order.pizzas.map((Pizza pizza) => pizza.price).reduce((double? value, double? element) => value! + element!).toString()}€',
-                                  ),
-                                ),
-                              ],
+                          ),
+                          Chip(
+                            label: Text(order.pizzas.length.toString()),
+                          ),
+                          Chip(
+                            label: Text(
+                              order.pizzas.isEmpty
+                                  ? '0'
+                                  : '${order.pizzas.map((Pizza pizza) => pizza.price).reduce((double? value, double? element) => value! + element!).toString()}€',
                             ),
-                            controlAffinity: ListTileControlAffinity.leading,
-                            children: order.pizzas
-                                .map(
-                                  (Pizza pizza) => OrderPizzaCard(
-                                    pizza: pizza,
-                                    count: 1,
-                                    isChecked:
-                                        pizza.isDone != null && pizza.isDone!,
-                                    onCheck: (bool? isChecked) {
-                                      if (isChecked != null && isChecked) {
-                                        if (order.pizzas
-                                                .where((e) =>
-                                                    e.isDone != null &&
-                                                    e.isDone!)
-                                                .toList()
-                                                .length ==
-                                            order.pizzas.length - 1) {
-                                          print('change to Done pizzas');
-                                          context.read<OrderBloc>().add(
-                                                UpdateOrderByIdEvent(
-                                                    order.copyWith(
-                                                        status:
-                                                            OrderStatus.done,
-                                                        pizzas: List<
-                                                                Pizza>.from(
-                                                            order.pizzas.map((Pizza
-                                                                pizzaToUpdate) {
-                                                          if (pizzaToUpdate
-                                                                  .id ==
-                                                              pizza.id) {
-                                                            return pizzaToUpdate
-                                                                .copyWith(
-                                                                    isDone:
-                                                                        true);
-                                                          } else {
-                                                            return pizzaToUpdate;
-                                                          }
-                                                        }).toList()))),
-                                              );
-                                        } else {
-                                          context.read<OrderBloc>().add(
-                                                UpdateOrderByIdEvent(
-                                                    order.copyWith(
-                                                        pizzas: List<
-                                                                Pizza>.from(
-                                                            order.pizzas.map((Pizza
-                                                                pizzaToUpdate) {
-                                                  if (pizzaToUpdate.id ==
-                                                      pizza.id) {
+                          ),
+                        ],
+                      ),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      children: order.pizzas
+                          .map(
+                            (Pizza pizza) => OrderPizzaCard(
+                              pizza: pizza,
+                              count: 1,
+                              isChecked: pizza.isDone != null && pizza.isDone!,
+                              onCheck: (bool? isChecked) {
+                                if (isChecked != null && isChecked) {
+                                  if (order.pizzas
+                                          .where(
+                                            (Pizza e) =>
+                                                e.isDone != null && e.isDone!,
+                                          )
+                                          .toList()
+                                          .length ==
+                                      order.pizzas.length - 1) {
+                                    context.read<OrderBloc>().add(
+                                          UpdateOrderByIdEvent(
+                                            order.copyWith(
+                                              status: OrderStatus.done,
+                                              pizzas: List<Pizza>.from(
+                                                order.pizzas
+                                                    .map((Pizza pizzaToUpdate) {
+                                                  if (pizzaToUpdate.hashCode ==
+                                                      pizza.hashCode) {
                                                     return pizzaToUpdate
                                                         .copyWith(isDone: true);
                                                   } else {
                                                     return pizzaToUpdate;
                                                   }
-                                                }).toList()))),
-                                              );
-                                        }
-                                      } else {
-                                        if (widget.status != OrderStatus.toDo) {
-                                          context.read<OrderBloc>().add(
-                                                UpdateOrderByIdEvent(
-                                                    order.copyWith(
-                                                        status:
-                                                            OrderStatus.toDo,
-                                                        pizzas: List<
-                                                                Pizza>.from(
-                                                            order.pizzas.map((Pizza
-                                                                pizzaToUpdate) {
-                                                          if (pizzaToUpdate
-                                                                  .id ==
-                                                              pizza.id) {
-                                                            return pizzaToUpdate
-                                                                .copyWith(
-                                                                    isDone:
-                                                                        false);
-                                                          } else {
-                                                            return pizzaToUpdate;
-                                                          }
-                                                        }).toList()))),
-                                              );
-                                        } else {
-                                          context.read<OrderBloc>().add(
-                                                UpdateOrderByIdEvent(
-                                                    order.copyWith(
-                                                        pizzas: List<
-                                                                Pizza>.from(
-                                                            order.pizzas.map((Pizza
-                                                                pizzaToUpdate) {
-                                                  if (pizzaToUpdate.id ==
-                                                      pizza.id) {
+                                                }).toList(),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                  } else {
+                                    context.read<OrderBloc>().add(
+                                          UpdateOrderByIdEvent(
+                                            order.copyWith(
+                                              pizzas: List<Pizza>.from(
+                                                order.pizzas
+                                                    .map((Pizza pizzaToUpdate) {
+                                                  if (pizzaToUpdate.hashCode ==
+                                                      pizza.hashCode) {
                                                     return pizzaToUpdate
                                                         .copyWith(
-                                                            isDone: false);
+                                                      isDone: true,
+                                                    );
                                                   } else {
                                                     return pizzaToUpdate;
                                                   }
-                                                }).toList()))),
-                                              );
-                                        }
-                                      }
-                                    },
-                                  ),
-                                )
-                                .toList(),
-                          ),
-                        ),
-                      )
-                      .toList()
-                ],
-              ),
-            ),
-          );
-        } else if (ordersState is OrdersLoadingState) {
-          return (const Center(
-            child: CircularProgressIndicator(),
-          ));
-        } else {
-          return const Text('Erreur');
-        }
+                                                }).toList(),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                  }
+                                } else {
+                                  if (widget.status != OrderStatus.toDo) {
+                                    context.read<OrderBloc>().add(
+                                          UpdateOrderByIdEvent(
+                                            order.copyWith(
+                                              status: OrderStatus.toDo,
+                                              pizzas: List<Pizza>.from(
+                                                order.pizzas
+                                                    .map((Pizza pizzaToUpdate) {
+                                                  if (pizzaToUpdate.hashCode ==
+                                                      pizza.hashCode) {
+                                                    return pizzaToUpdate
+                                                        .copyWith(
+                                                      isDone: false,
+                                                    );
+                                                  } else {
+                                                    return pizzaToUpdate;
+                                                  }
+                                                }).toList(),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                  } else {
+                                    context.read<OrderBloc>().add(
+                                          UpdateOrderByIdEvent(
+                                            order.copyWith(
+                                              pizzas: List<Pizza>.from(
+                                                order.pizzas
+                                                    .map((Pizza pizzaToUpdate) {
+                                                  if (pizzaToUpdate.hashCode ==
+                                                      pizza.hashCode) {
+                                                    return pizzaToUpdate
+                                                        .copyWith(
+                                                      isDone: false,
+                                                    );
+                                                  } else {
+                                                    return pizzaToUpdate;
+                                                  }
+                                                }).toList(),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                  }
+                                }
+                              },
+                            ),
+                          )
+                          .toList(),
+                    ),
+                  ),
+                )
+                .toList()
+          ],
+        );
       },
     );
   }
@@ -264,7 +251,8 @@ class OrderPizzaCard extends StatelessWidget {
                 Icons.warning_amber_rounded,
                 color: Colors.red,
               ),
-            Text(pizza.name ?? 'Error'),
+            // Text(pizza.name ?? 'Error'),
+            const SizedBox(width: 8),
             if (pizza.ingredientsToRemove!.isNotEmpty)
               Text(
                 pizza.ingredientsToRemove!
@@ -272,11 +260,16 @@ class OrderPizzaCard extends StatelessWidget {
                       (Ingredient ingredient) => ingredient.name,
                     )
                     .toList()
-                    .toString(),
-                style: const TextStyle(
+                    .toString()
+                    .replaceFirst('[', '')
+                    .replaceFirst(']', ''),
+                style: TextStyle(
+                  color: Colors.red[300],
                   decoration: TextDecoration.lineThrough,
+                  decorationThickness: 2,
                 ),
               ),
+            const SizedBox(width: 8),
             if (pizza.ingredientsToAdd!.isNotEmpty)
               Text(
                 pizza.ingredientsToAdd!
@@ -284,9 +277,13 @@ class OrderPizzaCard extends StatelessWidget {
                       (Ingredient ingredient) => ingredient.name,
                     )
                     .toList()
-                    .toString(),
-                style: const TextStyle(
+                    .toString()
+                    .replaceFirst('[', '')
+                    .replaceFirst(']', ''),
+                style: TextStyle(
+                  color: Colors.blue[300],
                   decoration: TextDecoration.underline,
+                  decorationThickness: 3,
                 ),
               )
           ],

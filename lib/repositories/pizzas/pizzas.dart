@@ -11,7 +11,7 @@ class PizzasRepository {
         await db.collection('pizzas').get();
 
     final QuerySnapshot<Map<String, dynamic>> ingredientsSnapshots =
-        await db.collection('ingredients').get();
+        await db.collection('ingredients').orderBy('name').get();
     final List<Ingredient> ingredients = ingredientsSnapshots.docs
         .map(
           (QueryDocumentSnapshot<Map<String, dynamic>> e) =>
@@ -28,15 +28,16 @@ class PizzasRepository {
             ingredients: (e['ingredients'] as List<dynamic>)
                 .map(
                   (dynamic e) => ingredients.firstWhere(
+                    // ignore: avoid_dynamic_calls
                     (Ingredient element) => element.id == e.id,
+                    orElse: () => const Ingredient(),
                   ),
                 )
+                .where((Ingredient element) => element.id != null)
                 .toList(),
           ),
         )
         .toList();
-
-    pizzas.sort((Pizza a, Pizza b) => a.name!.compareTo(b.name!));
 
     return pizzas;
   }

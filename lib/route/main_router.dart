@@ -47,7 +47,7 @@ class MainRouter {
       case StatisticsPage.routeName:
         return MaterialPageRoute<dynamic>(
           settings: settings,
-          builder: (BuildContext context) => StatisticsPage(),
+          builder: (BuildContext context) => const StatisticsPage(),
         );
       case IngredientPage.routeName:
         final Map<String, dynamic>? args =

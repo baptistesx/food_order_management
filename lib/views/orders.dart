@@ -1,8 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pom/blocs/orders/orders.dart';
 import 'package:pom/blocs/orders/orders_events.dart';
-import 'package:pom/blocs/orders/orders_states.dart';
 import 'package:pom/models/order.dart';
 import 'package:pom/views/order.dart';
 import 'package:pom/widgets/order_tab.dart';
@@ -42,14 +42,32 @@ class _OrdersPageState extends State<OrdersPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: BlocBuilder<OrdersBloc, OrdersState>(
-          builder: (BuildContext context, OrdersState ordersState) {
-            if (ordersState is OrdersFetchedState) {
-              return Text(
-                'Commandes ${_selectedIndex == 0 ? "A faire (${ordersState.orders.where((Order order) => order.status == OrderStatus.toDo).toList().length})" : _selectedIndex == 1 ? "Faites (${ordersState.orders.where((Order order) => order.status == OrderStatus.done).toList().length})" : "Livrées (${ordersState.orders.where((Order order) => order.status == OrderStatus.delivered).toList().length})"}',
-              );
-            } else {
+        title: StreamBuilder<QuerySnapshot<Object?>>(
+          stream: FirebaseFirestore.instance
+              .collection('orders')
+              .orderBy('timeToDeliver')
+              .snapshots(),
+          builder: (
+            BuildContext context,
+            AsyncSnapshot<QuerySnapshot<Object?>> snapshot,
+          ) {
+            if (!snapshot.hasData) return const LinearProgressIndicator();
+            final List<Order> orders = snapshot.data == null
+                ? <Order>[]
+                : snapshot.data!.docs
+                    .map(
+                      (QueryDocumentSnapshot<Object?> e) => Order.fromMap(
+                        e.data() as Map<String, dynamic>,
+                        e.reference.id,
+                      ),
+                    )
+                    .toList();
+            if (orders.isEmpty) {
               return const Text('Commandes');
+            } else {
+              return Text(
+                'Commandes ${_selectedIndex == 0 ? "A faire (${orders.where((Order order) => order.status == OrderStatus.toDo).toList().length})" : _selectedIndex == 1 ? "Faites (${orders.where((Order order) => order.status == OrderStatus.done).toList().length})" : "Livrées (${orders.where((Order order) => order.status == OrderStatus.delivered).toList().length})"}',
+              );
             }
           },
         ),

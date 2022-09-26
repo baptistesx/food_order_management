@@ -1,3 +1,4 @@
+import 'package:pom/extensions/text_helper.dart';
 import 'package:pom/models/item.dart';
 
 class Ingredient extends Item {
@@ -12,7 +13,7 @@ class Ingredient extends Item {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
-      'name': name,
+      'name': name?.toCapitalized().trim(),
     };
   }
 

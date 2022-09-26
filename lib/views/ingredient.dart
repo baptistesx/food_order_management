@@ -6,7 +6,6 @@ import 'package:pom/blocs/ingredient/ingredient_states.dart';
 import 'package:pom/models/ingredient.dart';
 import 'package:pom/widgets/layout/scrollable_column_space_between.dart';
 
-// TODO: remove useless stateful
 class IngredientPage extends StatefulWidget {
   static const String routeName = '/ingredient';
   final Ingredient? ingredient;

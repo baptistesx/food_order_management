@@ -128,6 +128,7 @@ class _PizzaPage extends State<PizzaPage> {
                   const Text('Aucun ingrédient')
                 else
                   Wrap(
+                    spacing: 5,
                     children: pizza.ingredients!
                         .map(
                           (Ingredient ingredient) => IngredientChip(

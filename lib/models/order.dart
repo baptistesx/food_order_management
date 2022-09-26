@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:pom/extensions/text_helper.dart';
 import 'package:pom/models/pizza.dart';
 
 enum OrderStatus { toDo, done, delivered }
@@ -21,21 +23,28 @@ class Order {
   });
 
   Map<String, dynamic> toMap() {
-    final now = new DateTime.now();
+    final DateTime now = DateTime.now();
 
     return <String, dynamic>{
       'id': id,
       'status': status.name,
       'createdAt': createdAt.toString(),
-      'timeToDeliver': new DateTime(now.year, now.month, now.day,
-          timeToDeliver.hour, timeToDeliver.minute),
+      'timeToDeliver': DateTime(
+        now.year,
+        now.month,
+        now.day,
+        timeToDeliver.hour,
+        timeToDeliver.minute,
+      ),
       'pizzas': pizzas.map((Pizza x) => x.toMap(true)).toList(),
-      'clientName': clientName,
+      'clientName': clientName?.trim().toCapitalized(),
     };
   }
 
   factory Order.fromMap(Map<String, dynamic> map, String id) {
-    DateTime date = DateTime.fromMillisecondsSinceEpoch(map['timeToDeliver'].seconds*1000);
+    final DateTime date = DateTime.fromMillisecondsSinceEpoch(
+      (map['timeToDeliver'] as Timestamp).seconds * 1000,
+    );
 
     return Order(
       id: id,
@@ -43,10 +52,15 @@ class Order {
           .firstWhere((OrderStatus element) => element.name == map['status']),
       createdAt: DateTime.parse(map['createdAt']),
       timeToDeliver: TimeOfDay(hour: date.hour, minute: date.minute),
-      pizzas: List<Pizza>.from(
-        map['pizzas']?.map((x) => Pizza.fromMap(x, x['id'])),
-      ),
-      clientName: map['clientName'],
+      pizzas: map['pizzas'] == null
+          ? <Pizza>[]
+          : List<Pizza>.from(
+              (map['pizzas'] as List<dynamic>?)!.map(
+                (dynamic x) =>
+                    Pizza.fromMap(x, (x as Map<String, dynamic>)['id']),
+              ),
+            ),
+      clientName: (map['clientName'] as String?)?.trim().toCapitalized(),
     );
   }
 

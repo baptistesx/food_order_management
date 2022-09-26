@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pom/models/exceptions.dart';
+import 'package:pom/models/ingredient.dart';
 import 'package:pom/models/pizza.dart';
 // TODO: reduce api calls
 
@@ -9,7 +10,7 @@ class PizzaRepository {
   PizzaRepository();
 
   Future<Pizza> getPizzaById(String id) async {
-    final Pizza ingredient = await db
+    Pizza pizza = await db
         .collection('pizzas')
         .doc(id)
         .get()
@@ -19,8 +20,12 @@ class PizzaRepository {
       }
       return Pizza.fromMap(event.data()!, event.id);
     });
+    if (pizza.ingredients != null) {
+      pizza.ingredients!
+          .sort((Ingredient a, Ingredient b) => a.name!.compareTo(b.name!));
+    }
 
-    return ingredient;
+    return pizza;
   }
 
   Future<void> deletePizzaById(String id) async {
@@ -38,10 +43,7 @@ class PizzaRepository {
     final Map<String, dynamic> map = pizza.toMap(false);
     map['ingredients'] = ingredientsRefs;
 
-    await db
-        .collection('pizzas')
-        .doc(pizza.id)
-        .update(map);
+    await db.collection('pizzas').doc(pizza.id).update(map);
   }
 
   Future<void> createPizza(Pizza pizza) async {
