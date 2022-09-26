@@ -1,11 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pom/blocs/ingredient/ingredient.dart';
 import 'package:pom/blocs/ingredient/ingredient_events.dart';
-import 'package:pom/blocs/ingredient/ingredient_states.dart';
-import 'package:pom/blocs/ingredients/ingredients.dart';
-import 'package:pom/blocs/ingredients/ingredients_events.dart';
-import 'package:pom/blocs/ingredients/ingredients_states.dart';
 import 'package:pom/models/ingredient.dart';
 import 'package:pom/views/ingredient.dart';
 import 'package:pom/widgets/item_card.dart';
@@ -29,59 +26,47 @@ class _IngredientsPageState extends State<IngredientsPage> {
       appBar: AppBar(
         title: const Text('Ingrédients'),
       ),
-      body: BlocListener<IngredientBloc, IngredientState>(
-        listener: (BuildContext context, IngredientState ingredientState) {
-          if (ingredientState is IngredientDeletedState ||
-              ingredientState is IngredientUpdatedState) {
-            context.read<IngredientsBloc>().add(
-                  GetIngredientsEvent(),
-                );
-          }
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('ingredients')
+            .orderBy('name')
+            .snapshots(),
+        builder: (BuildContext context,
+            AsyncSnapshot<QuerySnapshot<Object?>> snapshot) {
+          if (!snapshot.hasData) return LinearProgressIndicator();
+          final List<Ingredient> ingredients = snapshot.data == null
+              ? []
+              : snapshot.data!.docs
+                  .map((QueryDocumentSnapshot<Object?> e) => Ingredient.fromMap(
+                      e.data() as Map<String, dynamic>, e.reference.id))
+                  .toList();
+          return ListView(
+            padding: const EdgeInsets.all(24),
+            children: ingredients.isEmpty
+                ? <Widget>[const Text('Aucun ingrédient trouvé.')]
+                : ingredients
+                    .map(
+                      (Ingredient ingredient) => ItemCard(
+                        item: ingredient,
+                        onDelete: () {
+                          context.read<IngredientBloc>().add(
+                                DeleteIngredientByIdEvent(ingredient),
+                              );
+                        },
+                        onEdit: () {
+                          Navigator.pushNamed(
+                            context,
+                            IngredientPage.routeName,
+                            arguments: <String, dynamic>{
+                              'ingredient': ingredient
+                            },
+                          );
+                        },
+                      ),
+                    )
+                    .toList(),
+          );
         },
-        child: BlocBuilder<IngredientsBloc, IngredientsState>(
-          builder: (BuildContext context, IngredientsState ingredientsState) {
-            if (ingredientsState is IngredientsLoadingState) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (ingredientsState is IngredientsFetchedState) {
-              return RefreshIndicator(
-                key: _refreshIndicatorKey,
-                onRefresh: () async {
-                  context.read<IngredientsBloc>().add(GetIngredientsEvent());
-                },
-                child: ListView(
-                  padding: const EdgeInsets.all(24),
-                  children: ingredientsState.ingredients.isEmpty
-                      ? <Widget>[const Text('Aucun ingrédient trouvé.')]
-                      : ingredientsState.ingredients
-                          .map(
-                            (Ingredient ingredient) => ItemCard(
-                              item: ingredient,
-                              onDelete: () {
-                                context.read<IngredientBloc>().add(
-                                      DeleteIngredientByIdEvent(ingredient),
-                                    );
-                              },
-                              onEdit: () {
-                                Navigator.pushNamed(
-                                  context,
-                                  IngredientPage.routeName,
-                                  arguments: <String, dynamic>{
-                                    'ingredient': ingredient
-                                  },
-                                );
-                              },
-                            ),
-                          )
-                          .toList(),
-                ),
-              );
-            } else {
-              return const Center(
-                child: Text('Erreur'),
-              );
-            }
-          },
-        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

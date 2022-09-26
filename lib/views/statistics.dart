@@ -1,198 +1,104 @@
 import 'package:flutter/material.dart';
-import 'package:pom/models/ingredient.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pom/blocs/orders/orders.dart';
+import 'package:pom/blocs/orders/orders_events.dart';
+import 'package:pom/blocs/orders/orders_states.dart';
+import 'package:pom/blocs/pizzas/pizzas.dart';
+import 'package:pom/blocs/pizzas/pizzas_states.dart';
 import 'package:pom/models/order.dart';
 import 'package:pom/models/pizza.dart';
 
-class StatisticsPage extends StatelessWidget {
+class StatisticsPage extends StatefulWidget {
   static const String routeName = '/statistics';
 
-  StatisticsPage({Key? key}) : super(key: key);
+  const StatisticsPage({Key? key}) : super(key: key);
 
-  final List<Order> orders = <Order>[
-    Order(
-      id: '0',
-      status: OrderStatus.toDo,
-      createdAt: DateTime.now(),
-      timeToDeliver: TimeOfDay.now(),
-      pizzas: <Pizza>[
-        Pizza(
-          id: '1',
-          name: 'Reine',
-          price: 10.5,
-          ingredients: <Ingredient>[
-            const Ingredient(
-              id: '1',
-              name: 'Tomates',
-            ),
-            const Ingredient(
-              id: '2',
-              name: 'Mozza',
-            ),
-            const Ingredient(
-              id: '3',
-              name: 'Olives',
-            ),
-          ],
-        ),
-        Pizza(
-          id: '2',
-          name: 'Royale',
-          price: 10.5,
-          ingredients: <Ingredient>[
-            const Ingredient(
-              id: '1',
-              name: 'Tomates',
-            ),
-            const Ingredient(
-              id: '2',
-              name: 'Mozza',
-            ),
-            const Ingredient(
-              id: '3',
-              name: 'Olives',
-            ),
-          ],
-        ),
-      ],
-      clientName: 'Seux',
-    ),
-    Order(
-      id: '1',
-      status: OrderStatus.delivered,
-      createdAt: DateTime.now(),
-      timeToDeliver: TimeOfDay.now(),
-      pizzas: <Pizza>[
-        Pizza(
-          id: '1',
-          name: 'Reine',
-          price: 10.5,
-          ingredients: <Ingredient>[
-            const Ingredient(
-              id: '1',
-              name: 'Tomates',
-            ),
-            const Ingredient(
-              id: '2',
-              name: 'Mozza',
-            ),
-            const Ingredient(
-              id: '3',
-              name: 'Olives',
-            ),
-          ],
-        ),
-        Pizza(
-          id: '2',
-          name: 'Royale',
-          price: 10.5,
-          ingredients: <Ingredient>[
-            const Ingredient(
-              id: '1',
-              name: 'Tomates',
-            ),
-            const Ingredient(
-              id: '2',
-              name: 'Mozza',
-            ),
-            const Ingredient(
-              id: '3',
-              name: 'Olives',
-            ),
-          ],
-        ),
-      ],
-      clientName: 'Seux',
-    )
-  ];
+  @override
+  State<StatisticsPage> createState() => _StatisticsPageState();
+}
 
-  final List<Pizza> pizzas = <Pizza>[
-    Pizza(
-      id: '1',
-      name: 'Reine',
-      price: 10.5,
-      ingredients: <Ingredient>[
-        const Ingredient(
-          id: '1',
-          name: 'Tomates',
-        ),
-        const Ingredient(
-          id: '2',
-          name: 'Mozza',
-        ),
-        const Ingredient(
-          id: '3',
-          name: 'Olives',
-        ),
-      ],
-    ),
-    Pizza(
-      id: '2',
-      name: 'Royale',
-      price: 10.5,
-      ingredients: <Ingredient>[
-        const Ingredient(
-          id: '1',
-          name: 'Tomates',
-        ),
-        const Ingredient(
-          id: '2',
-          name: 'Mozza',
-        ),
-        const Ingredient(
-          id: '3',
-          name: 'Olives',
-        ),
-      ],
-    ),
-  ];
+class _StatisticsPageState extends State<StatisticsPage> {
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
 
   @override
   Widget build(BuildContext context) {
-    final List<int> pizzasDelivered = orders
-        .where((Order order) => order.status == OrderStatus.delivered)
-        .toList()
-        .map((Order order) => order.pizzas.length)
-        .toList();
-
-    const double incomes = 100;
-    //  orders
-    //     .where((Order order) => order.status == OrderStatus.delivered)
-    //     .toList()
-    //     .map(
-    //       (Order order) => order.pizzas
-    //           .map((Pizza pizza) => pizza.price)
-    //           .toList()
-    //           .reduce((double value, double element) => value + element),
-    //     )
-    //     .reduce((double value, double element) => value + element);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Statistiques'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
-        child: ListView(
-          children: <Widget>[
-            Text(
-              'Total commandes livrées: ${orders.where((Order order) => order.status == OrderStatus.delivered).toList().length}',
-            ),
-            Text(
-              'Total pizzas livrées: ${pizzasDelivered.isNotEmpty ? pizzasDelivered.reduce((int value, int element) => value + element).toString() : "0"}',
-            ),
-            Text('CA total: ${incomes.toString()}€'),
-            ...pizzas
-                .map(
-                  (Pizza pizza) => Card(
-                    child: ListTile(
-                      title: Text(
-                        '${orders.where((Order order) => order.status == OrderStatus.delivered).toList().map((Order order) => order.pizzas.where((Pizza pizzaSold) => pizzaSold.id == pizza.id).toList().length).reduce((int value, int element) => value + element)} x ${pizza.name}',
-                      ),
+        child: BlocBuilder<OrdersBloc, OrdersState>(
+          builder: (context, ordersState) {
+            if (ordersState is OrdersFetchedState) {
+              final List<Order> ordersDelivered = ordersState.orders
+                  .where((Order order) => order.status == OrderStatus.delivered)
+                  .toList();
+
+              final List<Pizza> allOrdersDeliveredPizzas = ordersDelivered
+                  .map((order) => order.pizzas)
+                  .expand((element) => element)
+                  .toList();
+
+              final double totalDayIncomes = allOrdersDeliveredPizzas
+                  .map((pizza) => pizza.price!)
+                  .reduce((value, element) => value + element);
+
+              return RefreshIndicator(
+                key: _refreshIndicatorKey,
+                onRefresh: () async {
+                  context.read<OrdersBloc>().add(GetOrdersEvent());
+                },
+                child: ListView(
+                  children: <Widget>[
+                    Text(
+                      'Total commandes livrées: ${ordersState.orders.isEmpty ? "0" : ordersDelivered.length}',
                     ),
-                  ),
-                )
-                .toList()
-          ],
+                    Text(
+                      'Total pizzas livrées: ${allOrdersDeliveredPizzas.length}',
+                    ),
+                    Text('CA total: ${totalDayIncomes.toString()}€'),
+                    BlocBuilder<PizzasBloc, PizzasState>(
+                        builder: (context, pizzasState) {
+                      if (pizzasState is PizzasFetchedState) {
+                        return Column(
+                          children: pizzasState.pizzas
+                              .map(
+                                (Pizza pizza) => allOrdersDeliveredPizzas
+                                        .where(
+                                            (element) => element.id == pizza.id)
+                                        .isEmpty
+                                    ? SizedBox()
+                                    : Card(
+                                        child: ListTile(
+                                          title: Text(
+                                            '${allOrdersDeliveredPizzas.where((element) => element.id == pizza.id).length} x ${pizza.name}',
+                                          ),
+                                        ),
+                                      ),
+                              )
+                              .toList(),
+                        );
+                      } else {
+                        return (Center(
+                          child: Text('Erreur'),
+                        ));
+                      }
+                    }),
+                  ],
+                ),
+              );
+            } else if (ordersState is OrdersLoadingState) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else {
+              return Center(
+                child: Text('Erreur'),
+              );
+            }
+          },
         ),
       ),
     );

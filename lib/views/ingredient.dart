@@ -3,8 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pom/blocs/ingredient/ingredient.dart';
 import 'package:pom/blocs/ingredient/ingredient_events.dart';
 import 'package:pom/blocs/ingredient/ingredient_states.dart';
-import 'package:pom/blocs/ingredients/ingredients.dart';
-import 'package:pom/blocs/ingredients/ingredients_events.dart';
 import 'package:pom/models/ingredient.dart';
 import 'package:pom/widgets/layout/scrollable_column_space_between.dart';
 
@@ -55,7 +53,6 @@ class _IngredientPage extends State<IngredientPage> {
           listener: (BuildContext context, IngredientState state) {
             if (state is IngredientAddedState ||
                 state is IngredientUpdatedState) {
-              context.read<IngredientsBloc>().add(GetIngredientsEvent());
               Navigator.pop(context);
             }
           },
