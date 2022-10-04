@@ -14,13 +14,16 @@ class Authentication {
     final User? user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute<HomePage>(
-          builder: (BuildContext context) => HomePage(
-            user: user,
+      if (ModalRoute.of(context)?.settings.name != HomePage.routeName) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute<HomePage>(
+            builder: (BuildContext context) => HomePage(
+              user: user,
+            ),
           ),
-        ),
-      );
+          (Route<dynamic> route) => false,
+        );
+      }
     }
     return firebaseApp;
   }

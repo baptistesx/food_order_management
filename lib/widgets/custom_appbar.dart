@@ -38,8 +38,10 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     _isSigningOut = false;
                   });
                   if (mounted) {
-                    Navigator.of(context)
-                        .pushReplacement(routeToSignInScreen());
+                    Navigator.of(context).pushAndRemoveUntil(
+                      routeToSignInScreen(),
+                      (Route<dynamic> route) => false,
+                    );
                   }
                 },
                 icon: const Icon(Icons.logout),

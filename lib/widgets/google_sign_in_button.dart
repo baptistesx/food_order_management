@@ -43,12 +43,13 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
                 });
 
                 if (user != null && mounted) {
-                  Navigator.of(context).pushReplacement(
+                  Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute<HomePage>(
                       builder: (BuildContext context) => HomePage(
                         user: user,
                       ),
                     ),
+                    (Route<dynamic> route) => false,
                   );
                 }
               },
