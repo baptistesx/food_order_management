@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "325973755347-5pgo8n9nmko58crs95fj64vodljjm0dr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ludyb.pom",
+            "certificate_hash": "58a23c1303182611b702abd54e650b5b41b8d5ab"
+          }
+        },
+        {
           "client_id": "325973755347-9k0qujhg83d45pmh0d5ida19gqo1necl.apps.googleusercontent.com",
           "client_type": 3
         }
