@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pom/blocs/orders/orders.dart';
@@ -15,7 +14,7 @@ import 'package:pom/widgets/home_section_button.dart';
 class HomePage extends StatelessWidget {
   static const String routeName = '/';
 
-  const HomePage({Key? key, required User? user}) : super(key: key);
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

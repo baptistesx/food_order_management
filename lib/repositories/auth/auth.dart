@@ -2,38 +2,43 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:pom/main.dart';
+import 'package:pom/models/exceptions.dart';
 
 class AuthRepository {
   FirebaseFirestore db = FirebaseFirestore.instance;
-
+  final GoogleSignIn googleSignIn = GoogleSignIn(
+    scopes: <String>['email', 'profile'],
+  );
   AuthRepository();
 
-  Future<UserCredential> signInWithGoogle() async {
-    // GoogleSignIn _googleSignIn = GoogleSignIn(
-    //   // Optional clientId
-    //   // clientId: '479882132969-9i9aqik3jfjd7qhci1nqf0bm2g71rm1u.apps.googleusercontent.com',
-    //   scopes: <String>[
-    //     'email',
-    //   ],
-    // );
-    // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+  Future<User> signInWithGoogle() async {
+    final GoogleSignInAccount? googleSignInAccount =
+        await googleSignIn.signIn();
 
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication? googleAuth =
-        await googleUser?.authentication;
+    if (googleSignInAccount == null) {
+      throw StandardException('Erreur lors de la connexion.');
+    }
 
-    // Create a new credential
-    final OAuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
+    final GoogleSignInAuthentication googleSignInAuthentication =
+        await googleSignInAccount.authentication;
+
+    final AuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleSignInAuthentication.accessToken,
+      idToken: googleSignInAuthentication.idToken,
     );
 
-    // Once signed in, return the UserCredential
-    return await firebaseAuth.signInWithCredential(credential);
+    final UserCredential userCredential =
+        await firebaseAuth.signInWithCredential(credential);
+
+    if (userCredential.user == null) {
+      throw StandardException('Erreur lors de la connexion.');
+    }
+
+    return userCredential.user!;
   }
 
   Future<void> signOut() async {
-    await firebaseAuth.signOut();
+    await googleSignIn.signOut();
+    await firebaseAuth.signOut(); // TODO: check if both are necessary
   }
 }

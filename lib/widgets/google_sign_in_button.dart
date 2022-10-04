@@ -1,83 +1,80 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:pom/authentication.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pom/blocs/auth/auth.dart';
+import 'package:pom/blocs/auth/auth_events.dart';
+import 'package:pom/blocs/auth/auth_states.dart';
+import 'package:pom/theme/themes.dart';
 import 'package:pom/views/home.dart';
+import 'package:pom/widgets/custom_snackbar_error_content.dart';
 
-class GoogleSignInButton extends StatefulWidget {
+class GoogleSignInButton extends StatelessWidget {
   const GoogleSignInButton({Key? key}) : super(key: key);
 
   @override
-  State<GoogleSignInButton> createState() => _GoogleSignInButtonState();
-}
-
-class _GoogleSignInButtonState extends State<GoogleSignInButton> {
-  bool _isSigningIn = false;
-
-  @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
-      child: _isSigningIn
-          ? const CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-            )
-          : OutlinedButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.white),
-                shape: MaterialStateProperty.all(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40),
-                  ),
-                ),
-              ),
-              onPressed: () async {
-                setState(() {
-                  _isSigningIn = true;
-                });
+    return BlocConsumer<AuthBloc, AuthState>(
+      listener: (BuildContext context, AuthState state) {
+        if (state is AuthErrorState) {
+          final SnackBar snackBar = SnackBar(
+            backgroundColor: context.theme.errorColor,
+            content: CustomSnackBarErrorContent(
+              state.message,
+            ),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        } else if (state is AuthConnectedState) {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            HomePage.routeName,
+            (Route<dynamic> route) => false,
+          );
+        }
+      },
+      builder: (BuildContext context, AuthState state) {
+        if (state is AuthLoadingState) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
 
-                final User? user =
-                    await Authentication.signInWithGoogle(context: context);
-
-                setState(() {
-                  _isSigningIn = false;
-                });
-
-                if (user != null && mounted) {
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute<HomePage>(
-                      builder: (BuildContext context) => HomePage(
-                        user: user,
-                      ),
-                    ),
-                    (Route<dynamic> route) => false,
-                  );
-                }
-              },
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const <Widget>[
-                    Image(
-                      image: AssetImage('assets/icon/google_logo.png'),
-                      height: 35.0,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Text(
-                        'Sign in with Google',
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.black54,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
+        return OutlinedButton(
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(Colors.white),
+            shape: MaterialStateProperty.all(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(40),
               ),
             ),
+          ),
+          onPressed: () async {
+            context.read<AuthBloc>().add(SignInEvent());
+          },
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const <Widget>[
+                Image(
+                  image: AssetImage('assets/icon/google_logo.png'),
+                  height: 35.0,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 10),
+                  child: Text(
+                    'Sign in with Google',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.black54,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

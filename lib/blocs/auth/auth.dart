@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pom/blocs/auth/auth_events.dart';
 import 'package:pom/blocs/auth/auth_states.dart';
@@ -44,13 +45,29 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       await authRepository.signOut();
 
-      emit(AuthConnectedState());
+      emit(AuthInitialState());
     } on StandardException catch (e) {
       emit(AuthErrorState(e.message));
-      emit(AuthInitialState());
+      emit(AuthConnectedState());
     } on ApiResponseException catch (e) {
       emit(AuthErrorState(e.message));
-      emit(AuthInitialState());
+      emit(AuthConnectedState());
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'account-exists-with-different-credential') {
+        emit(
+          AuthErrorState(
+            'The account already exists with a different credential.',
+          ),
+        );
+        emit(AuthConnectedState());
+      } else if (e.code == 'invalid-credential') {
+        emit(
+          AuthErrorState(
+            'Error occurred while accessing credentials. Try again.',
+          ),
+        );
+        emit(AuthConnectedState());
+      }
     } catch (e) {
       rethrow;
     }

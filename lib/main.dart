@@ -38,7 +38,6 @@ import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
 FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-// final navigatorKey = GlobalKey<NavigatorState>();
 
 Future<void> main() async {
   runZonedGuarded<Future<void>>(
@@ -51,7 +50,6 @@ Future<void> main() async {
 
       FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
 
-      // Init global repositories
       final SettingsRepository settingsRepository =
           SettingsRepository(logger: Logger());
 

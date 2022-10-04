@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:pom/authentication.dart';
-import 'package:pom/utils/functions.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pom/blocs/auth/auth.dart';
+import 'package:pom/blocs/auth/auth_events.dart';
+import 'package:pom/blocs/auth/auth_states.dart';
+import 'package:pom/theme/themes.dart';
+import 'package:pom/views/sign_in.dart';
+import 'package:pom/widgets/custom_snackbar_error_content.dart';
 
-class CustomAppBar extends StatefulWidget with PreferredSizeWidget {
+class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
   final Widget title;
   const CustomAppBar({
     Key? key,
@@ -10,42 +15,40 @@ class CustomAppBar extends StatefulWidget with PreferredSizeWidget {
   }) : super(key: key);
 
   @override
-  State<CustomAppBar> createState() => _CustomAppBarState();
-
-  @override
   Size get preferredSize => const Size.fromHeight(72);
-}
-
-class _CustomAppBarState extends State<CustomAppBar> {
-  bool _isSigningOut = false;
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: widget.title,
+      title: title,
       actions: <Widget>[
-        _isSigningOut
-            ? const CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              )
-            : IconButton(
-                onPressed: () async {
-                  setState(() {
-                    _isSigningOut = true;
-                  });
-                  await Authentication.signOut(context: context);
-                  setState(() {
-                    _isSigningOut = false;
-                  });
-                  if (mounted) {
-                    Navigator.of(context).pushAndRemoveUntil(
-                      routeToSignInScreen(),
-                      (Route<dynamic> route) => false,
-                    );
-                  }
-                },
-                icon: const Icon(Icons.logout),
-              ),
+        BlocConsumer<AuthBloc, AuthState>(
+          listener: (BuildContext context, AuthState state) {
+            if (state is AuthErrorState) {
+              final SnackBar snackBar = SnackBar(
+                backgroundColor: context.theme.errorColor,
+                content: CustomSnackBarErrorContent(
+                  state.message,
+                ),
+              );
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            } else if (state is AuthInitialState) {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                SignInPage.routeName,
+                (Route<dynamic> route) => false,
+              );
+            }
+          },
+          builder: (BuildContext context, AuthState state) {
+            return IconButton(
+              onPressed: () {
+                context.read<AuthBloc>().add(SignOutEvent());
+              },
+              icon: const Icon(Icons.logout),
+            );
+          },
+        )
       ],
     );
   }

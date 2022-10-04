@@ -23,9 +23,7 @@ class MainRouter {
       case HomePage.routeName:
         return MaterialPageRoute<dynamic>(
           settings: settings,
-          builder: (BuildContext context) => const HomePage(
-            user: null,
-          ),
+          builder: (BuildContext context) => const HomePage(),
         );
       case IngredientsPage.routeName:
         return MaterialPageRoute<dynamic>(
