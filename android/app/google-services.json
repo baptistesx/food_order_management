@@ -31,10 +31,10 @@
               "client_type": 3
             },
             {
-              "client_id": "325973755347-m6k4jb9hq7turoppsnimfa3ckdvnlnvg.apps.googleusercontent.com",
+              "client_id": "325973755347-9v670ke775bbh3fsb0cdhu0kqqncc0vp.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.ludyb.pom"
+                "bundle_id": "com.example.pom"
               }
             }
           ]

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:pom/main.dart';
 import 'package:pom/models/ingredient.dart';
 import 'package:pom/models/pizza.dart';
 import 'package:pom/widgets/ingredient_with_checkbox.dart';
@@ -144,6 +145,7 @@ class _AddPizzaToOrderDialogState extends State<AddPizzaToOrderDialog> {
               StreamBuilder<QuerySnapshot<Object?>>(
                 stream: FirebaseFirestore.instance
                     .collection('ingredients')
+                    .where('userId', isEqualTo: firebaseAuth.currentUser!.uid)
                     .orderBy('name')
                     .snapshots(),
                 builder: (
@@ -151,7 +153,7 @@ class _AddPizzaToOrderDialogState extends State<AddPizzaToOrderDialog> {
                   AsyncSnapshot<QuerySnapshot<Object?>> snapshot,
                 ) {
                   if (!snapshot.hasData) {
-                    return const LinearProgressIndicator();
+                    return const Center(child: CircularProgressIndicator());
                   }
                   final List<Ingredient> ingredients = snapshot.data == null
                       ? <Ingredient>[]

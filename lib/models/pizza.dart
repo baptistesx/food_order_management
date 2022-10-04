@@ -14,6 +14,7 @@ class Pizza extends Item {
 
   Pizza({
     String? id,
+    String? userId,
     String? name,
     this.priceSmall,
     this.priceBig,
@@ -24,12 +25,14 @@ class Pizza extends Item {
     this.isBig,
   }) : super(
           id: id,
+          userId: userId,
           name: name,
         );
 
   Map<String, dynamic> toMap(bool isInOrder) {
     return <String, dynamic>{
       'id': id,
+      'userId': userId,
       'ingredients': ingredients != null
           ? ingredients!
               .map((Ingredient x) => isInOrder ? x.toMap() : x.id)
@@ -56,6 +59,7 @@ class Pizza extends Item {
   factory Pizza.fromMap(Map<String, dynamic> map, String? id) {
     return Pizza(
       id: id,
+      userId: map['userId'],
       name: map['name'],
       ingredients: map['ingredients'] == null
           ? <Ingredient>[]
@@ -96,6 +100,7 @@ class Pizza extends Item {
     double? priceBig,
     bool? isDone,
     String? id,
+    String? userId,
     String? name,
     bool? isBig,
   }) {
@@ -109,6 +114,7 @@ class Pizza extends Item {
       isBig: isBig ?? this.isBig,
       name: name ?? this.name,
       id: id ?? this.id,
+      userId: userId ?? this.userId,
     );
   }
 
@@ -121,7 +127,8 @@ class Pizza extends Item {
         listEquals(other.ingredientsToRemove, ingredientsToRemove) &&
         listEquals(other.ingredientsToAdd, ingredientsToAdd) &&
         other.isDone == isDone &&
-        other.isBig == isBig;
+        other.isBig == isBig &&
+        other.userId == userId;
   }
 
   @override
@@ -130,6 +137,7 @@ class Pizza extends Item {
         ingredientsToRemove.hashCode ^
         ingredientsToAdd.hashCode ^
         isDone.hashCode ^
-        isBig.hashCode;
+        isBig.hashCode ^
+        userId.hashCode;
   }
 }

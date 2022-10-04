@@ -5,12 +5,14 @@ import 'package:pom/blocs/order/order_events.dart';
 import 'package:pom/blocs/order/order_states.dart';
 import 'package:pom/blocs/pizzas/pizzas.dart';
 import 'package:pom/blocs/pizzas/pizzas_states.dart';
+import 'package:pom/main.dart';
 import 'package:pom/models/ingredient.dart';
 import 'package:pom/models/order.dart';
 import 'package:pom/models/pizza.dart';
 import 'package:pom/theme/themes.dart';
 import 'package:pom/widgets/add_pizza_to_order_dialog.dart';
 import 'package:pom/widgets/confirm_action_dialog.dart';
+import 'package:pom/widgets/custom_appbar.dart';
 import 'package:pom/widgets/layout/scrollable_column_space_between.dart';
 
 class OrderPage extends StatefulWidget {
@@ -82,7 +84,7 @@ class _OrderPage extends State<OrderPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: CustomAppBar(
         title: Text(
           widget.order != null ? 'Editer la commande' : 'Nouvelle commande',
         ),
@@ -330,6 +332,8 @@ class _OrderPage extends State<OrderPage> {
                                             clientName:
                                                 _clientNameController.text,
                                             pizzas: pizzas,
+                                            userId:
+                                                firebaseAuth.currentUser!.uid,
                                           ),
                                         ),
                                       );
@@ -344,6 +348,8 @@ class _OrderPage extends State<OrderPage> {
                                             clientName:
                                                 _clientNameController.text,
                                             pizzas: pizzas,
+                                            userId:
+                                                firebaseAuth.currentUser!.uid,
                                           ),
                                         ),
                                       );
@@ -369,7 +375,8 @@ class _OrderPage extends State<OrderPage> {
                         );
                         if (widget.order != null &&
                             shouldDelete != null &&
-                            shouldDelete) {
+                            shouldDelete &&
+                            mounted) {
                           context
                               .read<OrderBloc>()
                               .add(DeleteOrderByIdEvent(widget.order!));

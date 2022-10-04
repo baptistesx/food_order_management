@@ -9,15 +9,23 @@ import 'package:pom/views/order.dart';
 import 'package:pom/views/orders.dart';
 import 'package:pom/views/pizza.dart';
 import 'package:pom/views/pizzas.dart';
+import 'package:pom/views/sign_in.dart';
 import 'package:pom/views/statistics.dart';
 
 class MainRouter {
   static Route<dynamic>? generateRoute(RouteSettings settings) {
     switch (settings.name) {
+      case SignInPage.routeName:
+        return MaterialPageRoute<dynamic>(
+          settings: settings,
+          builder: (BuildContext context) => const SignInPage(),
+        );
       case HomePage.routeName:
         return MaterialPageRoute<dynamic>(
           settings: settings,
-          builder: (BuildContext context) => const HomePage(),
+          builder: (BuildContext context) => const HomePage(
+            user: null,
+          ),
         );
       case IngredientsPage.routeName:
         return MaterialPageRoute<dynamic>(

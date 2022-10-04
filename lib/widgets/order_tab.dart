@@ -32,7 +32,9 @@ class _OrderTabState extends State<OrderTab> {
         BuildContext context,
         AsyncSnapshot<QuerySnapshot<Object?>> snapshot,
       ) {
-        if (!snapshot.hasData) return const LinearProgressIndicator();
+        if (!snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator());
+        }
         final List<Order> orders = snapshot.data == null
             ? <Order>[]
             : snapshot.data!.docs

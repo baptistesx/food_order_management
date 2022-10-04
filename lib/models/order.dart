@@ -7,6 +7,7 @@ enum OrderStatus { toDo, done, delivered }
 
 class Order {
   final String? id;
+  final String? userId;
   final OrderStatus status;
   final DateTime createdAt;
   final TimeOfDay timeToDeliver;
@@ -15,6 +16,7 @@ class Order {
 
   Order({
     this.id,
+    this.userId,
     required this.status,
     required this.createdAt,
     required this.timeToDeliver,
@@ -27,6 +29,7 @@ class Order {
 
     return <String, dynamic>{
       'id': id,
+      'userId': userId,
       'status': status.name,
       'createdAt': createdAt.toString(),
       'timeToDeliver': DateTime(
@@ -48,6 +51,7 @@ class Order {
 
     return Order(
       id: id,
+      userId: map['userId'],
       status: OrderStatus.values
           .firstWhere((OrderStatus element) => element.name == map['status']),
       createdAt: DateTime.parse(map['createdAt']),
@@ -64,13 +68,9 @@ class Order {
     );
   }
 
-  @override
-  String toString() {
-    return 'Order(id: $id, status: $status, createdAt: $createdAt, timeToDeliver: $timeToDeliver, pizzas: $pizzas, clientName: $clientName)';
-  }
-
   Order copyWith({
     String? id,
+    String? userId,
     OrderStatus? status,
     DateTime? createdAt,
     TimeOfDay? timeToDeliver,
@@ -79,6 +79,7 @@ class Order {
   }) {
     return Order(
       id: id ?? this.id,
+      userId: userId ?? this.userId,
       status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
       timeToDeliver: timeToDeliver ?? this.timeToDeliver,
