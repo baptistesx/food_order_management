@@ -59,11 +59,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDP2Vai0xyhW1JgKHwobO4wqMzI3HQR4qo',
-    appId: '1:325973755347:ios:9485e817cc1d5657dcdb26',
+    appId: '1:325973755347:ios:347ad144bf2d0709dcdb26',
     messagingSenderId: '325973755347',
     projectId: 'pizzaordersmanagement',
     storageBucket: 'pizzaordersmanagement.appspot.com',
-    iosClientId: '325973755347-9v670ke775bbh3fsb0cdhu0kqqncc0vp.apps.googleusercontent.com',
-    iosBundleId: 'com.example.pom',
+    iosClientId: '325973755347-m6k4jb9hq7turoppsnimfa3ckdvnlnvg.apps.googleusercontent.com',
+    iosBundleId: 'com.ludyb.pom',
   );
 }

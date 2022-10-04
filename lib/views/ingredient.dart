@@ -3,7 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pom/blocs/ingredient/ingredient.dart';
 import 'package:pom/blocs/ingredient/ingredient_events.dart';
 import 'package:pom/blocs/ingredient/ingredient_states.dart';
+import 'package:pom/main.dart';
 import 'package:pom/models/ingredient.dart';
+import 'package:pom/widgets/custom_appbar.dart';
 import 'package:pom/widgets/layout/scrollable_column_space_between.dart';
 
 class IngredientPage extends StatefulWidget {
@@ -39,7 +41,7 @@ class _IngredientPage extends State<IngredientPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: CustomAppBar(
         title: Text(
           widget.ingredient != null
               ? 'Editer l\'ingrédient'
@@ -92,7 +94,10 @@ class _IngredientPage extends State<IngredientPage> {
                       if (widget.ingredient == null) {
                         context.read<IngredientBloc>().add(
                               CreateIngredientEvent(
-                                Ingredient(name: _nameController.text),
+                                Ingredient(
+                                  name: _nameController.text,
+                                  userId: firebaseAuth.currentUser!.uid,
+                                ),
                               ),
                             );
                       } else if (widget.ingredient!.id != null) {
@@ -101,6 +106,7 @@ class _IngredientPage extends State<IngredientPage> {
                                 Ingredient(
                                   id: widget.ingredient!.id,
                                   name: _nameController.text,
+                                  userId: firebaseAuth.currentUser!.uid,
                                 ),
                               ),
                             );

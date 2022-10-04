@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pom/blocs/orders/orders.dart';
 import 'package:pom/blocs/orders/orders_events.dart';
+import 'package:pom/main.dart';
 import 'package:pom/models/order.dart';
 import 'package:pom/theme/themes.dart';
 import 'package:pom/views/order.dart';
+import 'package:pom/widgets/custom_appbar.dart';
 import 'package:pom/widgets/order_tab.dart';
 
 class OrdersPage extends StatefulWidget {
@@ -42,17 +44,20 @@ class _OrdersPageState extends State<OrdersPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: CustomAppBar(
         title: StreamBuilder<QuerySnapshot<Object?>>(
           stream: FirebaseFirestore.instance
               .collection('orders')
+              .where('userId', isEqualTo: firebaseAuth.currentUser!.uid)
               .orderBy('timeToDeliver')
               .snapshots(),
           builder: (
             BuildContext context,
             AsyncSnapshot<QuerySnapshot<Object?>> snapshot,
           ) {
-            if (!snapshot.hasData) return const LinearProgressIndicator();
+            if (!snapshot.hasData) {
+              return const Center(child: CircularProgressIndicator());
+            }
             final List<Order> orders = snapshot.data == null
                 ? <Order>[]
                 : snapshot.data!.docs

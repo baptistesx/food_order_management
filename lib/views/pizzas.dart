@@ -10,6 +10,7 @@ import 'package:pom/models/pizza.dart';
 import 'package:pom/theme/themes.dart';
 import 'package:pom/views/pizza.dart';
 import 'package:pom/widgets/confirm_action_dialog.dart';
+import 'package:pom/widgets/custom_appbar.dart';
 import 'package:pom/widgets/item_card.dart';
 
 class PizzasPage extends StatefulWidget {
@@ -30,8 +31,8 @@ class _PizzasPageState extends State<PizzasPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Pizzas'),
+      appBar: const CustomAppBar(
+        title: Text('Pizzas'),
       ),
       body: BlocListener<PizzaBloc, PizzaState>(
         listener: (BuildContext context, PizzaState pizzaState) {
@@ -70,7 +71,7 @@ class _PizzasPageState extends State<PizzasPage> {
                                   },
                                 );
                                 if (shouldDelete != null && shouldDelete) {
-                                  if (pizza.id != null) {
+                                  if (pizza.id != null && mounted) {
                                     context.read<PizzaBloc>().add(
                                           DeletePizzaByIdEvent(pizza.id!),
                                         );

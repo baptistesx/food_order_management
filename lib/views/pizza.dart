@@ -7,8 +7,10 @@ import 'package:pom/blocs/pizza/pizza_events.dart';
 import 'package:pom/blocs/pizza/pizza_states.dart';
 import 'package:pom/blocs/pizzas/pizzas.dart';
 import 'package:pom/blocs/pizzas/pizzas_events.dart';
+import 'package:pom/main.dart';
 import 'package:pom/models/ingredient.dart';
 import 'package:pom/models/pizza.dart';
+import 'package:pom/widgets/custom_appbar.dart';
 import 'package:pom/widgets/ingredient_chip.dart';
 import 'package:pom/widgets/ingredient_with_checkbox.dart';
 import 'package:pom/widgets/layout/scrollable_column_space_between.dart';
@@ -65,7 +67,7 @@ class _PizzaPage extends State<PizzaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: CustomAppBar(
         title: Text(
           widget.pizza != null ? 'Editer la pizza' : 'Nouvelle pizza',
         ),
@@ -180,6 +182,7 @@ class _PizzaPage extends State<PizzaPage> {
                 StreamBuilder<QuerySnapshot<Object?>>(
                   stream: FirebaseFirestore.instance
                       .collection('ingredients')
+                      .where('userId', isEqualTo: firebaseAuth.currentUser!.uid)
                       .orderBy('name')
                       .snapshots(),
                   builder: (
@@ -187,7 +190,7 @@ class _PizzaPage extends State<PizzaPage> {
                     AsyncSnapshot<QuerySnapshot<Object?>> snapshot,
                   ) {
                     if (!snapshot.hasData) {
-                      return const LinearProgressIndicator();
+                      return const Center(child: CircularProgressIndicator());
                     }
                     final List<Ingredient> ingredients = snapshot.data == null
                         ? <Ingredient>[]
@@ -255,6 +258,7 @@ class _PizzaPage extends State<PizzaPage> {
                                   priceBig:
                                       double.parse(_priceBigController.text),
                                   ingredients: pizza.ingredients,
+                                  userId: firebaseAuth.currentUser!.uid,
                                 ),
                               ),
                             );
@@ -269,6 +273,7 @@ class _PizzaPage extends State<PizzaPage> {
                                   priceBig:
                                       double.parse(_priceBigController.text),
                                   ingredients: pizza.ingredients,
+                                  userId: firebaseAuth.currentUser!.uid,
                                 ),
                               ),
                             );

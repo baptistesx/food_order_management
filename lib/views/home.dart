@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pom/blocs/orders/orders.dart';
@@ -8,19 +9,18 @@ import 'package:pom/views/ingredients.dart';
 import 'package:pom/views/orders.dart';
 import 'package:pom/views/pizzas.dart';
 import 'package:pom/views/statistics.dart';
+import 'package:pom/widgets/custom_appbar.dart';
 import 'package:pom/widgets/home_section_button.dart';
 
 class HomePage extends StatelessWidget {
   static const String routeName = '/';
 
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({Key? key, required User? user}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Accueil'),
-      ),
+      appBar: const CustomAppBar(title: Text('Accueil')),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <HomeSectionButton>[

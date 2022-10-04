@@ -7,6 +7,7 @@ import 'package:pom/blocs/pizzas/pizzas.dart';
 import 'package:pom/blocs/pizzas/pizzas_states.dart';
 import 'package:pom/models/order.dart';
 import 'package:pom/models/pizza.dart';
+import 'package:pom/widgets/custom_appbar.dart';
 
 class StatisticsPage extends StatefulWidget {
   static const String routeName = '/statistics';
@@ -24,9 +25,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Statistiques'),
-      ),
+      appBar: const CustomAppBar(title: Text('Statistiques')),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         child: BlocBuilder<OrdersBloc, OrdersState>(

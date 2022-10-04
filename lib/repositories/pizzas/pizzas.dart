@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pom/main.dart';
 import 'package:pom/models/ingredient.dart';
 import 'package:pom/models/pizza.dart';
 
@@ -7,11 +8,16 @@ class PizzasRepository {
   PizzasRepository();
 
   Future<List<Pizza>> getPizzas() async {
-    final QuerySnapshot<Map<String, dynamic>> pizzasSnapshots =
-        await db.collection('pizzas').get();
+    final QuerySnapshot<Map<String, dynamic>> pizzasSnapshots = await db
+        .collection('pizzas')
+        .where('userId', isEqualTo: firebaseAuth.currentUser!.uid)
+        .get();
 
-    final QuerySnapshot<Map<String, dynamic>> ingredientsSnapshots =
-        await db.collection('ingredients').orderBy('name').get();
+    final QuerySnapshot<Map<String, dynamic>> ingredientsSnapshots = await db
+        .collection('ingredients')
+        .where('userId', isEqualTo: firebaseAuth.currentUser!.uid)
+        .orderBy('name')
+        .get();
     final List<Ingredient> ingredients = ingredientsSnapshots.docs
         .map(
           (QueryDocumentSnapshot<Map<String, dynamic>> e) =>
