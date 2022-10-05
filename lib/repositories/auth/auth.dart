@@ -6,9 +6,7 @@ import 'package:pom/models/exceptions.dart';
 
 class AuthRepository {
   FirebaseFirestore db = FirebaseFirestore.instance;
-  final GoogleSignIn googleSignIn = GoogleSignIn(
-    scopes: <String>['email', 'profile'],
-  );
+  final GoogleSignIn googleSignIn = GoogleSignIn();
   AuthRepository();
 
   Future<User> signInWithGoogle() async {
