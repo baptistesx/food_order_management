@@ -1,1 +1,10 @@
-{"appTitle": "POM"}
+{
+    "appTitle": "POM",
+
+    "forceUpdateDialogTitle": "Mise à jour majeure disponible",
+    "forceUpdateDialogText": "Une version majeure plus récente est disponible, installez là pour bénéficier pleinement de l'application.",
+    "updateDialogTitle": "Nouvelle mise à jour disponible",
+    "updateDialogText": "Une nouvelle version de l'application est disponible réglant des problèmes et apportant quelques nouveautés.",
+    "updateDialogButton": "Mettre à jour",
+    "updateDialogButtonLater": "Plus tard"
+}

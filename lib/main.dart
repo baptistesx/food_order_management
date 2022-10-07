@@ -42,6 +42,8 @@ import 'package:provider/single_child_widget.dart';
 
 FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
+bool isVersionChecked = false;
+
 Future<void> main() async {
   runZonedGuarded<Future<void>>(
     () async {

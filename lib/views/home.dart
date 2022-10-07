@@ -4,6 +4,8 @@ import 'package:pom/blocs/orders/orders.dart';
 import 'package:pom/blocs/orders/orders_events.dart';
 import 'package:pom/blocs/pizzas/pizzas.dart';
 import 'package:pom/blocs/pizzas/pizzas_events.dart';
+import 'package:pom/main.dart';
+import 'package:pom/utils/functions.dart';
 import 'package:pom/views/ingredients.dart';
 import 'package:pom/views/orders.dart';
 import 'package:pom/views/pizzas.dart';
@@ -13,10 +15,26 @@ import 'package:pom/widgets/home_section_button.dart';
 import 'package:pom/widgets/privacy_policy_button.dart';
 import 'package:pom/widgets/suggestion_button.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   static const String routeName = '/';
 
   const HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void didChangeDependencies() {
+    if (!isVersionChecked) {
+      checkVersion(context);
+
+      isVersionChecked = true;
+    }
+
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {

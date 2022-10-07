@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pom/models/version_checker.dart';
 import 'package:pom/views/sign_in.dart';
 
 Route<dynamic> routeToSignInScreen() {
@@ -28,4 +29,13 @@ Route<dynamic> routeToSignInScreen() {
       );
     },
   );
+}
+
+checkVersion(BuildContext context) async {
+  try {
+    final VersionChecker checker = VersionChecker(context);
+    await checker.init();
+  } catch (e) {
+    debugPrint(e.toString());
+  }
 }
