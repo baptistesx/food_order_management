@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pom/blocs/auth/auth.dart';
 import 'package:pom/blocs/auth/auth_events.dart';
 import 'package:pom/blocs/auth/auth_states.dart';
+import 'package:pom/main.dart';
 import 'package:pom/theme/themes.dart';
 import 'package:pom/views/sign_in.dart';
 import 'package:pom/widgets/custom_snackbar_error_content.dart';
@@ -41,12 +42,14 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
             }
           },
           builder: (BuildContext context, AuthState state) {
-            return IconButton(
-              onPressed: () {
-                context.read<AuthBloc>().add(SignOutEvent());
-              },
-              icon: const Icon(Icons.logout),
-            );
+            return firebaseAuth.currentUser != null
+                ? IconButton(
+                    onPressed: () {
+                      context.read<AuthBloc>().add(SignOutEvent());
+                    },
+                    icon: const Icon(Icons.logout),
+                  )
+                : const SizedBox();
           },
         )
       ],

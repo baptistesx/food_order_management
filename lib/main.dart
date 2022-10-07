@@ -22,6 +22,8 @@ import 'package:pom/blocs/pizza/pizza_states.dart';
 import 'package:pom/blocs/pizzas/pizzas.dart';
 import 'package:pom/blocs/pizzas/pizzas_states.dart';
 import 'package:pom/blocs/settings/settings.dart';
+import 'package:pom/blocs/suggestion/suggestion.dart';
+import 'package:pom/blocs/suggestion/suggestion_states.dart';
 import 'package:pom/firebase_options.dart';
 import 'package:pom/models/settings_models.dart';
 import 'package:pom/repositories/auth/auth.dart';
@@ -32,6 +34,7 @@ import 'package:pom/repositories/orders/orders.dart';
 import 'package:pom/repositories/pizza/pizza.dart';
 import 'package:pom/repositories/pizzas/pizzas.dart';
 import 'package:pom/repositories/settings/settings.dart';
+import 'package:pom/repositories/suggestion/suggestion.dart';
 import 'package:pom/services/logger.dart';
 import 'package:pom/theme/themes.dart';
 import 'package:provider/provider.dart';
@@ -107,6 +110,12 @@ Future<void> main() async {
               create: (BuildContext context) => AuthBloc(
                 AuthRepository(),
                 initialState: AuthInitialState(),
+              ),
+            ),
+            BlocProvider<SuggestionBloc>(
+              create: (BuildContext context) => SuggestionBloc(
+                SuggestionRepository(),
+                initialState: SuggestionInitialState(),
               ),
             ),
           ],

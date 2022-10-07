@@ -11,6 +11,7 @@ import 'package:pom/views/pizza.dart';
 import 'package:pom/views/pizzas.dart';
 import 'package:pom/views/sign_in.dart';
 import 'package:pom/views/statistics.dart';
+import 'package:pom/views/suggestion.dart';
 
 class MainRouter {
   static Route<dynamic>? generateRoute(RouteSettings settings) {
@@ -74,6 +75,11 @@ class MainRouter {
           builder: (BuildContext context) => PizzaPage(
             pizza: args?['pizza'] as Pizza?,
           ),
+        );
+      case SuggestionPage.routeName:
+        return MaterialPageRoute<dynamic>(
+          settings: settings,
+          builder: (BuildContext context) => const SuggestionPage(),
         );
       default:
         assert(false, 'Need to implement ${settings.name}');

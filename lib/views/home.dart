@@ -10,6 +10,8 @@ import 'package:pom/views/pizzas.dart';
 import 'package:pom/views/statistics.dart';
 import 'package:pom/widgets/custom_appbar.dart';
 import 'package:pom/widgets/home_section_button.dart';
+import 'package:pom/widgets/privacy_policy_button.dart';
+import 'package:pom/widgets/suggestion_button.dart';
 
 class HomePage extends StatelessWidget {
   static const String routeName = '/';
@@ -22,7 +24,7 @@ class HomePage extends StatelessWidget {
       appBar: const CustomAppBar(title: Text('Accueil')),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: <HomeSectionButton>[
+        children: <Widget>[
           const HomeSectionButton(
             title: 'Liste des ingrédients',
             route: IngredientsPage.routeName,
@@ -52,6 +54,9 @@ class HomePage extends StatelessWidget {
                   );
             },
           ),
+          const Spacer(),
+          const SuggestionButton(),
+          const PrivacyPolicyButton(),
         ],
       ),
     );
