@@ -4,10 +4,5 @@
     
     
     
-      
-      <testcase classname="fastlane.lanes" name="0: upload_to_play_store" time="415.318297">
-        
-      </testcase>
-    
   </testsuite>
 </testsuites>
