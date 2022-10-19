@@ -6,12 +6,14 @@ import 'package:pom/models/exceptions.dart';
 
 class AuthRepository {
   FirebaseFirestore db = FirebaseFirestore.instance;
-  final GoogleSignIn googleSignIn = GoogleSignIn();
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: <String>['email', 'profile'],
+  );
   AuthRepository();
 
   Future<User> signInWithGoogle() async {
     final GoogleSignInAccount? googleSignInAccount =
-        await googleSignIn.signIn();
+        await _googleSignIn.signIn();
 
     if (googleSignInAccount == null) {
       throw StandardException('Erreur lors de la connexion.');
@@ -36,7 +38,7 @@ class AuthRepository {
   }
 
   Future<void> signOut() async {
-    await googleSignIn.signOut();
+    await _googleSignIn.signOut();
     await firebaseAuth.signOut(); // TODO: check if both are necessary
   }
 }

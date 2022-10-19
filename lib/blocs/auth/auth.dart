@@ -25,6 +25,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await authRepository.signInWithGoogle();
 
       emit(AuthConnectedState());
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'account-exists-with-different-credential') {
+        emit(AuthErrorState('Des crédentials différents sont déjà utiliés pour ce compte'));
+        emit(AuthInitialState());
+      } else if (e.code == 'invalid-credential') {
+        emit(AuthErrorState('Credentials invalides'));
+        emit(AuthInitialState());
+      }
     } on StandardException catch (e) {
       emit(AuthErrorState(e.message));
       emit(AuthInitialState());
