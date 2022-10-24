@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fom/extensions/text_helper.dart';
-import 'package:fom/models/pizza.dart';
+import 'package:fom/models/meal.dart';
 
 enum OrderStatus { toDo, done, delivered }
 
@@ -11,7 +11,7 @@ class Order {
   final OrderStatus status;
   final DateTime createdAt;
   final TimeOfDay timeToDeliver;
-  final List<Pizza> pizzas;
+  final List<Meal> meals;
   final String? clientName;
 
   Order({
@@ -20,7 +20,7 @@ class Order {
     required this.status,
     required this.createdAt,
     required this.timeToDeliver,
-    required this.pizzas,
+    required this.meals,
     required this.clientName,
   });
 
@@ -39,7 +39,7 @@ class Order {
         timeToDeliver.hour,
         timeToDeliver.minute,
       ),
-      'pizzas': pizzas.map((Pizza x) => x.toMap(true)).toList(),
+      'meals': meals.map((Meal x) => x.toMap(true)).toList(),
       'clientName': clientName?.trim().toCapitalized(),
     };
   }
@@ -56,12 +56,12 @@ class Order {
           .firstWhere((OrderStatus element) => element.name == map['status']),
       createdAt: DateTime.parse(map['createdAt']),
       timeToDeliver: TimeOfDay(hour: date.hour, minute: date.minute),
-      pizzas: map['pizzas'] == null
-          ? <Pizza>[]
-          : List<Pizza>.from(
-              (map['pizzas'] as List<dynamic>?)!.map(
+      meals: map['meals'] == null
+          ? <Meal>[]
+          : List<Meal>.from(
+              (map['meals'] as List<dynamic>?)!.map(
                 (dynamic x) =>
-                    Pizza.fromMap(x, (x as Map<String, dynamic>)['id']),
+                    Meal.fromMap(x, (x as Map<String, dynamic>)['id']),
               ),
             ),
       clientName: (map['clientName'] as String?)?.trim().toCapitalized(),
@@ -74,7 +74,7 @@ class Order {
     OrderStatus? status,
     DateTime? createdAt,
     TimeOfDay? timeToDeliver,
-    List<Pizza>? pizzas,
+    List<Meal>? meals,
     String? clientName,
   }) {
     return Order(
@@ -83,7 +83,7 @@ class Order {
       status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
       timeToDeliver: timeToDeliver ?? this.timeToDeliver,
-      pizzas: pizzas ?? this.pizzas,
+      meals: meals ?? this.meals,
       clientName: clientName ?? this.clientName,
     );
   }

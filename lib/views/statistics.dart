@@ -4,8 +4,8 @@ import 'package:fom/blocs/orders/orders.dart';
 import 'package:fom/blocs/orders/orders_events.dart';
 import 'package:fom/blocs/orders/orders_states.dart';
 import 'package:fom/models/day_statistics.dart';
+import 'package:fom/models/meal.dart';
 import 'package:fom/models/order.dart';
-import 'package:fom/models/pizza.dart';
 import 'package:fom/widgets/custom_appbar.dart';
 import 'package:fom/widgets/day_statistics_card.dart';
 
@@ -55,7 +55,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                         ordersDelivered[i].createdAt.day,
                       ),
                       ordersDelivered: <Order>[ordersDelivered[i]],
-                      allOrdersDeliveredPizzas: <Pizza>[],
+                      allOrdersDeliveredMeals: <Meal>[],
                       totalDayIncomes: 0,
                     ),
                   );
@@ -72,22 +72,21 @@ class _StatisticsPageState extends State<StatisticsPage> {
               }
 
               for (int i = 0; i < dayStatistics.length; i++) {
-                dayStatistics[i].allOrdersDeliveredPizzas = dayStatistics[i]
+                dayStatistics[i].allOrdersDeliveredMeals = dayStatistics[i]
                     .ordersDelivered
-                    .map((Order order) => order.pizzas)
-                    .expand((List<Pizza> element) => element)
+                    .map((Order order) => order.meals)
+                    .expand((List<Meal> element) => element)
                     .toList();
 
                 dayStatistics[i].totalDayIncomes =
-                    dayStatistics[i].allOrdersDeliveredPizzas.isEmpty
+                    dayStatistics[i].allOrdersDeliveredMeals.isEmpty
                         ? 0.0
                         : dayStatistics[i]
-                            .allOrdersDeliveredPizzas
+                            .allOrdersDeliveredMeals
                             .map(
-                              (Pizza pizza) =>
-                                  pizza.isBig != null && pizza.isBig!
-                                      ? pizza.priceBig!
-                                      : pizza.priceSmall!,
+                              (Meal meal) => meal.isBig != null && meal.isBig!
+                                  ? meal.priceBig!
+                                  : meal.priceSmall!,
                             )
                             .reduce(
                               (double value, double element) => value + element,

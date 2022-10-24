@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fom/blocs/meals/meals.dart';
+import 'package:fom/blocs/meals/meals_events.dart';
 import 'package:fom/blocs/orders/orders.dart';
 import 'package:fom/blocs/orders/orders_events.dart';
-import 'package:fom/blocs/pizzas/pizzas.dart';
-import 'package:fom/blocs/pizzas/pizzas_events.dart';
 import 'package:fom/main.dart';
 import 'package:fom/utils/functions.dart';
 import 'package:fom/views/ingredients.dart';
+import 'package:fom/views/meals.dart';
 import 'package:fom/views/orders.dart';
-import 'package:fom/views/pizzas.dart';
 import 'package:fom/views/statistics.dart';
 import 'package:fom/widgets/custom_appbar.dart';
 import 'package:fom/widgets/home_section_button.dart';
@@ -48,11 +48,11 @@ class _HomePageState extends State<HomePage> {
             route: IngredientsPage.routeName,
           ),
           HomeSectionButton(
-            title: 'Carte des pizzas',
-            route: PizzasPage.routeName,
+            title: 'La carte',
+            route: MealsPage.routeName,
             onClick: () {
-              context.read<PizzasBloc>().add(
-                    GetPizzasEvent(),
+              context.read<MealsBloc>().add(
+                    GetMealsEvent(),
                   );
             },
           ),
@@ -64,8 +64,8 @@ class _HomePageState extends State<HomePage> {
             title: 'Statistiques',
             route: StatisticsPage.routeName,
             onClick: () {
-              context.read<PizzasBloc>().add(
-                    GetPizzasEvent(),
+              context.read<MealsBloc>().add(
+                    GetMealsEvent(),
                   );
               context.read<OrdersBloc>().add(
                     GetOrdersEvent(),

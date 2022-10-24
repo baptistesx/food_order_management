@@ -13,14 +13,14 @@ import 'package:fom/blocs/ingredient/ingredient.dart';
 import 'package:fom/blocs/ingredient/ingredient_states.dart';
 import 'package:fom/blocs/ingredients/ingredients.dart';
 import 'package:fom/blocs/ingredients/ingredients_states.dart';
+import 'package:fom/blocs/meal/meal.dart';
+import 'package:fom/blocs/meal/meal_states.dart';
+import 'package:fom/blocs/meals/meals.dart';
+import 'package:fom/blocs/meals/meals_states.dart';
 import 'package:fom/blocs/order/order.dart';
 import 'package:fom/blocs/order/order_states.dart';
 import 'package:fom/blocs/orders/orders.dart';
 import 'package:fom/blocs/orders/orders_states.dart';
-import 'package:fom/blocs/pizza/pizza.dart';
-import 'package:fom/blocs/pizza/pizza_states.dart';
-import 'package:fom/blocs/pizzas/pizzas.dart';
-import 'package:fom/blocs/pizzas/pizzas_states.dart';
 import 'package:fom/blocs/settings/settings.dart';
 import 'package:fom/blocs/suggestion/suggestion.dart';
 import 'package:fom/blocs/suggestion/suggestion_states.dart';
@@ -29,10 +29,10 @@ import 'package:fom/models/settings_models.dart';
 import 'package:fom/repositories/auth/auth.dart';
 import 'package:fom/repositories/ingredient/ingredient.dart';
 import 'package:fom/repositories/ingredients/ingredients.dart';
+import 'package:fom/repositories/meal/meal.dart';
+import 'package:fom/repositories/meals/meals.dart';
 import 'package:fom/repositories/order/order.dart';
 import 'package:fom/repositories/orders/orders.dart';
-import 'package:fom/repositories/pizza/pizza.dart';
-import 'package:fom/repositories/pizzas/pizzas.dart';
 import 'package:fom/repositories/settings/settings.dart';
 import 'package:fom/repositories/suggestion/suggestion.dart';
 import 'package:fom/services/logger.dart';
@@ -84,16 +84,16 @@ Future<void> main() async {
                 initialState: IngredientInitialState(),
               ),
             ),
-            BlocProvider<PizzasBloc>(
-              create: (BuildContext context) => PizzasBloc(
-                PizzasRepository(),
-                initialState: PizzasInitialState(),
+            BlocProvider<MealsBloc>(
+              create: (BuildContext context) => MealsBloc(
+                MealsRepository(),
+                initialState: MealsInitialState(),
               ),
             ),
-            BlocProvider<PizzaBloc>(
-              create: (BuildContext context) => PizzaBloc(
-                PizzaRepository(),
-                initialState: PizzaInitialState(),
+            BlocProvider<MealBloc>(
+              create: (BuildContext context) => MealBloc(
+                MealRepository(),
+                initialState: MealInitialState(),
               ),
             ),
             BlocProvider<OrdersBloc>(
@@ -127,7 +127,7 @@ Future<void> main() async {
                 create: (BuildContext context) => AppTheme(),
               ),
             ],
-            child: POMApp(
+            child: FOMApp(
               observer: FirebaseAnalyticsObserver(
                 analytics: FirebaseAnalytics.instance,
               ),

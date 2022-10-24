@@ -7,7 +7,7 @@
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
 		<key>CFBundleDisplayName</key>
-		<string>POM</string>
+		<string>FOM</string>
 		<key>CFBundleExecutable</key>
 		<string>$(EXECUTABLE_NAME)</string>
 		<key>CFBundleIdentifier</key>
@@ -63,6 +63,5 @@
 			</dict>
 		</array>
 		<!-- End of the Google Sign-in Section -->
-
 	</dict>
 </plist>

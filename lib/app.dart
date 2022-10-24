@@ -8,10 +8,10 @@ import 'package:fom/views/home.dart';
 import 'package:fom/views/sign_in.dart';
 import 'package:provider/provider.dart';
 
-class POMApp extends StatelessWidget {
+class FOMApp extends StatelessWidget {
   final NavigatorObserver? observer;
 
-  const POMApp({Key? key, this.observer}) : super(key: key);
+  const FOMApp({Key? key, this.observer}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

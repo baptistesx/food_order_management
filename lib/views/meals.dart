@@ -1,30 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fom/blocs/pizza/pizza.dart';
-import 'package:fom/blocs/pizza/pizza_events.dart';
-import 'package:fom/blocs/pizza/pizza_states.dart';
-import 'package:fom/blocs/pizzas/pizzas.dart';
-import 'package:fom/blocs/pizzas/pizzas_events.dart';
-import 'package:fom/blocs/pizzas/pizzas_states.dart';
-import 'package:fom/models/pizza.dart';
+import 'package:fom/blocs/meal/meal.dart';
+import 'package:fom/blocs/meal/meal_events.dart';
+import 'package:fom/blocs/meal/meal_states.dart';
+import 'package:fom/blocs/meals/meals.dart';
+import 'package:fom/blocs/meals/meals_events.dart';
+import 'package:fom/blocs/meals/meals_states.dart';
+import 'package:fom/models/meal.dart';
 import 'package:fom/theme/themes.dart';
-import 'package:fom/views/pizza.dart';
+import 'package:fom/views/meal.dart';
 import 'package:fom/widgets/confirm_action_dialog.dart';
 import 'package:fom/widgets/custom_appbar.dart';
 import 'package:fom/widgets/item_card.dart';
 
-class PizzasPage extends StatefulWidget {
-  static const String routeName = '/pizzas';
+class MealsPage extends StatefulWidget {
+  static const String routeName = '/meals';
 
-  const PizzasPage({
+  const MealsPage({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<PizzasPage> createState() => _PizzasPageState();
+  State<MealsPage> createState() => _MealsPageState();
 }
 
-class _PizzasPageState extends State<PizzasPage> {
+class _MealsPageState extends State<MealsPage> {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
 
@@ -32,36 +32,35 @@ class _PizzasPageState extends State<PizzasPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const CustomAppBar(
-        title: Text('Pizzas'),
+        title: Text('La carte'),
       ),
-      body: BlocListener<PizzaBloc, PizzaState>(
-        listener: (BuildContext context, PizzaState pizzaState) {
-          if (pizzaState is PizzaDeletedState ||
-              pizzaState is PizzaUpdatedState) {
-            context.read<PizzasBloc>().add(
-                  GetPizzasEvent(),
+      body: BlocListener<MealBloc, MealState>(
+        listener: (BuildContext context, MealState mealState) {
+          if (mealState is MealDeletedState || mealState is MealUpdatedState) {
+            context.read<MealsBloc>().add(
+                  GetMealsEvent(),
                 );
           }
         },
-        child: BlocBuilder<PizzasBloc, PizzasState>(
-          builder: (BuildContext context, PizzasState pizzasState) {
-            if (pizzasState is PizzasLoadingState) {
+        child: BlocBuilder<MealsBloc, MealsState>(
+          builder: (BuildContext context, MealsState mealsState) {
+            if (mealsState is MealsLoadingState) {
               return const Center(child: CircularProgressIndicator());
-            } else if (pizzasState is PizzasFetchedState) {
+            } else if (mealsState is MealsFetchedState) {
               return RefreshIndicator(
                 key: _refreshIndicatorKey,
                 onRefresh: () async {
-                  context.read<PizzasBloc>().add(GetPizzasEvent());
+                  context.read<MealsBloc>().add(GetMealsEvent());
                 },
                 child: ListView(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-                  children: pizzasState.pizzas.isEmpty
-                      ? <Widget>[const Text('Aucune pizza trouvée.')]
-                      : pizzasState.pizzas
+                  children: mealsState.meals.isEmpty
+                      ? <Widget>[const Text('Aucun élément trouvé.')]
+                      : mealsState.meals
                           .map(
-                            (Pizza pizza) => ItemCard(
-                              item: pizza,
+                            (Meal meal) => ItemCard(
+                              item: meal,
                               onDelete: () async {
                                 // ignore: always_specify_types
                                 final shouldDelete = await showDialog(
@@ -71,9 +70,9 @@ class _PizzasPageState extends State<PizzasPage> {
                                   },
                                 );
                                 if (shouldDelete != null && shouldDelete) {
-                                  if (pizza.id != null && mounted) {
-                                    context.read<PizzaBloc>().add(
-                                          DeletePizzaByIdEvent(pizza.id!),
+                                  if (meal.id != null && mounted) {
+                                    context.read<MealBloc>().add(
+                                          DeleteMealByIdEvent(meal.id!),
                                         );
                                   }
                                 }
@@ -81,8 +80,8 @@ class _PizzasPageState extends State<PizzasPage> {
                               onEdit: () {
                                 Navigator.pushNamed(
                                   context,
-                                  PizzaPage.routeName,
-                                  arguments: <String, dynamic>{'pizza': pizza},
+                                  MealPage.routeName,
+                                  arguments: <String, dynamic>{'meal': meal},
                                 );
                               },
                             ),
@@ -101,7 +100,7 @@ class _PizzasPageState extends State<PizzasPage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: context.themeColors.secondaryColor,
         onPressed: () {
-          Navigator.pushNamed(context, PizzaPage.routeName);
+          Navigator.pushNamed(context, MealPage.routeName);
         },
         child: const Icon(Icons.add),
       ),

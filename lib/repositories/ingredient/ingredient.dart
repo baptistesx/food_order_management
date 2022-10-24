@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fom/models/exceptions.dart';
 import 'package:fom/models/ingredient.dart';
-import 'package:fom/models/pizza.dart';
-import 'package:fom/repositories/pizza/pizza.dart';
-import 'package:fom/repositories/pizzas/pizzas.dart';
+import 'package:fom/models/meal.dart';
+import 'package:fom/repositories/meal/meal.dart';
+import 'package:fom/repositories/meals/meals.dart';
 
 class IngredientRepository {
   FirebaseFirestore db = FirebaseFirestore.instance;
-  PizzasRepository pizzasRepository = PizzasRepository();
-  PizzaRepository pizzaRepository = PizzaRepository();
+  MealsRepository mealsRepository = MealsRepository();
+  MealRepository mealRepository = MealRepository();
 
   IngredientRepository();
 
@@ -28,17 +28,17 @@ class IngredientRepository {
   }
 
   Future<void> deleteIngredientById(Ingredient ingredient) async {
-    final List<Pizza> pizzas = await pizzasRepository.getPizzas();
+    final List<Meal> meals = await mealsRepository.getMeals();
 
-    pizzas
-        .where((Pizza pizza) => pizza.ingredients!.contains(ingredient))
-        .forEach((Pizza pizza) async {
-      pizza.ingredients!.removeWhere(
+    meals
+        .where((Meal meal) => meal.ingredients!.contains(ingredient))
+        .forEach((Meal meal) async {
+      meal.ingredients!.removeWhere(
         (Ingredient ingredientToUpdate) =>
             ingredientToUpdate.id == ingredient.id,
       );
 
-      await pizzaRepository.updatePizzaById(pizza);
+      await mealRepository.updateMealById(meal);
     });
 
     await db.collection('ingredients').doc(ingredient.id).delete();

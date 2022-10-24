@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
-import 'package:fom/blocs/pizzas/pizzas.dart';
-import 'package:fom/blocs/pizzas/pizzas_states.dart';
+import 'package:fom/blocs/meals/meals.dart';
+import 'package:fom/blocs/meals/meals_states.dart';
 import 'package:fom/models/day_statistics.dart';
-import 'package:fom/models/pizza.dart';
+import 'package:fom/models/meal.dart';
 import 'package:fom/theme/themes.dart';
+import 'package:intl/intl.dart';
 
 class DayStatisticsCard extends StatelessWidget {
   final DayStatistics dayStatistics;
@@ -29,26 +29,26 @@ class DayStatisticsCard extends StatelessWidget {
           Text(
             'Total commandes livrées: ${dayStatistics.ordersDelivered.isEmpty ? "0" : dayStatistics.ordersDelivered.length}',
           ),
-          Text(
-            'Total pizzas livrées: ${dayStatistics.allOrdersDeliveredPizzas.length}',
-          ),
+          // Text(
+          //   'Total meals livrées: ${dayStatistics.allOrdersDeliveredMeals.length}',
+          // ),
           Text('CA total: ${dayStatistics.totalDayIncomes.toString()}€'),
-          BlocBuilder<PizzasBloc, PizzasState>(
-            builder: (BuildContext context, PizzasState pizzasState) {
-              if (pizzasState is PizzasFetchedState) {
+          BlocBuilder<MealsBloc, MealsState>(
+            builder: (BuildContext context, MealsState mealsState) {
+              if (mealsState is MealsFetchedState) {
                 return Column(
-                  children: pizzasState.pizzas
+                  children: mealsState.meals
                       .map(
-                        (Pizza pizza) => dayStatistics.allOrdersDeliveredPizzas
+                        (Meal meal) => dayStatistics.allOrdersDeliveredMeals
                                 .where(
-                                  (Pizza element) => element.id == pizza.id,
+                                  (Meal element) => element.id == meal.id,
                                 )
                                 .isEmpty
                             ? const SizedBox()
                             : Card(
                                 child: ListTile(
                                   title: Text(
-                                    '${dayStatistics.allOrdersDeliveredPizzas.where((Pizza element) => element.id == pizza.id).length} x ${pizza.name}',
+                                    '${dayStatistics.allOrdersDeliveredMeals.where((Meal element) => element.id == meal.id).length} x ${meal.name}',
                                   ),
                                 ),
                               ),

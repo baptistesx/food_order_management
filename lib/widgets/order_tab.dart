@@ -4,8 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fom/blocs/order/order.dart';
 import 'package:fom/blocs/order/order_events.dart';
 import 'package:fom/models/ingredient.dart';
+import 'package:fom/models/meal.dart';
 import 'package:fom/models/order.dart';
-import 'package:fom/models/pizza.dart';
 import 'package:fom/views/order.dart';
 
 class OrderTab extends StatefulWidget {
@@ -95,49 +95,49 @@ class _OrderTabState extends State<OrderTab> {
                           const SizedBox(width: 5),
                           Chip(
                             label: Text(
-                              '${order.pizzas.length.toString()} pizzas (${order.pizzas.where((Pizza pizza) => pizza.isBig != null && pizza.isBig!).length} grande(s), ${order.pizzas.where((Pizza pizza) => pizza.isBig == null || !pizza.isBig!).length} petite(s))',
+                              '${order.meals.length.toString()} meals (${order.meals.where((Meal meal) => meal.isBig != null && meal.isBig!).length} grande(s), ${order.meals.where((Meal meal) => meal.isBig == null || !meal.isBig!).length} petite(s))',
                             ),
                           ),
                           const SizedBox(width: 5),
                           Chip(
                             label: Text(
-                              order.pizzas.isEmpty
+                              order.meals.isEmpty
                                   ? '0'
-                                  : '${order.pizzas.map((Pizza pizza) => pizza.isBig != null && pizza.isBig! ? pizza.priceBig : pizza.priceSmall).reduce((double? value, double? element) => value! + element!).toString()}€',
+                                  : '${order.meals.map((Meal meal) => meal.isBig != null && meal.isBig! ? meal.priceBig : meal.priceSmall).reduce((double? value, double? element) => value! + element!).toString()}€',
                             ),
                           ),
                         ],
                       ),
                       controlAffinity: ListTileControlAffinity.leading,
-                      children: order.pizzas
+                      children: order.meals
                           .map(
-                            (Pizza pizza) => OrderPizzaCard(
-                              pizza: pizza,
+                            (Meal meal) => OrderMealCard(
+                              meal: meal,
                               count: 1,
-                              isChecked: pizza.isDone != null && pizza.isDone!,
+                              isChecked: meal.isDone != null && meal.isDone!,
                               onCheck: (bool? isChecked) {
                                 if (isChecked != null && isChecked) {
-                                  if (order.pizzas
+                                  if (order.meals
                                           .where(
-                                            (Pizza e) =>
+                                            (Meal e) =>
                                                 e.isDone != null && e.isDone!,
                                           )
                                           .toList()
                                           .length ==
-                                      order.pizzas.length - 1) {
+                                      order.meals.length - 1) {
                                     context.read<OrderBloc>().add(
                                           UpdateOrderByIdEvent(
                                             order.copyWith(
                                               status: OrderStatus.done,
-                                              pizzas: List<Pizza>.from(
-                                                order.pizzas
-                                                    .map((Pizza pizzaToUpdate) {
-                                                  if (pizzaToUpdate.hashCode ==
-                                                      pizza.hashCode) {
-                                                    return pizzaToUpdate
+                                              meals: List<Meal>.from(
+                                                order.meals
+                                                    .map((Meal mealToUpdate) {
+                                                  if (mealToUpdate.hashCode ==
+                                                      meal.hashCode) {
+                                                    return mealToUpdate
                                                         .copyWith(isDone: true);
                                                   } else {
-                                                    return pizzaToUpdate;
+                                                    return mealToUpdate;
                                                   }
                                                 }).toList(),
                                               ),
@@ -148,17 +148,17 @@ class _OrderTabState extends State<OrderTab> {
                                     context.read<OrderBloc>().add(
                                           UpdateOrderByIdEvent(
                                             order.copyWith(
-                                              pizzas: List<Pizza>.from(
-                                                order.pizzas
-                                                    .map((Pizza pizzaToUpdate) {
-                                                  if (pizzaToUpdate.hashCode ==
-                                                      pizza.hashCode) {
-                                                    return pizzaToUpdate
+                                              meals: List<Meal>.from(
+                                                order.meals
+                                                    .map((Meal mealToUpdate) {
+                                                  if (mealToUpdate.hashCode ==
+                                                      meal.hashCode) {
+                                                    return mealToUpdate
                                                         .copyWith(
                                                       isDone: true,
                                                     );
                                                   } else {
-                                                    return pizzaToUpdate;
+                                                    return mealToUpdate;
                                                   }
                                                 }).toList(),
                                               ),
@@ -172,17 +172,17 @@ class _OrderTabState extends State<OrderTab> {
                                           UpdateOrderByIdEvent(
                                             order.copyWith(
                                               status: OrderStatus.toDo,
-                                              pizzas: List<Pizza>.from(
-                                                order.pizzas
-                                                    .map((Pizza pizzaToUpdate) {
-                                                  if (pizzaToUpdate.hashCode ==
-                                                      pizza.hashCode) {
-                                                    return pizzaToUpdate
+                                              meals: List<Meal>.from(
+                                                order.meals
+                                                    .map((Meal mealToUpdate) {
+                                                  if (mealToUpdate.hashCode ==
+                                                      meal.hashCode) {
+                                                    return mealToUpdate
                                                         .copyWith(
                                                       isDone: false,
                                                     );
                                                   } else {
-                                                    return pizzaToUpdate;
+                                                    return mealToUpdate;
                                                   }
                                                 }).toList(),
                                               ),
@@ -193,17 +193,17 @@ class _OrderTabState extends State<OrderTab> {
                                     context.read<OrderBloc>().add(
                                           UpdateOrderByIdEvent(
                                             order.copyWith(
-                                              pizzas: List<Pizza>.from(
-                                                order.pizzas
-                                                    .map((Pizza pizzaToUpdate) {
-                                                  if (pizzaToUpdate.hashCode ==
-                                                      pizza.hashCode) {
-                                                    return pizzaToUpdate
+                                              meals: List<Meal>.from(
+                                                order.meals
+                                                    .map((Meal mealToUpdate) {
+                                                  if (mealToUpdate.hashCode ==
+                                                      meal.hashCode) {
+                                                    return mealToUpdate
                                                         .copyWith(
                                                       isDone: false,
                                                     );
                                                   } else {
-                                                    return pizzaToUpdate;
+                                                    return mealToUpdate;
                                                   }
                                                 }).toList(),
                                               ),
@@ -227,15 +227,15 @@ class _OrderTabState extends State<OrderTab> {
   }
 }
 
-class OrderPizzaCard extends StatelessWidget {
-  final Pizza pizza;
+class OrderMealCard extends StatelessWidget {
+  final Meal meal;
   final int count;
   final bool isChecked;
   final void Function(bool?) onCheck;
 
-  const OrderPizzaCard({
+  const OrderMealCard({
     Key? key,
-    required this.pizza,
+    required this.meal,
     required this.count,
     required this.isChecked,
     required this.onCheck,
@@ -246,22 +246,22 @@ class OrderPizzaCard extends StatelessWidget {
     return Card(
       child: ListTile(
         leading: Text(
-          '$count x ${pizza.isBig != null && pizza.isBig! ? "Grande" : "Petite"}',
+          '$count x ${meal.isBig != null && meal.isBig! ? "Grande" : "Petite"}',
         ),
-        title: Text(pizza.name ?? 'Error'),
+        title: Text(meal.name ?? 'Error'),
         subtitle: Wrap(
           children: <Widget>[
-            if (pizza.ingredientsToAdd!.isNotEmpty ||
-                pizza.ingredientsToRemove!.isNotEmpty)
+            if (meal.ingredientsToAdd!.isNotEmpty ||
+                meal.ingredientsToRemove!.isNotEmpty)
               const Icon(
                 Icons.warning_amber_rounded,
                 color: Colors.red,
               ),
-            // Text(pizza.name ?? 'Error'),
+            // Text(meal.name ?? 'Error'),
             const SizedBox(width: 8),
-            if (pizza.ingredientsToRemove!.isNotEmpty)
+            if (meal.ingredientsToRemove!.isNotEmpty)
               Text(
-                pizza.ingredientsToRemove!
+                meal.ingredientsToRemove!
                     .map(
                       (Ingredient ingredient) => ingredient.name,
                     )
@@ -276,9 +276,9 @@ class OrderPizzaCard extends StatelessWidget {
                 ),
               ),
             const SizedBox(width: 8),
-            if (pizza.ingredientsToAdd!.isNotEmpty)
+            if (meal.ingredientsToAdd!.isNotEmpty)
               Text(
-                pizza.ingredientsToAdd!
+                meal.ingredientsToAdd!
                     .map(
                       (Ingredient ingredient) => ingredient.name,
                     )

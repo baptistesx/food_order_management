@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fom/blocs/meals/meals.dart';
+import 'package:fom/blocs/meals/meals_states.dart';
 import 'package:fom/blocs/order/order.dart';
 import 'package:fom/blocs/order/order_events.dart';
 import 'package:fom/blocs/order/order_states.dart';
-import 'package:fom/blocs/pizzas/pizzas.dart';
-import 'package:fom/blocs/pizzas/pizzas_states.dart';
 import 'package:fom/main.dart';
 import 'package:fom/models/ingredient.dart';
+import 'package:fom/models/meal.dart';
 import 'package:fom/models/order.dart';
-import 'package:fom/models/pizza.dart';
 import 'package:fom/theme/themes.dart';
-import 'package:fom/widgets/add_pizza_to_order_dialog.dart';
+import 'package:fom/widgets/add_meal_to_order_dialog.dart';
 import 'package:fom/widgets/confirm_action_dialog.dart';
 import 'package:fom/widgets/custom_appbar.dart';
 import 'package:fom/widgets/layout/scrollable_column_space_between.dart';
@@ -30,7 +30,7 @@ class _OrderPage extends State<OrderPage> {
   TextEditingController _clientNameController = TextEditingController();
   TextEditingController _timeToDeliverController = TextEditingController();
   TimeOfDay? _timeToDeliver;
-  List<Pizza> pizzas = <Pizza>[];
+  List<Meal> meals = <Meal>[];
 
   @override
   void initState() {
@@ -48,9 +48,9 @@ class _OrderPage extends State<OrderPage> {
         hour: widget.order!.timeToDeliver.hour,
         minute: widget.order!.timeToDeliver.minute,
       );
-      pizzas = widget.order != null
-          ? widget.order!.pizzas.map((Pizza e) => e).toList()
-          : <Pizza>[];
+      meals = widget.order != null
+          ? widget.order!.meals.map((Meal e) => e).toList()
+          : <Meal>[];
     }
   }
 
@@ -61,19 +61,17 @@ class _OrderPage extends State<OrderPage> {
     _clientNameController.dispose();
   }
 
-  Map<Pizza, int> getPizzasSorted(List<Pizza> pizzas) {
-    final Map<Pizza, int> distinct = <Pizza, int>{};
+  Map<Meal, int> getMealsSorted(List<Meal> meals) {
+    final Map<Meal, int> distinct = <Meal, int>{};
 
-    for (int i = 0; i < pizzas.length; i++) {
-      if (distinct.keys
-          .where((Pizza element) => element == pizzas[i])
-          .isEmpty) {
-        distinct[pizzas[i].copyWith()] = 1;
+    for (int i = 0; i < meals.length; i++) {
+      if (distinct.keys.where((Meal element) => element == meals[i]).isEmpty) {
+        distinct[meals[i].copyWith()] = 1;
       } else {
         distinct[distinct.keys
-            .firstWhere((Pizza element) => element == pizzas[i])] = distinct[
+            .firstWhere((Meal element) => element == meals[i])] = distinct[
                 distinct.keys
-                    .firstWhere((Pizza element) => element == pizzas[i])]! +
+                    .firstWhere((Meal element) => element == meals[i])]! +
             1;
       }
     }
@@ -167,32 +165,32 @@ class _OrderPage extends State<OrderPage> {
                 const SizedBox(height: 24),
                 Wrap(
                   spacing: 5,
-                  children: getPizzasSorted(pizzas)
+                  children: getMealsSorted(meals)
                       .entries
                       .map(
-                        (MapEntry<Pizza, int> pizza) => Chip(
+                        (MapEntry<Meal, int> meal) => Chip(
                           label: Wrap(
                             children: <Widget>[
-                              if (pizza.key.ingredientsToAdd!.isNotEmpty ||
-                                  pizza.key.ingredientsToRemove!.isNotEmpty)
+                              if (meal.key.ingredientsToAdd!.isNotEmpty ||
+                                  meal.key.ingredientsToRemove!.isNotEmpty)
                                 const Icon(
                                   Icons.warning_amber_rounded,
                                   color: Colors.red,
                                 ),
                               Text(
-                                '${pizza.value.toString()} x ${pizza.key.isBig != null && pizza.key.isBig! ? "Grande(s)" : "Petite(s)"}',
+                                '${meal.value.toString()} x ${meal.key.isBig != null && meal.key.isBig! ? "Grande(s)" : "Petite(s)"}',
                               ),
                               Text(
-                                pizza.key.name ?? 'Error',
+                                meal.key.name ?? 'Error',
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               const SizedBox(width: 5),
-                              if (pizza.key.ingredientsToRemove!.isNotEmpty)
+                              if (meal.key.ingredientsToRemove!.isNotEmpty)
                                 Text(
-                                  pizza.key.ingredientsToRemove!
+                                  meal.key.ingredientsToRemove!
                                       .map(
                                         (Ingredient ingredient) =>
                                             ingredient.name,
@@ -208,9 +206,9 @@ class _OrderPage extends State<OrderPage> {
                                   ),
                                 ),
                               const SizedBox(width: 5),
-                              if (pizza.key.ingredientsToAdd!.isNotEmpty)
+                              if (meal.key.ingredientsToAdd!.isNotEmpty)
                                 Text(
-                                  pizza.key.ingredientsToAdd!
+                                  meal.key.ingredientsToAdd!
                                       .map(
                                         (Ingredient ingredient) =>
                                             ingredient.name,
@@ -231,9 +229,8 @@ class _OrderPage extends State<OrderPage> {
                           onDeleted: () {
                             if (mounted) {
                               setState(() {
-                                pizzas.removeWhere(
-                                  (Pizza pizzaToCheck) =>
-                                      pizza.key == pizzaToCheck,
+                                meals.removeWhere(
+                                  (Meal mealToCheck) => meal.key == mealToCheck,
                                 );
                               });
                             }
@@ -242,46 +239,46 @@ class _OrderPage extends State<OrderPage> {
                       )
                       .toList(),
                 ),
-                BlocBuilder<PizzasBloc, PizzasState>(
-                  builder: (BuildContext context, PizzasState pizzasState) {
-                    if (pizzasState is! PizzasFetchedState) {
+                BlocBuilder<MealsBloc, MealsState>(
+                  builder: (BuildContext context, MealsState mealsState) {
+                    if (mealsState is! MealsFetchedState) {
                       return const Center(
                         child: Text('Erreur'),
                       );
                     } else {
                       return Wrap(
-                        children: pizzasState.pizzas
+                        children: mealsState.meals
                             .map(
-                              (Pizza pizza) => SizedBox(
+                              (Meal meal) => SizedBox(
                                 width: 300,
                                 child: Card(
                                   child: ListTile(
                                     onTap: () async {
                                       // ignore: always_specify_types
-                                      final pizzaToAdd = await showDialog(
+                                      final mealToAdd = await showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
-                                          return AddPizzaToOrderDialog(
-                                            pizza: pizza,
+                                          return AddMealToOrderDialog(
+                                            meal: meal,
                                           );
                                         },
                                       );
-                                      if (pizzaToAdd != null) {
+                                      if (mealToAdd != null) {
                                         if (mounted) {
                                           setState(() {
-                                            pizzas.add(pizzaToAdd);
+                                            meals.add(mealToAdd);
                                           });
                                         }
                                       }
                                     },
                                     title: Text(
-                                      '${pizza.name}${pizza.runtimeType == Pizza ? " / ${pizza.priceSmall}€ / ${pizza.priceBig}€" : ""}',
+                                      '${meal.name}${meal.runtimeType == Meal ? " / ${meal.priceSmall}€ / ${meal.priceBig}€" : ""}',
                                     ),
-                                    subtitle: pizza.runtimeType == Pizza
+                                    subtitle: meal.runtimeType == Meal
                                         ? Text(
-                                            (pizza).ingredients == null
+                                            (meal).ingredients == null
                                                 ? 'Erreur'
-                                                : (pizza)
+                                                : (meal)
                                                     .ingredients!
                                                     .map(
                                                       (
@@ -310,7 +307,7 @@ class _OrderPage extends State<OrderPage> {
           child: Column(
             children: <Widget>[
               Text(
-                'Total: ${pizzas.isEmpty ? "0" : pizzas.map((Pizza pizza) => pizza.isBig != null && pizza.isBig! ? pizza.priceBig! : pizza.priceSmall!).toList().reduce((double value, double element) => value + element)}€',
+                'Total: ${meals.isEmpty ? "0" : meals.map((Meal meal) => meal.isBig != null && meal.isBig! ? meal.priceBig! : meal.priceSmall!).toList().reduce((double value, double element) => value + element)}€',
                 style: const TextStyle(fontSize: 20.0),
               ),
               const SizedBox(height: 16),
@@ -318,7 +315,7 @@ class _OrderPage extends State<OrderPage> {
                 children: <Widget>[
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: pizzas.isEmpty || _timeToDeliver == null
+                      onPressed: meals.isEmpty || _timeToDeliver == null
                           ? null
                           : () {
                               if (_formKey.currentState!.validate()) {
@@ -331,7 +328,7 @@ class _OrderPage extends State<OrderPage> {
                                             timeToDeliver: _timeToDeliver!,
                                             clientName:
                                                 _clientNameController.text,
-                                            pizzas: pizzas,
+                                            meals: meals,
                                             userId:
                                                 firebaseAuth.currentUser!.uid,
                                           ),
@@ -347,7 +344,7 @@ class _OrderPage extends State<OrderPage> {
                                             timeToDeliver: _timeToDeliver!,
                                             clientName:
                                                 _clientNameController.text,
-                                            pizzas: pizzas,
+                                            meals: meals,
                                             userId:
                                                 firebaseAuth.currentUser!.uid,
                                           ),

@@ -106,7 +106,7 @@ class _SuggestionPageState extends State<SuggestionPage> {
                             scheme: 'mailto',
                             path: 'contact@ludyb.fr',
                             query: encodeQueryParameters(<String, String>{
-                              'subject': 'Suggestion pour la POM app',
+                              'subject': 'Suggestion pour la FOM app',
                               'body': textController.text,
                             }),
                           );

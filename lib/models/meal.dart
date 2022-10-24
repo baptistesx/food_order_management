@@ -3,7 +3,7 @@ import 'package:fom/extensions/text_helper.dart';
 import 'package:fom/models/ingredient.dart';
 import 'package:fom/models/item.dart';
 
-class Pizza extends Item {
+class Meal extends Item {
   List<Ingredient>? ingredients;
   List<Ingredient>? ingredientsToRemove;
   List<Ingredient>? ingredientsToAdd;
@@ -12,7 +12,7 @@ class Pizza extends Item {
   bool? isDone;
   bool? isBig;
 
-  Pizza({
+  Meal({
     String? id,
     String? userId,
     String? name,
@@ -56,8 +56,8 @@ class Pizza extends Item {
     };
   }
 
-  factory Pizza.fromMap(Map<String, dynamic> map, String? id) {
-    return Pizza(
+  factory Meal.fromMap(Map<String, dynamic> map, String? id) {
+    return Meal(
       id: id,
       userId: map['userId'],
       name: map['name'],
@@ -92,7 +92,7 @@ class Pizza extends Item {
     );
   }
 
-  Pizza copyWith({
+  Meal copyWith({
     List<Ingredient>? ingredients,
     List<Ingredient>? ingredientsToRemove,
     List<Ingredient>? ingredientsToAdd,
@@ -104,7 +104,7 @@ class Pizza extends Item {
     String? name,
     bool? isBig,
   }) {
-    return Pizza(
+    return Meal(
       ingredients: ingredients ?? this.ingredients,
       ingredientsToRemove: ingredientsToRemove ?? this.ingredientsToRemove,
       ingredientsToAdd: ingredientsToAdd ?? this.ingredientsToAdd,
@@ -122,7 +122,7 @@ class Pizza extends Item {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is Pizza &&
+    return other is Meal &&
         listEquals(other.ingredients, ingredients) &&
         listEquals(other.ingredientsToRemove, ingredientsToRemove) &&
         listEquals(other.ingredientsToAdd, ingredientsToAdd) &&

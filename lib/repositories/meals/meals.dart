@@ -1,15 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fom/main.dart';
 import 'package:fom/models/ingredient.dart';
-import 'package:fom/models/pizza.dart';
+import 'package:fom/models/meal.dart';
 
-class PizzasRepository {
+class MealsRepository {
   FirebaseFirestore db = FirebaseFirestore.instance;
-  PizzasRepository();
+  MealsRepository();
 
-  Future<List<Pizza>> getPizzas() async {
-    final QuerySnapshot<Map<String, dynamic>> pizzasSnapshots = await db
-        .collection('pizzas')
+  Future<List<Meal>> getMeals() async {
+    final QuerySnapshot<Map<String, dynamic>> mealsSnapshots = await db
+        .collection('meals')
         .where('userId', isEqualTo: firebaseAuth.currentUser!.uid)
         .get();
 
@@ -25,9 +25,9 @@ class PizzasRepository {
         )
         .toList();
 
-    final List<Pizza> pizzas = pizzasSnapshots.docs
+    final List<Meal> meals = mealsSnapshots.docs
         .map(
-          (QueryDocumentSnapshot<Map<String, dynamic>> e) => Pizza(
+          (QueryDocumentSnapshot<Map<String, dynamic>> e) => Meal(
             id: e.id,
             name: e['name'],
             priceSmall: e['priceSmall'],
@@ -47,6 +47,6 @@ class PizzasRepository {
         )
         .toList();
 
-    return pizzas;
+    return meals;
   }
 }
