@@ -1,5 +1,5 @@
-import 'package:pom/extensions/text_helper.dart';
-import 'package:pom/models/item.dart';
+import 'package:fom/extensions/text_helper.dart';
+import 'package:fom/models/item.dart';
 
 class Ingredient extends Item {
   const Ingredient({

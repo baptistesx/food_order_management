@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:pom/models/suggestion.dart';
+import 'package:fom/models/suggestion.dart';
 
 class SuggestionRepository {
   FirebaseFirestore db = FirebaseFirestore.instance;

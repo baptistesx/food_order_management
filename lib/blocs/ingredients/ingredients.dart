@@ -1,9 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pom/blocs/ingredients/ingredients_events.dart';
-import 'package:pom/blocs/ingredients/ingredients_states.dart';
-import 'package:pom/models/exceptions.dart';
-import 'package:pom/models/ingredient.dart';
-import 'package:pom/repositories/ingredients/ingredients.dart';
+import 'package:fom/blocs/ingredients/ingredients_events.dart';
+import 'package:fom/blocs/ingredients/ingredients_states.dart';
+import 'package:fom/models/exceptions.dart';
+import 'package:fom/models/ingredient.dart';
+import 'package:fom/repositories/ingredients/ingredients.dart';
 
 class IngredientsBloc extends Bloc<IngredientsEvent, IngredientsState> {
   final IngredientsRepository ingredientsRepository;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pom/utils/constants.dart';
+import 'package:fom/utils/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PrivacyPolicyButton extends StatelessWidget {

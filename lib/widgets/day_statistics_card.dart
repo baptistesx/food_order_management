@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:pom/blocs/pizzas/pizzas.dart';
-import 'package:pom/blocs/pizzas/pizzas_states.dart';
-import 'package:pom/models/day_statistics.dart';
-import 'package:pom/models/pizza.dart';
-import 'package:pom/theme/themes.dart';
+import 'package:fom/blocs/pizzas/pizzas.dart';
+import 'package:fom/blocs/pizzas/pizzas_states.dart';
+import 'package:fom/models/day_statistics.dart';
+import 'package:fom/models/pizza.dart';
+import 'package:fom/theme/themes.dart';
 
 class DayStatisticsCard extends StatelessWidget {
   final DayStatistics dayStatistics;

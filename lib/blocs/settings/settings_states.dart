@@ -1,4 +1,4 @@
-import 'package:pom/models/settings_models.dart';
+import 'package:fom/models/settings_models.dart';
 
 abstract class SettingsState {}
 

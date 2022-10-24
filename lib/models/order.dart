@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:pom/extensions/text_helper.dart';
-import 'package:pom/models/pizza.dart';
+import 'package:fom/extensions/text_helper.dart';
+import 'package:fom/models/pizza.dart';
 
 enum OrderStatus { toDo, done, delivered }
 

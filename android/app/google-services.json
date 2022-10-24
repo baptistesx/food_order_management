@@ -1,48 +1,48 @@
 {
   "project_info": {
-    "project_number": "325973755347",
-    "project_id": "pizzaordersmanagement",
-    "storage_bucket": "pizzaordersmanagement.appspot.com"
+    "project_number": "1016954699062",
+    "project_id": "foodordersmanagement",
+    "storage_bucket": "foodordersmanagement.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:325973755347:android:88f48fc91271c8c4dcdb26",
+        "mobilesdk_app_id": "1:1016954699062:android:355ef5b2daff439b030797",
         "android_client_info": {
-          "package_name": "com.ludyb.pom"
+          "package_name": "com.ludyb.fom"
         }
       },
       "oauth_client": [
         {
-          "client_id": "325973755347-5pgo8n9nmko58crs95fj64vodljjm0dr.apps.googleusercontent.com",
+          "client_id": "1016954699062-6vth0coprbi3ut7jqtcbekm54raki7ui.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.ludyb.pom",
-            "certificate_hash": "58a23c1303182611b702abd54e650b5b41b8d5ab"
+            "package_name": "com.ludyb.fom",
+            "certificate_hash": "517942855c7598518dad91d2bc9b2aaa5438d4c0"
           }
         },
         {
-          "client_id": "325973755347-9k0qujhg83d45pmh0d5ida19gqo1necl.apps.googleusercontent.com",
+          "client_id": "1016954699062-11q1ujal8grh98cnml4l83guh5a9o78o.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAexdBkHiPpHGgPb6Sb6vc54M73e6H_tdU"
+          "current_key": "AIzaSyBJyCViHJCW5H7hkSsk9Rrcni7L5jbyYIA"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "325973755347-9k0qujhg83d45pmh0d5ida19gqo1necl.apps.googleusercontent.com",
+              "client_id": "1016954699062-11q1ujal8grh98cnml4l83guh5a9o78o.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "325973755347-9v670ke775bbh3fsb0cdhu0kqqncc0vp.apps.googleusercontent.com",
+              "client_id": "1016954699062-dg8em7ct32nauoankr2odnksnuinq3vh.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.pom"
+                "bundle_id": "com.ludyb.pom"
               }
             }
           ]

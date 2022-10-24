@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:pom/models/exceptions.dart';
-import 'package:pom/models/ingredient.dart';
-import 'package:pom/models/pizza.dart';
+import 'package:fom/models/exceptions.dart';
+import 'package:fom/models/ingredient.dart';
+import 'package:fom/models/pizza.dart';
 // TODO: reduce api calls
 
 class PizzaRepository {

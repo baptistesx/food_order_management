@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:pom/models/order.dart';
+import 'package:fom/models/order.dart';
 
 class OrdersRepository {
   FirebaseFirestore db = FirebaseFirestore.instance;

@@ -1,5 +1,5 @@
-import 'package:pom/models/order.dart';
-import 'package:pom/models/pizza.dart';
+import 'package:fom/models/order.dart';
+import 'package:fom/models/pizza.dart';
 
 class DayStatistics {
   final DateTime date;

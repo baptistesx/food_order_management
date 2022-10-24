@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:pom/models/ingredient.dart';
+import 'package:fom/models/ingredient.dart';
 
 class IngredientsRepository {
   FirebaseFirestore db = FirebaseFirestore.instance;

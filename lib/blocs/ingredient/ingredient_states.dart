@@ -1,4 +1,4 @@
-import 'package:pom/models/ingredient.dart';
+import 'package:fom/models/ingredient.dart';
 
 abstract class IngredientState {}
 

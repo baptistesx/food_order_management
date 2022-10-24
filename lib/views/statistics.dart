@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pom/blocs/orders/orders.dart';
-import 'package:pom/blocs/orders/orders_events.dart';
-import 'package:pom/blocs/orders/orders_states.dart';
-import 'package:pom/models/day_statistics.dart';
-import 'package:pom/models/order.dart';
-import 'package:pom/models/pizza.dart';
-import 'package:pom/widgets/custom_appbar.dart';
-import 'package:pom/widgets/day_statistics_card.dart';
+import 'package:fom/blocs/orders/orders.dart';
+import 'package:fom/blocs/orders/orders_events.dart';
+import 'package:fom/blocs/orders/orders_states.dart';
+import 'package:fom/models/day_statistics.dart';
+import 'package:fom/models/order.dart';
+import 'package:fom/models/pizza.dart';
+import 'package:fom/widgets/custom_appbar.dart';
+import 'package:fom/widgets/day_statistics_card.dart';
 
 class StatisticsPage extends StatefulWidget {
   static const String routeName = '/statistics';

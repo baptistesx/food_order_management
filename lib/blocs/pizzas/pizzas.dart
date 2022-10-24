@@ -1,9 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pom/blocs/pizzas/pizzas_events.dart';
-import 'package:pom/blocs/pizzas/pizzas_states.dart';
-import 'package:pom/models/exceptions.dart';
-import 'package:pom/models/pizza.dart';
-import 'package:pom/repositories/pizzas/pizzas.dart';
+import 'package:fom/blocs/pizzas/pizzas_events.dart';
+import 'package:fom/blocs/pizzas/pizzas_states.dart';
+import 'package:fom/models/exceptions.dart';
+import 'package:fom/models/pizza.dart';
+import 'package:fom/repositories/pizzas/pizzas.dart';
 
 class PizzasBloc extends Bloc<PizzasEvent, PizzasState> {
   final PizzasRepository pizzasRepository;
@@ -21,8 +21,7 @@ class PizzasBloc extends Bloc<PizzasEvent, PizzasState> {
     try {
       emit(PizzasLoadingState());
 
-      final List<Pizza> pizzas =
-          await pizzasRepository.getPizzas();
+      final List<Pizza> pizzas = await pizzasRepository.getPizzas();
 
       emit(PizzasFetchedState(pizzas: pizzas));
     } on StandardException catch (e) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pom/models/ingredient.dart';
-import 'package:pom/models/item.dart';
-import 'package:pom/models/pizza.dart';
+import 'package:fom/models/ingredient.dart';
+import 'package:fom/models/item.dart';
+import 'package:fom/models/pizza.dart';
 
 class ItemCard extends StatelessWidget {
   final Item item;

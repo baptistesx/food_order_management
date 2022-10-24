@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
-import 'package:pom/extensions/text_helper.dart';
-import 'package:pom/models/ingredient.dart';
-import 'package:pom/models/item.dart';
+import 'package:fom/extensions/text_helper.dart';
+import 'package:fom/models/ingredient.dart';
+import 'package:fom/models/item.dart';
 
 class Pizza extends Item {
   List<Ingredient>? ingredients;

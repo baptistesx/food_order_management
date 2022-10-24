@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:pom/models/exceptions.dart';
-import 'package:pom/models/ingredient.dart';
-import 'package:pom/models/pizza.dart';
-import 'package:pom/repositories/pizza/pizza.dart';
-import 'package:pom/repositories/pizzas/pizzas.dart';
+import 'package:fom/models/exceptions.dart';
+import 'package:fom/models/ingredient.dart';
+import 'package:fom/models/pizza.dart';
+import 'package:fom/repositories/pizza/pizza.dart';
+import 'package:fom/repositories/pizzas/pizzas.dart';
 
 class IngredientRepository {
   FirebaseFirestore db = FirebaseFirestore.instance;

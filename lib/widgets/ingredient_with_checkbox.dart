@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pom/models/ingredient.dart';
+import 'package:fom/models/ingredient.dart';
 
 class IngredientWithCheckbox extends StatelessWidget {
   final Ingredient ingredient;

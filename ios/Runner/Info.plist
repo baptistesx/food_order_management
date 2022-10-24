@@ -15,7 +15,7 @@
 		<key>CFBundleInfoDictionaryVersion</key>
 		<string>6.0</string>
 		<key>CFBundleName</key>
-		<string>pom</string>
+		<string>fom</string>
 		<key>CFBundlePackageType</key>
 		<string>APPL</string>
 		<key>CFBundleShortVersionString</key>
@@ -58,7 +58,7 @@
 				<array>
 					<!-- TODO Replace this value: -->
 					<!-- Copied from GoogleService-Info.plist key REVERSED_CLIENT_ID -->
-					<string>com.googleusercontent.apps.325973755347-m6k4jb9hq7turoppsnimfa3ckdvnlnvg</string>
+					<string>com.googleusercontent.apps.1016954699062-n50394kfli6bktun54o8nojvae6ncqqg</string>
 				</array>
 			</dict>
 		</array>

@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:pom/main.dart';
-import 'package:pom/models/ingredient.dart';
-import 'package:pom/models/pizza.dart';
-import 'package:pom/widgets/ingredient_with_checkbox.dart';
+import 'package:fom/main.dart';
+import 'package:fom/models/ingredient.dart';
+import 'package:fom/models/pizza.dart';
+import 'package:fom/widgets/ingredient_with_checkbox.dart';
 
 class AddPizzaToOrderDialog extends StatefulWidget {
   final Pizza pizza;
