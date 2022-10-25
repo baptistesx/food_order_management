@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fom/blocs/orders/orders.dart';
-import 'package:fom/blocs/orders/orders_events.dart';
 import 'package:fom/main.dart';
+import 'package:fom/models/ingredient.dart';
 import 'package:fom/models/order.dart';
 import 'package:fom/theme/themes.dart';
 import 'package:fom/views/order.dart';
@@ -38,7 +36,7 @@ class _OrdersPageState extends State<OrdersPage> {
   void initState() {
     super.initState();
 
-    context.read<OrdersBloc>().add(GetOrdersEvent());
+    // context.read<OrdersBloc>().add(GetOrdersEvent());
   }
 
   @override
@@ -49,32 +47,62 @@ class _OrdersPageState extends State<OrdersPage> {
           stream: FirebaseFirestore.instance
               .collection('orders')
               .where('userId', isEqualTo: firebaseAuth.currentUser!.uid)
-              .orderBy('timeToDeliver')
+              // .orderBy('timeToDeliver')
               .snapshots(),
           builder: (
             BuildContext context,
-            AsyncSnapshot<QuerySnapshot<Object?>> snapshot,
+            AsyncSnapshot<QuerySnapshot<Object?>> ordersSnapshot,
           ) {
-            if (!snapshot.hasData) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            final List<Order> orders = snapshot.data == null
-                ? <Order>[]
-                : snapshot.data!.docs
-                    .map(
-                      (QueryDocumentSnapshot<Object?> e) => Order.fromMap(
-                        e.data() as Map<String, dynamic>,
-                        e.reference.id,
-                      ),
-                    )
-                    .toList();
-            if (orders.isEmpty) {
-              return const Text('Commandes');
-            } else {
-              return Text(
-                'Commandes ${_selectedIndex == 0 ? "A faire (${orders.where((Order order) => order.status == OrderStatus.toDo).toList().length})" : _selectedIndex == 1 ? "Faites (${orders.where((Order order) => order.status == OrderStatus.done).toList().length})" : "Livrées (${orders.where((Order order) => order.status == OrderStatus.delivered).toList().length})"}',
-              );
-            }
+            return StreamBuilder<QuerySnapshot<Object?>>(
+                stream: FirebaseFirestore.instance
+                    .collection('ingredients')
+                    // .orderBy('name')
+                    .where('userId', isEqualTo: firebaseAuth.currentUser!.uid)
+                    .snapshots(),
+                builder: (
+                  BuildContext context,
+                  AsyncSnapshot<QuerySnapshot<Object?>> ingredientsSnapshot,
+                ) {
+                  if (!ordersSnapshot.hasData || !ingredientsSnapshot.hasData) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  final List<Ingredient> ingredients =
+                      ingredientsSnapshot.data == null
+                          ? <Ingredient>[]
+                          : ingredientsSnapshot.data!.docs
+                              .map(
+                                (QueryDocumentSnapshot<Object?> e) =>
+                                    Ingredient.fromMap(
+                                  e.data() as Map<String, dynamic>,
+                                  e.reference.id,
+                                ),
+                              )
+                              .toList();
+
+                  final List<Order> orders = ordersSnapshot.data == null
+                      ? <Order>[]
+                      : ordersSnapshot.data!.docs
+                          .map(
+                            (QueryDocumentSnapshot<Object?> e) => Order.fromMap(
+                                e.data() as Map<String, dynamic>,
+                                e.reference.id,
+                                ingredients),
+                          )
+                          .toList();
+                  if (orders.isEmpty) {
+                    return const Text('Liste des commandes');
+                  } else {
+                    orders.sort(
+                      (a, b) => a.timeToDeliver
+                          .toString()
+                          .compareTo(b.timeToDeliver.toString()),
+                    );
+
+                    return Text(
+                      'Commandes ${_selectedIndex == 0 ? "A faire (${orders.where((Order order) => order.status == OrderStatus.toDo).toList().length})" : _selectedIndex == 1 ? "Faites (${orders.where((Order order) => order.status == OrderStatus.done).toList().length})" : "Livrées (${orders.where((Order order) => order.status == OrderStatus.delivered).toList().length})"}',
+                    );
+                  }
+                });
           },
         ),
       ),

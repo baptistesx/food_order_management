@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fom/extensions/text_helper.dart';
+import 'package:fom/models/ingredient.dart';
 import 'package:fom/models/meal.dart';
 
 enum OrderStatus { toDo, done, delivered }
@@ -44,7 +45,7 @@ class Order {
     };
   }
 
-  factory Order.fromMap(Map<String, dynamic> map, String id) {
+  factory Order.fromMap(Map<String, dynamic> map, String id, List<Ingredient> ingredients) {
     final DateTime date = DateTime.fromMillisecondsSinceEpoch(
       (map['timeToDeliver'] as Timestamp).seconds * 1000,
     );
@@ -61,7 +62,7 @@ class Order {
           : List<Meal>.from(
               (map['meals'] as List<dynamic>?)!.map(
                 (dynamic x) =>
-                    Meal.fromMap(x, (x as Map<String, dynamic>)['id']),
+                    Meal.fromMapInOrder(x, (x as Map<String, dynamic>)['id'],ingredients),
               ),
             ),
       clientName: (map['clientName'] as String?)?.trim().toCapitalized(),

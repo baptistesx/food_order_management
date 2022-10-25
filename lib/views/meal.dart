@@ -5,8 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fom/blocs/meal/meal.dart';
 import 'package:fom/blocs/meal/meal_events.dart';
 import 'package:fom/blocs/meal/meal_states.dart';
-import 'package:fom/blocs/meals/meals.dart';
-import 'package:fom/blocs/meals/meals_events.dart';
 import 'package:fom/main.dart';
 import 'package:fom/models/ingredient.dart';
 import 'package:fom/models/meal.dart';
@@ -40,17 +38,17 @@ class _MealPage extends State<MealPage> {
       text: widget.meal != null ? widget.meal!.name : '',
     );
     _priceSmallController = TextEditingController(
-      text: widget.meal != null ? widget.meal!.priceSmall.toString() : '0',
+      text: widget.meal != null ? widget.meal!.priceSmall.toString() : '',
     );
     _priceBigController = TextEditingController(
-      text: widget.meal != null ? widget.meal!.priceBig.toString() : '0',
+      text: widget.meal != null ? widget.meal!.priceBig.toString() : '',
     );
 
     meal = widget.meal ??
         Meal(
           name: '',
-          priceSmall: 0,
-          priceBig: 0,
+          priceSmall: null,
+          priceBig: null,
           ingredients: <Ingredient>[],
         );
   }
@@ -77,7 +75,7 @@ class _MealPage extends State<MealPage> {
         content: BlocListener<MealBloc, MealState>(
           listener: (BuildContext context, MealState state) {
             if (state is MealAddedState || state is MealUpdatedState) {
-              context.read<MealsBloc>().add(GetMealsEvent());
+              // context.read<MealsBloc>().add(GetMealsEvent()); // TODO: normalement ok pour delete
               Navigator.pop(context);
             }
           },
@@ -183,7 +181,7 @@ class _MealPage extends State<MealPage> {
                   stream: FirebaseFirestore.instance
                       .collection('ingredients')
                       .where('userId', isEqualTo: firebaseAuth.currentUser!.uid)
-                      .orderBy('name')
+                      // .orderBy('name')
                       .snapshots(),
                   builder: (
                     BuildContext context,
@@ -203,7 +201,9 @@ class _MealPage extends State<MealPage> {
                               ),
                             )
                             .toList();
-
+                    ingredients.sort((a, b) => a.name == null || b.name == null
+                        ? -1
+                        : a.name!.compareTo(b.name!));
                     return Column(
                       children: ingredients
                           .map(

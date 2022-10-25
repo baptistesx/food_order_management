@@ -1,7 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fom/blocs/meals/meals.dart';
-import 'package:fom/blocs/meals/meals_states.dart';
+import 'package:fom/main.dart';
 import 'package:fom/models/day_statistics.dart';
 import 'package:fom/models/meal.dart';
 import 'package:fom/theme/themes.dart';
@@ -33,11 +32,32 @@ class DayStatisticsCard extends StatelessWidget {
           //   'Total meals livrées: ${dayStatistics.allOrdersDeliveredMeals.length}',
           // ),
           Text('CA total: ${dayStatistics.totalDayIncomes.toString()}€'),
-          BlocBuilder<MealsBloc, MealsState>(
-            builder: (BuildContext context, MealsState mealsState) {
-              if (mealsState is MealsFetchedState) {
+          StreamBuilder<QuerySnapshot<Object?>>(
+              stream: FirebaseFirestore.instance
+                  .collection('meals')
+                  // .orderBy('name')
+                  .where('userId', isEqualTo: firebaseAuth.currentUser!.uid)
+                  .snapshots(),
+              builder: (
+                BuildContext context,
+                AsyncSnapshot<QuerySnapshot<Object?>> mealsSnapshot,
+              ) {
+                if (!mealsSnapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                final List<Meal> meals = mealsSnapshot.data == null
+                    ? <Meal>[]
+                    : mealsSnapshot.data!.docs
+                        .map(
+                          (QueryDocumentSnapshot<Object?> e) => Meal.fromMap(
+                              e.data() as Map<String, dynamic>,
+                              e.reference.id, []),
+                        )
+                        .toList();
+
                 return Column(
-                  children: mealsState.meals
+                  children: meals
                       .map(
                         (Meal meal) => dayStatistics.allOrdersDeliveredMeals
                                 .where(
@@ -55,13 +75,7 @@ class DayStatisticsCard extends StatelessWidget {
                       )
                       .toList(),
                 );
-              } else {
-                return (const Center(
-                  child: Text('Erreur'),
-                ));
-              }
-            },
-          ),
+              }),
         ],
       ),
     );

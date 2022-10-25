@@ -1,7 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fom/blocs/meals/meals.dart';
-import 'package:fom/blocs/meals/meals_states.dart';
 import 'package:fom/blocs/order/order.dart';
 import 'package:fom/blocs/order/order_events.dart';
 import 'package:fom/blocs/order/order_states.dart';
@@ -30,7 +29,7 @@ class _OrderPage extends State<OrderPage> {
   TextEditingController _clientNameController = TextEditingController();
   TextEditingController _timeToDeliverController = TextEditingController();
   TimeOfDay? _timeToDeliver;
-  List<Meal> meals = <Meal>[];
+  List<Meal> selectedMeals = <Meal>[];
 
   @override
   void initState() {
@@ -48,7 +47,7 @@ class _OrderPage extends State<OrderPage> {
         hour: widget.order!.timeToDeliver.hour,
         minute: widget.order!.timeToDeliver.minute,
       );
-      meals = widget.order != null
+      selectedMeals = widget.order != null
           ? widget.order!.meals.map((Meal e) => e).toList()
           : <Meal>[];
     }
@@ -155,7 +154,7 @@ class _OrderPage extends State<OrderPage> {
                     if (pickedTime != null) {
                       setState(() {
                         _timeToDeliverController.text =
-                            '${pickedTime.hour}:${pickedTime.minute}';
+                            '${pickedTime.hour.toString().padLeft(2, '0')}:${pickedTime.minute.toString().padLeft(2, '0')}';
                         _timeToDeliver = pickedTime;
                       });
                     }
@@ -165,7 +164,7 @@ class _OrderPage extends State<OrderPage> {
                 const SizedBox(height: 24),
                 Wrap(
                   spacing: 5,
-                  children: getMealsSorted(meals)
+                  children: getMealsSorted(selectedMeals)
                       .entries
                       .map(
                         (MapEntry<Meal, int> meal) => Chip(
@@ -229,7 +228,7 @@ class _OrderPage extends State<OrderPage> {
                           onDeleted: () {
                             if (mounted) {
                               setState(() {
-                                meals.removeWhere(
+                                selectedMeals.removeWhere(
                                   (Meal mealToCheck) => meal.key == mealToCheck,
                                 );
                               });
@@ -239,66 +238,117 @@ class _OrderPage extends State<OrderPage> {
                       )
                       .toList(),
                 ),
-                BlocBuilder<MealsBloc, MealsState>(
-                  builder: (BuildContext context, MealsState mealsState) {
-                    if (mealsState is! MealsFetchedState) {
-                      return const Center(
-                        child: Text('Erreur'),
-                      );
-                    } else {
-                      return Wrap(
-                        children: mealsState.meals
-                            .map(
-                              (Meal meal) => SizedBox(
-                                width: 300,
-                                child: Card(
-                                  child: ListTile(
-                                    onTap: () async {
-                                      // ignore: always_specify_types
-                                      final mealToAdd = await showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AddMealToOrderDialog(
-                                            meal: meal,
-                                          );
-                                        },
-                                      );
-                                      if (mealToAdd != null) {
-                                        if (mounted) {
-                                          setState(() {
-                                            meals.add(mealToAdd);
-                                          });
-                                        }
-                                      }
-                                    },
-                                    title: Text(
-                                      '${meal.name}${meal.runtimeType == Meal ? " / ${meal.priceSmall}€ / ${meal.priceBig}€" : ""}',
+                StreamBuilder<QuerySnapshot<Object?>>(
+                    stream: FirebaseFirestore.instance
+                        .collection('meals')
+                        .where('userId',
+                            isEqualTo: firebaseAuth.currentUser!.uid)
+                        // .orderBy('name')
+                        .snapshots(),
+                    builder: (
+                      BuildContext context,
+                      AsyncSnapshot<QuerySnapshot<Object?>> mealsSnapshot,
+                    ) {
+                      return StreamBuilder<QuerySnapshot<Object?>>(
+                          stream: FirebaseFirestore.instance
+                              .collection('ingredients')
+                              .where('userId',
+                                  isEqualTo: firebaseAuth.currentUser!.uid)
+                              // .orderBy('name')
+                              .snapshots(),
+                          builder: (
+                            BuildContext context,
+                            AsyncSnapshot<QuerySnapshot<Object?>>
+                                ingredientsSnapshot,
+                          ) {
+                            if (!ingredientsSnapshot.hasData ||
+                                !mealsSnapshot.hasData) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
+
+                            final List<Ingredient> ingredients =
+                                ingredientsSnapshot.data == null
+                                    ? <Ingredient>[]
+                                    : ingredientsSnapshot.data!.docs
+                                        .map(
+                                          (QueryDocumentSnapshot<Object?> e) =>
+                                              Ingredient.fromMap(
+                                            e.data() as Map<String, dynamic>,
+                                            e.reference.id,
+                                          ),
+                                        )
+                                        .toList();
+
+                            final List<Meal> meals = mealsSnapshot.data == null
+                                ? <Meal>[]
+                                : mealsSnapshot.data!.docs
+                                    .map(
+                                      (QueryDocumentSnapshot<Object?> e) =>
+                                          Meal.fromMap(
+                                              e.data() as Map<String, dynamic>,
+                                              e.reference.id,
+                                              ingredients),
+                                    )
+                                    .toList();
+                            if (!mealsSnapshot.hasData) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
+
+                            return Wrap(
+                              children: meals
+                                  .map(
+                                    (Meal meal) => SizedBox(
+                                      width: 300,
+                                      child: Card(
+                                        child: ListTile(
+                                          onTap: () async {
+                                            // ignore: always_specify_types
+                                            final mealToAdd = await showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AddMealToOrderDialog(
+                                                  meal: meal,
+                                                );
+                                              },
+                                            );
+                                            if (mealToAdd != null) {
+                                              if (mounted) {
+                                                setState(() {
+                                                  selectedMeals.add(mealToAdd);
+                                                });
+                                              }
+                                            }
+                                          },
+                                          title: Text(
+                                            '${meal.name}${meal.runtimeType == Meal ? " / ${meal.priceSmall}€ / ${meal.priceBig}€" : ""}',
+                                          ),
+                                          subtitle: meal.runtimeType == Meal
+                                              ? Text(
+                                                  (meal).ingredients == null
+                                                      ? 'Erreur'
+                                                      : (meal)
+                                                          .ingredients!
+                                                          .map(
+                                                            (
+                                                              Ingredient
+                                                                  ingredient,
+                                                            ) =>
+                                                                ingredient.name,
+                                                          )
+                                                          .toList()
+                                                          .toString(),
+                                                )
+                                              : null,
+                                        ),
+                                      ),
                                     ),
-                                    subtitle: meal.runtimeType == Meal
-                                        ? Text(
-                                            (meal).ingredients == null
-                                                ? 'Erreur'
-                                                : (meal)
-                                                    .ingredients!
-                                                    .map(
-                                                      (
-                                                        Ingredient ingredient,
-                                                      ) =>
-                                                          ingredient.name,
-                                                    )
-                                                    .toList()
-                                                    .toString(),
-                                          )
-                                        : null,
-                                  ),
-                                ),
-                              ),
-                            )
-                            .toList(),
-                      );
-                    }
-                  },
-                ),
+                                  )
+                                  .toList(),
+                            );
+                          });
+                    }),
               ],
             ),
           ),
@@ -307,7 +357,7 @@ class _OrderPage extends State<OrderPage> {
           child: Column(
             children: <Widget>[
               Text(
-                'Total: ${meals.isEmpty ? "0" : meals.map((Meal meal) => meal.isBig != null && meal.isBig! ? meal.priceBig! : meal.priceSmall!).toList().reduce((double value, double element) => value + element)}€',
+                'Total: ${selectedMeals.isEmpty ? "0" : selectedMeals.map((Meal meal) => meal.isBig != null && meal.isBig! ? meal.priceBig! : meal.priceSmall!).toList().reduce((double value, double element) => value + element)}€',
                 style: const TextStyle(fontSize: 20.0),
               ),
               const SizedBox(height: 16),
@@ -315,7 +365,7 @@ class _OrderPage extends State<OrderPage> {
                 children: <Widget>[
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: meals.isEmpty || _timeToDeliver == null
+                      onPressed: selectedMeals.isEmpty || _timeToDeliver == null
                           ? null
                           : () {
                               if (_formKey.currentState!.validate()) {
@@ -328,7 +378,7 @@ class _OrderPage extends State<OrderPage> {
                                             timeToDeliver: _timeToDeliver!,
                                             clientName:
                                                 _clientNameController.text,
-                                            meals: meals,
+                                            meals: selectedMeals,
                                             userId:
                                                 firebaseAuth.currentUser!.uid,
                                           ),
@@ -344,7 +394,7 @@ class _OrderPage extends State<OrderPage> {
                                             timeToDeliver: _timeToDeliver!,
                                             clientName:
                                                 _clientNameController.text,
-                                            meals: meals,
+                                            meals: selectedMeals,
                                             userId:
                                                 firebaseAuth.currentUser!.uid,
                                           ),

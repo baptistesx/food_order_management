@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "1016954699062-cvid8jnuv0ssh712evrkqpq7rghsb382.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ludyb.fom",
+            "certificate_hash": "42ef2913bdba326deecdc16a1966a3b8df8ca167"
+          }
+        },
+        {
           "client_id": "1016954699062-11q1ujal8grh98cnml4l83guh5a9o78o.apps.googleusercontent.com",
           "client_type": 3
         }

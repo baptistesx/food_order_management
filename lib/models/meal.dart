@@ -56,7 +56,55 @@ class Meal extends Item {
     };
   }
 
-  factory Meal.fromMap(Map<String, dynamic> map, String? id) {
+  factory Meal.fromMap(
+    Map<String, dynamic> map,
+    String? id,
+    List<Ingredient> ingredients,
+  ) {
+    return Meal(
+      id: id,
+      userId: map['userId'],
+      name: map['name'],
+      ingredients: map['ingredients'] == null || ingredients.isEmpty
+          ? <Ingredient>[]
+          : List<Ingredient>.from(
+              (map['ingredients'] as List<dynamic>?)!.map(
+                (dynamic x) => ingredients.firstWhere(
+                  (Ingredient element) {
+                    return element.id == x.id;
+                  },
+                ),
+                // Ingredient.fromMap(x, (x as Map<String, dynamic>)['id']),
+              ),
+            ),
+      ingredientsToRemove: map['ingredientsToRemove'] == null
+          ? <Ingredient>[]
+          : List<Ingredient>.from(
+              (map['ingredientsToRemove'] as List<dynamic>?)!.map(
+                (dynamic x) =>
+                    Ingredient.fromMap(x, (x as Map<String, dynamic>)['id']),
+              ),
+            ),
+      ingredientsToAdd: map['ingredientsToAdd'] == null
+          ? <Ingredient>[]
+          : List<Ingredient>.from(
+              (map['ingredientsToAdd'] as List<dynamic>?)!.map(
+                (dynamic x) =>
+                    Ingredient.fromMap(x, (x as Map<String, dynamic>)['id']),
+              ),
+            ),
+      priceSmall: map['priceSmall'],
+      priceBig: map['priceBig'],
+      isDone: map['isDone'],
+      isBig: map['isBig'],
+    );
+  }
+
+  factory Meal.fromMapInOrder(
+    Map<String, dynamic> map,
+    String? id,
+    List<Ingredient> ingredients,
+  ) {
     return Meal(
       id: id,
       userId: map['userId'],

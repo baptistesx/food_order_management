@@ -1,9 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fom/blocs/orders/orders.dart';
-import 'package:fom/blocs/orders/orders_events.dart';
-import 'package:fom/blocs/orders/orders_states.dart';
+import 'package:fom/main.dart';
 import 'package:fom/models/day_statistics.dart';
+import 'package:fom/models/ingredient.dart';
 import 'package:fom/models/meal.dart';
 import 'package:fom/models/order.dart';
 import 'package:fom/widgets/custom_appbar.dart';
@@ -19,113 +18,154 @@ class StatisticsPage extends StatefulWidget {
 }
 
 class _StatisticsPageState extends State<StatisticsPage> {
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-      GlobalKey<RefreshIndicatorState>();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(title: Text('Statistiques')),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: BlocBuilder<OrdersBloc, OrdersState>(
-          builder: (BuildContext context, OrdersState ordersState) {
-            if (ordersState is OrdersFetchedState) {
-              final List<DayStatistics> dayStatistics = <DayStatistics>[];
+        appBar: const CustomAppBar(title: Text('Statistiques')),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: StreamBuilder<QuerySnapshot<Object?>>(
+              stream: FirebaseFirestore.instance
+                  .collection('orders')
+                  .where('userId', isEqualTo: firebaseAuth.currentUser!.uid)
+                  // .orderBy('timeToDeliver')
+                  .snapshots(),
+              builder: (
+                BuildContext context,
+                AsyncSnapshot<QuerySnapshot<Object?>> ordersSnapshot,
+              ) {
+                return StreamBuilder<QuerySnapshot<Object?>>(
+                    stream: FirebaseFirestore.instance
+                        .collection('ingredients')
+                        // .orderBy('name')
+                        .where('userId',
+                            isEqualTo: firebaseAuth.currentUser!.uid)
+                        .snapshots(),
+                    builder: (
+                      BuildContext context,
+                      AsyncSnapshot<QuerySnapshot<Object?>> ingredientsSnapshot,
+                    ) {
+                      if (!ordersSnapshot.hasData ||
+                          !ingredientsSnapshot.hasData) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      final List<Ingredient> ingredients =
+                          ingredientsSnapshot.data == null
+                              ? <Ingredient>[]
+                              : ingredientsSnapshot.data!.docs
+                                  .map(
+                                    (QueryDocumentSnapshot<Object?> e) =>
+                                        Ingredient.fromMap(
+                                      e.data() as Map<String, dynamic>,
+                                      e.reference.id,
+                                    ),
+                                  )
+                                  .toList();
 
-              final List<Order> ordersDelivered = ordersState.orders
-                  .where((Order order) => order.status == OrderStatus.delivered)
-                  .toList();
+                      final List<Order> orders = ordersSnapshot.data == null
+                          ? <Order>[]
+                          : ordersSnapshot.data!.docs
+                              .map(
+                                (QueryDocumentSnapshot<Object?> e) =>
+                                    Order.fromMap(
+                                        e.data() as Map<String, dynamic>,
+                                        e.reference.id,
+                                        ingredients),
+                              )
+                              .toList();
 
-              for (int i = 0; i < ordersDelivered.length; i++) {
-                if (dayStatistics
-                    .where(
-                      (DayStatistics day) =>
-                          day.date.year == ordersDelivered[i].createdAt.year &&
-                          day.date.month ==
-                              ordersDelivered[i].createdAt.month &&
-                          day.date.day == ordersDelivered[i].createdAt.day,
-                    )
-                    .isEmpty) {
-                  dayStatistics.add(
-                    DayStatistics(
-                      date: DateTime(
-                        ordersDelivered[i].createdAt.year,
-                        ordersDelivered[i].createdAt.month,
-                        ordersDelivered[i].createdAt.day,
-                      ),
-                      ordersDelivered: <Order>[ordersDelivered[i]],
-                      allOrdersDeliveredMeals: <Meal>[],
-                      totalDayIncomes: 0,
-                    ),
-                  );
-                } else {
-                  dayStatistics[dayStatistics.indexWhere(
-                    (DayStatistics day) =>
-                        day.date.year == ordersDelivered[i].createdAt.year &&
-                        day.date.month == ordersDelivered[i].createdAt.month &&
-                        day.date.day == ordersDelivered[i].createdAt.day,
-                  )]
-                      .ordersDelivered
-                      .add(ordersDelivered[i]);
-                }
-              }
+                      final List<DayStatistics> dayStatistics =
+                          <DayStatistics>[];
 
-              for (int i = 0; i < dayStatistics.length; i++) {
-                dayStatistics[i].allOrdersDeliveredMeals = dayStatistics[i]
-                    .ordersDelivered
-                    .map((Order order) => order.meals)
-                    .expand((List<Meal> element) => element)
-                    .toList();
+                      final List<Order> ordersDelivered = orders
+                          .where((Order order) =>
+                              order.status == OrderStatus.delivered)
+                          .toList();
 
-                dayStatistics[i].totalDayIncomes =
-                    dayStatistics[i].allOrdersDeliveredMeals.isEmpty
-                        ? 0.0
-                        : dayStatistics[i]
-                            .allOrdersDeliveredMeals
-                            .map(
-                              (Meal meal) => meal.isBig != null && meal.isBig!
-                                  ? meal.priceBig!
-                                  : meal.priceSmall!,
+                      for (int i = 0; i < ordersDelivered.length; i++) {
+                        if (dayStatistics
+                            .where(
+                              (DayStatistics day) =>
+                                  day.date.year ==
+                                      ordersDelivered[i].createdAt.year &&
+                                  day.date.month ==
+                                      ordersDelivered[i].createdAt.month &&
+                                  day.date.day ==
+                                      ordersDelivered[i].createdAt.day,
                             )
-                            .reduce(
-                              (double value, double element) => value + element,
-                            );
-              }
+                            .isEmpty) {
+                          dayStatistics.add(
+                            DayStatistics(
+                              date: DateTime(
+                                ordersDelivered[i].createdAt.year,
+                                ordersDelivered[i].createdAt.month,
+                                ordersDelivered[i].createdAt.day,
+                              ),
+                              ordersDelivered: <Order>[ordersDelivered[i]],
+                              allOrdersDeliveredMeals: <Meal>[],
+                              totalDayIncomes: 0,
+                            ),
+                          );
+                        } else {
+                          dayStatistics[dayStatistics.indexWhere(
+                            (DayStatistics day) =>
+                                day.date.year ==
+                                    ordersDelivered[i].createdAt.year &&
+                                day.date.month ==
+                                    ordersDelivered[i].createdAt.month &&
+                                day.date.day ==
+                                    ordersDelivered[i].createdAt.day,
+                          )]
+                              .ordersDelivered
+                              .add(ordersDelivered[i]);
+                        }
+                      }
 
-              return RefreshIndicator(
-                key: _refreshIndicatorKey,
-                onRefresh: () async {
-                  context.read<OrdersBloc>().add(GetOrdersEvent());
-                },
-                child: ListView(
-                  children: <Widget>[
-                    const SizedBox(height: 24),
-                    ...dayStatistics
-                        .map(
-                          (DayStatistics e) => <Widget>[
-                            DayStatisticsCard(dayStatistics: e),
-                            const SizedBox(height: 24)
-                          ],
-                        )
-                        .expand((List<Widget> element) => element)
-                        .toList(),
-                    const SizedBox(height: 24),
-                  ],
-                ),
-              );
-            } else if (ordersState is OrdersLoadingState) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else {
-              return const Center(
-                child: Text('Erreur'),
-              );
-            }
-          },
-        ),
-      ),
-    );
+                      for (int i = 0; i < dayStatistics.length; i++) {
+                        dayStatistics[i].allOrdersDeliveredMeals =
+                            dayStatistics[i]
+                                .ordersDelivered
+                                .map((Order order) => order.meals)
+                                .expand((List<Meal> element) => element)
+                                .toList();
+
+                        dayStatistics[i].totalDayIncomes =
+                            dayStatistics[i].allOrdersDeliveredMeals.isEmpty
+                                ? 0.0
+                                : dayStatistics[i]
+                                    .allOrdersDeliveredMeals
+                                    .map(
+                                      (Meal meal) =>
+                                          meal.isBig != null && meal.isBig!
+                                              ? meal.priceBig!
+                                              : meal.priceSmall!,
+                                    )
+                                    .reduce(
+                                      (double value, double element) =>
+                                          value + element,
+                                    );
+                      }
+
+                      return ListView(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 24),
+                        children: dayStatistics.isEmpty
+                            ? <Widget>[const Text('Aucune vente trouvée.')]
+                            : <Widget>[
+                                ...dayStatistics
+                                    .map(
+                                      (DayStatistics e) => <Widget>[
+                                        DayStatisticsCard(dayStatistics: e),
+                                        const SizedBox(height: 24)
+                                      ],
+                                    )
+                                    .expand((List<Widget> element) => element)
+                                    .toList(),
+                                const SizedBox(height: 24),
+                              ],
+                      );
+                    });
+              }),
+        ));
   }
 }

@@ -19,6 +19,7 @@ class ItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
+        onTap: onEdit,
         title: Text(
           '${item.name}${item.runtimeType == Meal ? " / ${(item as Meal).priceSmall}€ / ${(item as Meal).priceBig}€" : ""}',
         ),

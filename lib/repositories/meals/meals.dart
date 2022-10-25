@@ -33,6 +33,7 @@ class MealsRepository {
             priceSmall: e['priceSmall'],
             priceBig: e['priceBig'],
             isBig: e['isBig'],
+            userId: firebaseAuth.currentUser!.uid,
             ingredients: (e['ingredients'] as List<dynamic>)
                 .map(
                   (dynamic e) => ingredients.firstWhere(

@@ -63,6 +63,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1016954699062',
     projectId: 'foodordersmanagement',
     storageBucket: 'foodordersmanagement.appspot.com',
+    androidClientId: '1016954699062-6vth0coprbi3ut7jqtcbekm54raki7ui.apps.googleusercontent.com',
     iosClientId: '1016954699062-n50394kfli6bktun54o8nojvae6ncqqg.apps.googleusercontent.com',
     iosBundleId: 'com.ludyb.fom',
   );

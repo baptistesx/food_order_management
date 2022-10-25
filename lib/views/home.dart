@@ -64,12 +64,12 @@ class _HomePageState extends State<HomePage> {
             title: 'Statistiques',
             route: StatisticsPage.routeName,
             onClick: () {
-              context.read<MealsBloc>().add(
-                    GetMealsEvent(),
-                  );
-              context.read<OrdersBloc>().add(
-                    GetOrdersEvent(),
-                  );
+              // context.read<MealsBloc>().add(
+              //       GetMealsEvent(),
+              //     );
+              // context.read<OrdersBloc>().add(
+              //       GetOrdersEvent(),
+              //     );
             },
           ),
           const Spacer(),
