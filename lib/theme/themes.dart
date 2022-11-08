@@ -14,24 +14,24 @@ class ThemeColors {
 }
 
 class AppTheme {
-  final int _primaryInt = 0xFF545afa;
-  final int _secondaryInt = 0xFFFAAF19;
+  final int _primaryInt = 0xFF6a3189;
+  final int _secondaryInt = 0xFFEE7CAE;
 
   ThemeColors get lightColors => ThemeColors(
         primaryColor: Color(_primaryInt),
         primarySwatch: MaterialColor(
           _primaryInt,
           const <int, Color>{
-            50: Color(0xff4c51e1),
-            100: Color(0xff4348c8),
-            200: Color(0xff3b3faf),
-            300: Color(0xff323696),
-            400: Color(0xff2a2d7d),
-            500: Color(0xff222464),
-            600: Color(0xff191b4b),
-            700: Color(0xff111232),
-            800: Color(0xff080919),
-            900: Color(0xff000000),
+            50: Color(0xFF6a3189),
+            100: Color(0xff5f2c7b),
+            200: Color(0xff55276e),
+            300: Color(0xff4a2260),
+            400: Color(0xff401d52),
+            500: Color(0xff351945),
+            600: Color(0xff2a1437),
+            700: Color(0xff200f29),
+            800: Color(0xff150a1b),
+            900: Color(0xff0b050e),
           },
         ),
         secondaryColor: Color(_secondaryInt),

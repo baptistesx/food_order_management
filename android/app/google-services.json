@@ -1,40 +1,56 @@
 {
   "project_info": {
-    "project_number": "23632118686",
-    "project_id": "trams-app",
-    "storage_bucket": "trams-app.appspot.com"
+    "project_number": "1016954699062",
+    "project_id": "foodordersmanagement",
+    "storage_bucket": "foodordersmanagement.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:23632118686:android:9c48f739f3a8139a8c4c8f",
+        "mobilesdk_app_id": "1:1016954699062:android:355ef5b2daff439b030797",
         "android_client_info": {
-          "package_name": "com.example.mobile_app"
+          "package_name": "com.ludyb.fom"
         }
       },
       "oauth_client": [
         {
-          "client_id": "23632118686-02s4oocclq3irjj4tge9cffnnrc0rhs9.apps.googleusercontent.com",
+          "client_id": "1016954699062-6vth0coprbi3ut7jqtcbekm54raki7ui.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ludyb.fom",
+            "certificate_hash": "517942855c7598518dad91d2bc9b2aaa5438d4c0"
+          }
+        },
+        {
+          "client_id": "1016954699062-cvid8jnuv0ssh712evrkqpq7rghsb382.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ludyb.fom",
+            "certificate_hash": "42ef2913bdba326deecdc16a1966a3b8df8ca167"
+          }
+        },
+        {
+          "client_id": "1016954699062-11q1ujal8grh98cnml4l83guh5a9o78o.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBHmBjfgkmYy5QxiELA8n_Fh2ONuOy8DEE"
+          "current_key": "AIzaSyBJyCViHJCW5H7hkSsk9Rrcni7L5jbyYIA"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "23632118686-02s4oocclq3irjj4tge9cffnnrc0rhs9.apps.googleusercontent.com",
+              "client_id": "1016954699062-11q1ujal8grh98cnml4l83guh5a9o78o.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "23632118686-hhjbhlnlqj58jkpmi7ajgqh3jlcbjf6g.apps.googleusercontent.com",
+              "client_id": "1016954699062-dg8em7ct32nauoankr2odnksnuinq3vh.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.mobileApp"
+                "bundle_id": "com.ludyb.pom"
               }
             }
           ]

@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -46,30 +49,22 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDfBuvqYyr8HSX8cgP4ip-atrJoXkp_WGM',
-    appId: '1:23632118686:web:cf16e318d845faca8c4c8f',
-    messagingSenderId: '23632118686',
-    projectId: 'trams-app',
-    authDomain: 'trams-app.firebaseapp.com',
-    storageBucket: 'trams-app.appspot.com',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBHmBjfgkmYy5QxiELA8n_Fh2ONuOy8DEE',
-    appId: '1:23632118686:android:9c48f739f3a8139a8c4c8f',
-    messagingSenderId: '23632118686',
-    projectId: 'trams-app',
-    storageBucket: 'trams-app.appspot.com',
+    apiKey: 'AIzaSyBJyCViHJCW5H7hkSsk9Rrcni7L5jbyYIA',
+    appId: '1:1016954699062:android:355ef5b2daff439b030797',
+    messagingSenderId: '1016954699062',
+    projectId: 'foodordersmanagement',
+    storageBucket: 'foodordersmanagement.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBHfpArc-f4n3NwU1LFy6Bpn8vEL_48XII',
-    appId: '1:23632118686:ios:4b233cd03c1fc7fa8c4c8f',
-    messagingSenderId: '23632118686',
-    projectId: 'trams-app',
-    storageBucket: 'trams-app.appspot.com',
-    iosClientId: '23632118686-hhjbhlnlqj58jkpmi7ajgqh3jlcbjf6g.apps.googleusercontent.com',
-    iosBundleId: 'com.example.mobileApp',
+    apiKey: 'AIzaSyCnC4TWl4WI1vTTjWZj96fUe82qsf4Wrqw',
+    appId: '1:1016954699062:ios:ba23ed45639ca9ec030797',
+    messagingSenderId: '1016954699062',
+    projectId: 'foodordersmanagement',
+    storageBucket: 'foodordersmanagement.appspot.com',
+    androidClientId: '1016954699062-6vth0coprbi3ut7jqtcbekm54raki7ui.apps.googleusercontent.com',
+    iosClientId: '1016954699062-n50394kfli6bktun54o8nojvae6ncqqg.apps.googleusercontent.com',
+    iosBundleId: 'com.ludyb.fom',
   );
 }

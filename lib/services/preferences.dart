@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
-import 'package:mobile_app/models/settings_models.dart';
+import 'package:fom/models/settings_models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// In case of breaking change we can handle that with the [version]

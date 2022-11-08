@@ -1,0 +1,22 @@
+fastlane_require 'dotenv'
+
+platform :android do
+    before_all do
+        Dotenv.overload '.env'
+    end
+
+    desc "Build lane"
+    lane :build do
+        sh("fvm flutter build appbundle --release")
+    end
+
+    desc "Android App Playstore"
+    lane :deploy_to_playstore do
+        upload_to_play_store(
+            aab: "../build/app/outputs/bundle/release/app-release.aab",
+            changes_not_sent_for_review: true,
+            track: "internal",
+            release_status: "draft"
+        )
+  end
+end
