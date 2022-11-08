@@ -19,7 +19,9 @@ class ConfirmActionDialog extends StatelessWidget {
           child: const Text('Annuler'),
         ),
         ElevatedButton(
-          style: ElevatedButton.styleFrom(primary: context.theme.errorColor),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: context.theme.errorColor,
+          ),
           onPressed: () {
             Navigator.pop(context, true);
           },

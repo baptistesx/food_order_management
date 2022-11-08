@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fom/blocs/meals/meals.dart';
 import 'package:fom/blocs/meals/meals_events.dart';
-import 'package:fom/blocs/orders/orders.dart';
-import 'package:fom/blocs/orders/orders_events.dart';
 import 'package:fom/main.dart';
 import 'package:fom/utils/functions.dart';
 import 'package:fom/views/ingredients.dart';

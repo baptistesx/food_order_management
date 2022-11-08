@@ -145,7 +145,6 @@ class _AddMealToOrderDialogState extends State<AddMealToOrderDialog> {
                 stream: FirebaseFirestore.instance
                     .collection('ingredients')
                     .where('userId', isEqualTo: firebaseAuth.currentUser!.uid)
-                    .orderBy('name')
                     .snapshots(),
                 builder: (
                   BuildContext context,
@@ -165,7 +164,12 @@ class _AddMealToOrderDialogState extends State<AddMealToOrderDialog> {
                             ),
                           )
                           .toList();
-
+                  if (ingredients.isNotEmpty) {
+                    ingredients.sort(
+                      (Ingredient a, Ingredient b) =>
+                          a.name.toString().compareTo(b.name.toString()),
+                    );
+                  }
                   return Column(
                     children: ingredients
                         .map(

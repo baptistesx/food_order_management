@@ -23,7 +23,7 @@ class MealRepository {
           .collection('ingredients')
           .where('userId', isEqualTo: firebaseAuth.currentUser!.uid)
           .get()
-          .then((snapshot) {
+          .then((QuerySnapshot<Map<String, dynamic>> snapshot) {
         return snapshot.docs
             .map(
               (QueryDocumentSnapshot<Object?> e) => Ingredient.fromMap(

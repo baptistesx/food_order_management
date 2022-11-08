@@ -49,6 +49,7 @@ class IngredientBloc extends Bloc<IngredientEvent, IngredientState> {
       await ingredientRepository.deleteIngredientById(event.ingredient);
 
       emit(IngredientDeletedState());
+      emit(IngredientInitialState());
     } on StandardException catch (e) {
       emit(IngredientFetchedErrorState(e.message));
       emit(IngredientInitialState());
@@ -70,6 +71,7 @@ class IngredientBloc extends Bloc<IngredientEvent, IngredientState> {
       await ingredientRepository.updateIngredientById(event.ingredient);
 
       emit(IngredientUpdatedState());
+      emit(IngredientInitialState());
     } on StandardException catch (e) {
       emit(IngredientFetchedErrorState(e.message));
       emit(IngredientInitialState());
@@ -91,6 +93,7 @@ class IngredientBloc extends Bloc<IngredientEvent, IngredientState> {
       await ingredientRepository.createIngredient(event.ingredient);
 
       emit(IngredientAddedState());
+      emit(IngredientInitialState());
     } on StandardException catch (e) {
       emit(IngredientFetchedErrorState(e.message));
       emit(IngredientInitialState());

@@ -48,6 +48,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       await orderRepository.deleteOrderById(event.order);
 
       emit(OrderDeletedState());
+      emit(OrderInitialState());
     } on StandardException catch (e) {
       emit(OrderFetchedErrorState(e.message));
       emit(OrderInitialState());
@@ -111,6 +112,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       await orderRepository.createOrder(event.order);
 
       emit(OrderAddedState());
+      emit(OrderInitialState());
     } on StandardException catch (e) {
       emit(OrderFetchedErrorState(e.message));
       emit(OrderInitialState());

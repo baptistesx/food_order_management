@@ -201,9 +201,12 @@ class _MealPage extends State<MealPage> {
                               ),
                             )
                             .toList();
-                    ingredients.sort((a, b) => a.name == null || b.name == null
-                        ? -1
-                        : a.name!.compareTo(b.name!));
+                    ingredients.sort(
+                      (Ingredient a, Ingredient b) =>
+                          a.name == null || b.name == null
+                              ? -1
+                              : a.name!.compareTo(b.name!),
+                    );
                     return Column(
                       children: ingredients
                           .map(
@@ -245,42 +248,54 @@ class _MealPage extends State<MealPage> {
           child: Row(
             children: <Widget>[
               Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      if (widget.meal == null) {
-                        context.read<MealBloc>().add(
-                              CreateMealEvent(
-                                Meal(
-                                  name: _nameController.text,
-                                  priceSmall:
-                                      double.parse(_priceSmallController.text),
-                                  priceBig:
-                                      double.parse(_priceBigController.text),
-                                  ingredients: meal.ingredients,
-                                  userId: firebaseAuth.currentUser!.uid,
-                                ),
-                              ),
-                            );
-                      } else if (widget.meal!.id != null) {
-                        context.read<MealBloc>().add(
-                              UpdateMealByIdEvent(
-                                Meal(
-                                  id: widget.meal!.id,
-                                  name: _nameController.text,
-                                  priceSmall:
-                                      double.parse(_priceSmallController.text),
-                                  priceBig:
-                                      double.parse(_priceBigController.text),
-                                  ingredients: meal.ingredients,
-                                  userId: firebaseAuth.currentUser!.uid,
-                                ),
-                              ),
-                            );
-                      }
-                    }
+                child: BlocBuilder<MealBloc, MealState>(
+                  builder: (BuildContext context, MealState state) {
+                    return ElevatedButton(
+                      onPressed: state is MealLoadingState
+                          ? null
+                          : () {
+                              if (_formKey.currentState!.validate()) {
+                                if (widget.meal == null) {
+                                  context.read<MealBloc>().add(
+                                        CreateMealEvent(
+                                          Meal(
+                                            name: _nameController.text,
+                                            priceSmall: double.parse(
+                                              _priceSmallController.text,
+                                            ),
+                                            priceBig: double.parse(
+                                              _priceBigController.text,
+                                            ),
+                                            ingredients: meal.ingredients,
+                                            userId:
+                                                firebaseAuth.currentUser!.uid,
+                                          ),
+                                        ),
+                                      );
+                                } else if (widget.meal!.id != null) {
+                                  context.read<MealBloc>().add(
+                                        UpdateMealByIdEvent(
+                                          Meal(
+                                            id: widget.meal!.id,
+                                            name: _nameController.text,
+                                            priceSmall: double.parse(
+                                              _priceSmallController.text,
+                                            ),
+                                            priceBig: double.parse(
+                                              _priceBigController.text,
+                                            ),
+                                            ingredients: meal.ingredients,
+                                            userId:
+                                                firebaseAuth.currentUser!.uid,
+                                          ),
+                                        ),
+                                      );
+                                }
+                              }
+                            },
+                      child: const Text('Valider'),
+                    );
                   },
-                  child: const Text('Valider'),
                 ),
               ),
             ],

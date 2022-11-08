@@ -16,7 +16,6 @@ class MealsRepository {
     final QuerySnapshot<Map<String, dynamic>> ingredientsSnapshots = await db
         .collection('ingredients')
         .where('userId', isEqualTo: firebaseAuth.currentUser!.uid)
-        .orderBy('name')
         .get();
     final List<Ingredient> ingredients = ingredientsSnapshots.docs
         .map(
@@ -47,6 +46,10 @@ class MealsRepository {
           ),
         )
         .toList();
+
+    meals.sort(
+      (Meal a, Meal b) => a.name.toString().compareTo(b.name.toString()),
+    );
 
     return meals;
   }

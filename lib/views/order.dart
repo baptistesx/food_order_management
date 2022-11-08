@@ -239,205 +239,221 @@ class _OrderPage extends State<OrderPage> {
                       .toList(),
                 ),
                 StreamBuilder<QuerySnapshot<Object?>>(
-                    stream: FirebaseFirestore.instance
-                        .collection('meals')
-                        .where('userId',
-                            isEqualTo: firebaseAuth.currentUser!.uid)
-                        // .orderBy('name')
-                        .snapshots(),
-                    builder: (
-                      BuildContext context,
-                      AsyncSnapshot<QuerySnapshot<Object?>> mealsSnapshot,
-                    ) {
-                      return StreamBuilder<QuerySnapshot<Object?>>(
-                          stream: FirebaseFirestore.instance
-                              .collection('ingredients')
-                              .where('userId',
-                                  isEqualTo: firebaseAuth.currentUser!.uid)
-                              // .orderBy('name')
-                              .snapshots(),
-                          builder: (
-                            BuildContext context,
-                            AsyncSnapshot<QuerySnapshot<Object?>>
-                                ingredientsSnapshot,
-                          ) {
-                            if (!ingredientsSnapshot.hasData ||
-                                !mealsSnapshot.hasData) {
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            }
+                  stream: FirebaseFirestore.instance
+                      .collection('meals')
+                      .where(
+                        'userId',
+                        isEqualTo: firebaseAuth.currentUser!.uid,
+                      )
+                      // .orderBy('name')
+                      .snapshots(),
+                  builder: (
+                    BuildContext context,
+                    AsyncSnapshot<QuerySnapshot<Object?>> mealsSnapshot,
+                  ) {
+                    return StreamBuilder<QuerySnapshot<Object?>>(
+                      stream: FirebaseFirestore.instance
+                          .collection('ingredients')
+                          .where(
+                            'userId',
+                            isEqualTo: firebaseAuth.currentUser!.uid,
+                          )
+                          // .orderBy('name')
+                          .snapshots(),
+                      builder: (
+                        BuildContext context,
+                        AsyncSnapshot<QuerySnapshot<Object?>>
+                            ingredientsSnapshot,
+                      ) {
+                        if (!ingredientsSnapshot.hasData ||
+                            !mealsSnapshot.hasData) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
 
-                            final List<Ingredient> ingredients =
-                                ingredientsSnapshot.data == null
-                                    ? <Ingredient>[]
-                                    : ingredientsSnapshot.data!.docs
-                                        .map(
-                                          (QueryDocumentSnapshot<Object?> e) =>
-                                              Ingredient.fromMap(
-                                            e.data() as Map<String, dynamic>,
-                                            e.reference.id,
-                                          ),
-                                        )
-                                        .toList();
-
-                            final List<Meal> meals = mealsSnapshot.data == null
-                                ? <Meal>[]
-                                : mealsSnapshot.data!.docs
+                        final List<Ingredient> ingredients =
+                            ingredientsSnapshot.data == null
+                                ? <Ingredient>[]
+                                : ingredientsSnapshot.data!.docs
                                     .map(
                                       (QueryDocumentSnapshot<Object?> e) =>
-                                          Meal.fromMap(
-                                              e.data() as Map<String, dynamic>,
-                                              e.reference.id,
-                                              ingredients),
+                                          Ingredient.fromMap(
+                                        e.data() as Map<String, dynamic>,
+                                        e.reference.id,
+                                      ),
                                     )
                                     .toList();
-                            if (!mealsSnapshot.hasData) {
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            }
 
-                            return Wrap(
-                              children: meals
-                                  .map(
-                                    (Meal meal) => SizedBox(
-                                      width: 300,
-                                      child: Card(
-                                        child: ListTile(
-                                          onTap: () async {
-                                            // ignore: always_specify_types
-                                            final mealToAdd = await showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return AddMealToOrderDialog(
-                                                  meal: meal,
-                                                );
-                                              },
+                        final List<Meal> meals = mealsSnapshot.data == null
+                            ? <Meal>[]
+                            : mealsSnapshot.data!.docs
+                                .map(
+                                  (QueryDocumentSnapshot<Object?> e) =>
+                                      Meal.fromMap(
+                                    e.data() as Map<String, dynamic>,
+                                    e.reference.id,
+                                    ingredients,
+                                  ),
+                                )
+                                .toList();
+                        if (!mealsSnapshot.hasData) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+
+                        return Wrap(
+                          children: meals
+                              .map(
+                                (Meal meal) => SizedBox(
+                                  width: 300,
+                                  child: Card(
+                                    child: ListTile(
+                                      onTap: () async {
+                                        // ignore: always_specify_types
+                                        final mealToAdd = await showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AddMealToOrderDialog(
+                                              meal: meal,
                                             );
-                                            if (mealToAdd != null) {
-                                              if (mounted) {
-                                                setState(() {
-                                                  selectedMeals.add(mealToAdd);
-                                                });
-                                              }
-                                            }
                                           },
-                                          title: Text(
-                                            '${meal.name}${meal.runtimeType == Meal ? " / ${meal.priceSmall}€ / ${meal.priceBig}€" : ""}',
-                                          ),
-                                          subtitle: meal.runtimeType == Meal
-                                              ? Text(
-                                                  (meal).ingredients == null
-                                                      ? 'Erreur'
-                                                      : (meal)
-                                                          .ingredients!
-                                                          .map(
-                                                            (
-                                                              Ingredient
-                                                                  ingredient,
-                                                            ) =>
-                                                                ingredient.name,
-                                                          )
-                                                          .toList()
-                                                          .toString(),
-                                                )
-                                              : null,
-                                        ),
+                                        );
+                                        if (mealToAdd != null) {
+                                          if (mounted) {
+                                            setState(() {
+                                              selectedMeals.add(mealToAdd);
+                                            });
+                                          }
+                                        }
+                                      },
+                                      title: Text(
+                                        '${meal.name}${meal.runtimeType == Meal ? " / ${meal.priceSmall}€ / ${meal.priceBig}€" : ""}',
                                       ),
+                                      subtitle: meal.runtimeType == Meal
+                                          ? Text(
+                                              (meal).ingredients == null
+                                                  ? 'Erreur'
+                                                  : (meal)
+                                                      .ingredients!
+                                                      .map(
+                                                        (
+                                                          Ingredient ingredient,
+                                                        ) =>
+                                                            ingredient.name,
+                                                      )
+                                                      .toList()
+                                                      .toString(),
+                                            )
+                                          : null,
                                     ),
-                                  )
-                                  .toList(),
-                            );
-                          });
-                    }),
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                        );
+                      },
+                    );
+                  },
+                ),
               ],
             ),
           ),
         ),
         bottom: SafeArea(
-          child: Column(
-            children: <Widget>[
-              Text(
-                'Total: ${selectedMeals.isEmpty ? "0" : selectedMeals.map((Meal meal) => meal.isBig != null && meal.isBig! ? meal.priceBig! : meal.priceSmall!).toList().reduce((double value, double element) => value + element)}€',
-                style: const TextStyle(fontSize: 20.0),
-              ),
-              const SizedBox(height: 16),
-              Row(
+          child: BlocBuilder<OrderBloc, OrderState>(
+            builder: (BuildContext context, OrderState state) {
+              return Column(
                 children: <Widget>[
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: selectedMeals.isEmpty || _timeToDeliver == null
-                          ? null
-                          : () {
-                              if (_formKey.currentState!.validate()) {
-                                if (widget.order == null) {
-                                  context.read<OrderBloc>().add(
-                                        CreateOrderEvent(
-                                          Order(
-                                            status: OrderStatus.toDo,
-                                            createdAt: DateTime.now(),
-                                            timeToDeliver: _timeToDeliver!,
-                                            clientName:
-                                                _clientNameController.text,
-                                            meals: selectedMeals,
-                                            userId:
-                                                firebaseAuth.currentUser!.uid,
-                                          ),
-                                        ),
-                                      );
-                                } else if (widget.order!.id != null) {
-                                  context.read<OrderBloc>().add(
-                                        UpdateOrderByIdEvent(
-                                          Order(
-                                            id: widget.order!.id,
-                                            status: widget.order!.status,
-                                            createdAt: DateTime.now(),
-                                            timeToDeliver: _timeToDeliver!,
-                                            clientName:
-                                                _clientNameController.text,
-                                            meals: selectedMeals,
-                                            userId:
-                                                firebaseAuth.currentUser!.uid,
-                                          ),
-                                        ),
-                                      );
-                                }
-                              }
-                            },
-                      child: const Text('Valider'),
-                    ),
+                  Text(
+                    'Total: ${selectedMeals.isEmpty ? "0" : selectedMeals.map((Meal meal) => meal.isBig != null && meal.isBig! ? meal.priceBig! : meal.priceSmall!).toList().reduce((double value, double element) => value + element)}€',
+                    style: const TextStyle(fontSize: 20.0),
                   ),
-                ],
-              ),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: TextButton(
-                      onPressed: () async {
-                        // ignore: always_specify_types
-                        final shouldDelete = await showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return const ConfirmActionDialog();
-                          },
-                        );
-                        if (widget.order != null &&
-                            shouldDelete != null &&
-                            shouldDelete &&
-                            mounted) {
-                          context
-                              .read<OrderBloc>()
-                              .add(DeleteOrderByIdEvent(widget.order!));
-                        }
-                      },
-                      child: Text(
-                        'Supprimer',
-                        style: TextStyle(color: context.theme.errorColor),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: selectedMeals.isEmpty ||
+                                  _timeToDeliver == null ||
+                                  state is OrderLoadingState
+                              ? null
+                              : () {
+                                  if (_formKey.currentState!.validate()) {
+                                    if (widget.order == null) {
+                                      context.read<OrderBloc>().add(
+                                            CreateOrderEvent(
+                                              Order(
+                                                status: OrderStatus.toDo,
+                                                createdAt: DateTime.now(),
+                                                timeToDeliver: _timeToDeliver!,
+                                                clientName:
+                                                    _clientNameController.text,
+                                                meals: selectedMeals,
+                                                userId: firebaseAuth
+                                                    .currentUser!.uid,
+                                              ),
+                                            ),
+                                          );
+                                    } else if (widget.order!.id != null) {
+                                      context.read<OrderBloc>().add(
+                                            UpdateOrderByIdEvent(
+                                              Order(
+                                                id: widget.order!.id,
+                                                status: widget.order!.status,
+                                                createdAt: DateTime.now(),
+                                                timeToDeliver: _timeToDeliver!,
+                                                clientName:
+                                                    _clientNameController.text,
+                                                meals: selectedMeals,
+                                                userId: firebaseAuth
+                                                    .currentUser!.uid,
+                                              ),
+                                            ),
+                                          );
+                                    }
+                                  }
+                                },
+                          child: const Text('Valider'),
+                        ),
                       ),
-                    ),
+                    ],
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: TextButton(
+                          onPressed: state is OrderLoadingState
+                              ? null
+                              : () async {
+                                  // ignore: always_specify_types
+                                  final shouldDelete = await showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return const ConfirmActionDialog();
+                                    },
+                                  );
+                                  if (widget.order != null &&
+                                      shouldDelete != null &&
+                                      shouldDelete &&
+                                      mounted) {
+                                    context.read<OrderBloc>().add(
+                                          DeleteOrderByIdEvent(widget.order!),
+                                        );
+                                  }
+                                },
+                          child: Text(
+                            'Supprimer',
+                            style: TextStyle(color: context.theme.errorColor),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
-              ),
-            ],
+              );
+            },
           ),
         ),
       ),

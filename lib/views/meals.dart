@@ -27,9 +27,6 @@ class MealsPage extends StatefulWidget {
 }
 
 class _MealsPageState extends State<MealsPage> {
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-      GlobalKey<RefreshIndicatorState>();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,99 +42,102 @@ class _MealsPageState extends State<MealsPage> {
           }
         },
         child: StreamBuilder<QuerySnapshot<Object?>>(
-            stream: FirebaseFirestore.instance
-                .collection('ingredients')
-                // .orderBy('name')
-                .where('userId', isEqualTo: firebaseAuth.currentUser!.uid)
-                .snapshots(),
-            builder: (
-              BuildContext context,
-              AsyncSnapshot<QuerySnapshot<Object?>> ingredientsSnapshot,
-            ) {
-              return StreamBuilder<QuerySnapshot<Object?>>(
-                  stream: FirebaseFirestore.instance
-                      .collection('meals')
-                      // .orderBy('name')
-                      .where('userId', isEqualTo: firebaseAuth.currentUser!.uid)
-                      .snapshots(),
-                  builder: (
-                    BuildContext context,
-                    AsyncSnapshot<QuerySnapshot<Object?>> mealsSnapshot,
-                  ) {
-                    if (!ingredientsSnapshot.hasData ||
-                        !mealsSnapshot.hasData) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
+          stream: FirebaseFirestore.instance
+              .collection('ingredients')
+              // .orderBy('name')
+              .where('userId', isEqualTo: firebaseAuth.currentUser!.uid)
+              .snapshots(),
+          builder: (
+            BuildContext context,
+            AsyncSnapshot<QuerySnapshot<Object?>> ingredientsSnapshot,
+          ) {
+            return StreamBuilder<QuerySnapshot<Object?>>(
+              stream: FirebaseFirestore.instance
+                  .collection('meals')
+                  // .orderBy('name')
+                  .where('userId', isEqualTo: firebaseAuth.currentUser!.uid)
+                  .snapshots(),
+              builder: (
+                BuildContext context,
+                AsyncSnapshot<QuerySnapshot<Object?>> mealsSnapshot,
+              ) {
+                if (!ingredientsSnapshot.hasData || !mealsSnapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-                    final List<Ingredient> ingredients =
-                        ingredientsSnapshot.data == null
-                            ? <Ingredient>[]
-                            : ingredientsSnapshot.data!.docs
-                                .map(
-                                  (QueryDocumentSnapshot<Object?> e) =>
-                                      Ingredient.fromMap(
-                                    e.data() as Map<String, dynamic>,
-                                    e.reference.id,
-                                  ),
-                                )
-                                .toList();
-
-                    final List<Meal> meals = mealsSnapshot.data == null
-                        ? <Meal>[]
-                        : mealsSnapshot.data!.docs
+                final List<Ingredient> ingredients =
+                    ingredientsSnapshot.data == null
+                        ? <Ingredient>[]
+                        : ingredientsSnapshot.data!.docs
                             .map(
                               (QueryDocumentSnapshot<Object?> e) =>
-                                  Meal.fromMap(e.data() as Map<String, dynamic>,
-                                      e.reference.id, ingredients),
+                                  Ingredient.fromMap(
+                                e.data() as Map<String, dynamic>,
+                                e.reference.id,
+                              ),
                             )
                             .toList();
 
-                    meals.sort(
-                      (a, b) => a.name == null || b.name == null
-                          ? -1
-                          : a.name!.compareTo(b.name!),
-                    );
+                final List<Meal> meals = mealsSnapshot.data == null
+                    ? <Meal>[]
+                    : mealsSnapshot.data!.docs
+                        .map(
+                          (QueryDocumentSnapshot<Object?> e) => Meal.fromMap(
+                            e.data() as Map<String, dynamic>,
+                            e.reference.id,
+                            ingredients,
+                          ),
+                        )
+                        .toList();
 
-                    return ListView(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 24),
-                      children: meals.isEmpty
-                          ? <Widget>[const Text('Aucun élément trouvé.')]
-                          : meals
-                              .map(
-                                (Meal meal) => ItemCard(
-                                  item: meal,
-                                  onDelete: () async {
-                                    // ignore: always_specify_types
-                                    final shouldDelete = await showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return const ConfirmActionDialog();
-                                      },
-                                    );
-                                    if (shouldDelete != null && shouldDelete) {
-                                      if (meal.id != null && mounted) {
-                                        context.read<MealBloc>().add(
-                                              DeleteMealByIdEvent(meal.id!),
-                                            );
-                                      }
-                                    }
+                meals.sort(
+                  (Meal a, Meal b) => a.name == null || b.name == null
+                      ? -1
+                      : a.name!.compareTo(b.name!),
+                );
+
+                return ListView(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 24,
+                  ),
+                  children: meals.isEmpty
+                      ? <Widget>[const Text('Aucun élément trouvé.')]
+                      : meals
+                          .map(
+                            (Meal meal) => ItemCard(
+                              item: meal,
+                              onDelete: () async {
+                                // ignore: always_specify_types
+                                final shouldDelete = await showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return const ConfirmActionDialog();
                                   },
-                                  onEdit: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      MealPage.routeName,
-                                      arguments: <String, dynamic>{
-                                        'meal': meal
-                                      },
-                                    );
-                                  },
-                                ),
-                              )
-                              .toList(),
-                    );
-                  });
-            }),
+                                );
+                                if (shouldDelete != null && shouldDelete) {
+                                  if (meal.id != null && mounted) {
+                                    context.read<MealBloc>().add(
+                                          DeleteMealByIdEvent(meal.id!),
+                                        );
+                                  }
+                                }
+                              },
+                              onEdit: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  MealPage.routeName,
+                                  arguments: <String, dynamic>{'meal': meal},
+                                );
+                              },
+                            ),
+                          )
+                          .toList(),
+                );
+              },
+            );
+          },
+        ),
 
         //  BlocBuilder<MealsBloc, MealsState>(
         //   builder: (BuildContext context, MealsState mealsState) {

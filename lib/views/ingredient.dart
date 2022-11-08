@@ -88,32 +88,40 @@ class _IngredientPage extends State<IngredientPage> {
           child: Row(
             children: <Widget>[
               Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      if (widget.ingredient == null) {
-                        context.read<IngredientBloc>().add(
-                              CreateIngredientEvent(
-                                Ingredient(
-                                  name: _nameController.text,
-                                  userId: firebaseAuth.currentUser!.uid,
-                                ),
-                              ),
-                            );
-                      } else if (widget.ingredient!.id != null) {
-                        context.read<IngredientBloc>().add(
-                              UpdateIngredientByIdEvent(
-                                Ingredient(
-                                  id: widget.ingredient!.id,
-                                  name: _nameController.text,
-                                  userId: firebaseAuth.currentUser!.uid,
-                                ),
-                              ),
-                            );
-                      }
-                    }
+                child: BlocBuilder<IngredientBloc, IngredientState>(
+                  builder: (BuildContext context, IngredientState state) {
+                    return ElevatedButton(
+                      onPressed: state is IngredientLoadingState
+                          ? null
+                          : () {
+                              if (_formKey.currentState!.validate()) {
+                                if (widget.ingredient == null) {
+                                  context.read<IngredientBloc>().add(
+                                        CreateIngredientEvent(
+                                          Ingredient(
+                                            name: _nameController.text,
+                                            userId:
+                                                firebaseAuth.currentUser!.uid,
+                                          ),
+                                        ),
+                                      );
+                                } else if (widget.ingredient!.id != null) {
+                                  context.read<IngredientBloc>().add(
+                                        UpdateIngredientByIdEvent(
+                                          Ingredient(
+                                            id: widget.ingredient!.id,
+                                            name: _nameController.text,
+                                            userId:
+                                                firebaseAuth.currentUser!.uid,
+                                          ),
+                                        ),
+                                      );
+                                }
+                              }
+                            },
+                      child: const Text('Valider'),
+                    );
                   },
-                  child: const Text('Valider'),
                 ),
               ),
             ],

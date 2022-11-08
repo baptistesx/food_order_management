@@ -48,6 +48,7 @@ class MealBloc extends Bloc<MealEvent, MealState> {
       await mealRepository.deleteMealById(event.id);
 
       emit(MealDeletedState());
+      emit(MealInitialState());
     } on StandardException catch (e) {
       emit(MealFetchedErrorState(e.message));
       emit(MealInitialState());
@@ -69,6 +70,7 @@ class MealBloc extends Bloc<MealEvent, MealState> {
       await mealRepository.updateMealById(event.meal);
 
       emit(MealUpdatedState());
+      emit(MealInitialState());
     } on StandardException catch (e) {
       emit(MealFetchedErrorState(e.message));
       emit(MealInitialState());
@@ -90,6 +92,7 @@ class MealBloc extends Bloc<MealEvent, MealState> {
       await mealRepository.createMeal(event.meal);
 
       emit(MealAddedState());
+      emit(MealInitialState());
     } on StandardException catch (e) {
       emit(MealFetchedErrorState(e.message));
       emit(MealInitialState());

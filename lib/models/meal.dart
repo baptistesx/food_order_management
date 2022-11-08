@@ -71,6 +71,7 @@ class Meal extends Item {
               (map['ingredients'] as List<dynamic>?)!.map(
                 (dynamic x) => ingredients.firstWhere(
                   (Ingredient element) {
+                    // ignore: avoid_dynamic_calls
                     return element.id == x.id;
                   },
                 ),

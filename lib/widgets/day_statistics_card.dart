@@ -1,8 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:fom/main.dart';
 import 'package:fom/models/day_statistics.dart';
-import 'package:fom/models/meal.dart';
 import 'package:fom/theme/themes.dart';
 import 'package:intl/intl.dart';
 
@@ -16,6 +13,15 @@ class DayStatisticsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Map<String, int> countedMeals = {};
+    for (int i = 0; i < dayStatistics.allOrdersDeliveredMeals.length; i++) {
+      countedMeals[dayStatistics.allOrdersDeliveredMeals[i].name!] =
+          countedMeals[dayStatistics.allOrdersDeliveredMeals[i].name] == null
+              ? 1
+              : countedMeals[dayStatistics.allOrdersDeliveredMeals[i].name!]! +
+                  1;
+    }
+
     return Card(
       elevation: 10,
       color: const Color(0xffececec),
@@ -32,50 +38,19 @@ class DayStatisticsCard extends StatelessWidget {
           //   'Total meals livrées: ${dayStatistics.allOrdersDeliveredMeals.length}',
           // ),
           Text('CA total: ${dayStatistics.totalDayIncomes.toString()}€'),
-          StreamBuilder<QuerySnapshot<Object?>>(
-              stream: FirebaseFirestore.instance
-                  .collection('meals')
-                  // .orderBy('name')
-                  .where('userId', isEqualTo: firebaseAuth.currentUser!.uid)
-                  .snapshots(),
-              builder: (
-                BuildContext context,
-                AsyncSnapshot<QuerySnapshot<Object?>> mealsSnapshot,
-              ) {
-                if (!mealsSnapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                final List<Meal> meals = mealsSnapshot.data == null
-                    ? <Meal>[]
-                    : mealsSnapshot.data!.docs
-                        .map(
-                          (QueryDocumentSnapshot<Object?> e) => Meal.fromMap(
-                              e.data() as Map<String, dynamic>,
-                              e.reference.id, []),
-                        )
-                        .toList();
-
-                return Column(
-                  children: meals
-                      .map(
-                        (Meal meal) => dayStatistics.allOrdersDeliveredMeals
-                                .where(
-                                  (Meal element) => element.id == meal.id,
-                                )
-                                .isEmpty
-                            ? const SizedBox()
-                            : Card(
-                                child: ListTile(
-                                  title: Text(
-                                    '${dayStatistics.allOrdersDeliveredMeals.where((Meal element) => element.id == meal.id).length} x ${meal.name}',
-                                  ),
-                                ),
-                              ),
-                      )
-                      .toList(),
-                );
-              }),
+          Column(
+            children: countedMeals.keys
+                .map(
+                  (String key) => Card(
+                    child: ListTile(
+                      title: Text(
+                        '${countedMeals[key]} x $key',
+                      ),
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
         ],
       ),
     );

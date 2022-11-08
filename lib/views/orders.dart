@@ -54,55 +54,57 @@ class _OrdersPageState extends State<OrdersPage> {
             AsyncSnapshot<QuerySnapshot<Object?>> ordersSnapshot,
           ) {
             return StreamBuilder<QuerySnapshot<Object?>>(
-                stream: FirebaseFirestore.instance
-                    .collection('ingredients')
-                    // .orderBy('name')
-                    .where('userId', isEqualTo: firebaseAuth.currentUser!.uid)
-                    .snapshots(),
-                builder: (
-                  BuildContext context,
-                  AsyncSnapshot<QuerySnapshot<Object?>> ingredientsSnapshot,
-                ) {
-                  if (!ordersSnapshot.hasData || !ingredientsSnapshot.hasData) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  final List<Ingredient> ingredients =
-                      ingredientsSnapshot.data == null
-                          ? <Ingredient>[]
-                          : ingredientsSnapshot.data!.docs
-                              .map(
-                                (QueryDocumentSnapshot<Object?> e) =>
-                                    Ingredient.fromMap(
-                                  e.data() as Map<String, dynamic>,
-                                  e.reference.id,
-                                ),
-                              )
-                              .toList();
-
-                  final List<Order> orders = ordersSnapshot.data == null
-                      ? <Order>[]
-                      : ordersSnapshot.data!.docs
-                          .map(
-                            (QueryDocumentSnapshot<Object?> e) => Order.fromMap(
+              stream: FirebaseFirestore.instance
+                  .collection('ingredients')
+                  // .orderBy('name')
+                  .where('userId', isEqualTo: firebaseAuth.currentUser!.uid)
+                  .snapshots(),
+              builder: (
+                BuildContext context,
+                AsyncSnapshot<QuerySnapshot<Object?>> ingredientsSnapshot,
+              ) {
+                if (!ordersSnapshot.hasData || !ingredientsSnapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                final List<Ingredient> ingredients =
+                    ingredientsSnapshot.data == null
+                        ? <Ingredient>[]
+                        : ingredientsSnapshot.data!.docs
+                            .map(
+                              (QueryDocumentSnapshot<Object?> e) =>
+                                  Ingredient.fromMap(
                                 e.data() as Map<String, dynamic>,
                                 e.reference.id,
-                                ingredients),
-                          )
-                          .toList();
-                  if (orders.isEmpty) {
-                    return const Text('Liste des commandes');
-                  } else {
-                    orders.sort(
-                      (a, b) => a.timeToDeliver
-                          .toString()
-                          .compareTo(b.timeToDeliver.toString()),
-                    );
+                              ),
+                            )
+                            .toList();
 
-                    return Text(
-                      'Commandes ${_selectedIndex == 0 ? "A faire (${orders.where((Order order) => order.status == OrderStatus.toDo).toList().length})" : _selectedIndex == 1 ? "Faites (${orders.where((Order order) => order.status == OrderStatus.done).toList().length})" : "Livrées (${orders.where((Order order) => order.status == OrderStatus.delivered).toList().length})"}',
-                    );
-                  }
-                });
+                final List<Order> orders = ordersSnapshot.data == null
+                    ? <Order>[]
+                    : ordersSnapshot.data!.docs
+                        .map(
+                          (QueryDocumentSnapshot<Object?> e) => Order.fromMap(
+                            e.data() as Map<String, dynamic>,
+                            e.reference.id,
+                            ingredients,
+                          ),
+                        )
+                        .toList();
+                if (orders.isEmpty) {
+                  return const Text('Liste des commandes');
+                } else {
+                  orders.sort(
+                    (Order a, Order b) => a.timeToDeliver
+                        .toString()
+                        .compareTo(b.timeToDeliver.toString()),
+                  );
+
+                  return Text(
+                    'Commandes ${_selectedIndex == 0 ? "A faire (${orders.where((Order order) => order.status == OrderStatus.toDo).toList().length})" : _selectedIndex == 1 ? "Faites (${orders.where((Order order) => order.status == OrderStatus.done).toList().length})" : "Livrées (${orders.where((Order order) => order.status == OrderStatus.delivered).toList().length})"}',
+                  );
+                }
+              },
+            );
           },
         ),
       ),

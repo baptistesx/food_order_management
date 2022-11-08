@@ -28,7 +28,6 @@ class _IngredientsPageState extends State<IngredientsPage> {
       body: StreamBuilder<QuerySnapshot<Object?>>(
         stream: FirebaseFirestore.instance
             .collection('ingredients')
-            .orderBy('name')
             .where('userId', isEqualTo: firebaseAuth.currentUser!.uid)
             .snapshots(),
         builder: (
@@ -48,6 +47,14 @@ class _IngredientsPageState extends State<IngredientsPage> {
                     ),
                   )
                   .toList();
+
+          if (ingredients.isNotEmpty) {
+            ingredients.sort(
+              (Ingredient a, Ingredient b) =>
+                  a.name.toString().compareTo(b.name.toString()),
+            );
+          }
+
           return ListView(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
             children: ingredients.isEmpty
