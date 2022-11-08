@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pom/models/version_checker.dart';
-import 'package:pom/views/sign_in.dart';
+import 'package:fom/models/version_checker.dart';
+import 'package:fom/views/sign_in.dart';
 
 Route<dynamic> routeToSignInScreen() {
   return PageRouteBuilder<dynamic>(

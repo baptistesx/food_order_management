@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pom/theme/themes.dart';
-import 'package:pom/views/suggestion.dart';
+import 'package:fom/theme/themes.dart';
+import 'package:fom/views/suggestion.dart';
 
 class SuggestionButton extends StatelessWidget {
   const SuggestionButton({Key? key}) : super(key: key);

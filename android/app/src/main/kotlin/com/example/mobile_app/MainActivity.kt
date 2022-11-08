@@ -1,4 +1,4 @@
-package com.ludyb.pom
+package com.ludyb.fom
 
 import io.flutter.embedding.android.FlutterActivity
 

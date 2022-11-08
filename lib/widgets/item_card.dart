@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pom/models/ingredient.dart';
-import 'package:pom/models/item.dart';
-import 'package:pom/models/pizza.dart';
+import 'package:fom/models/ingredient.dart';
+import 'package:fom/models/item.dart';
+import 'package:fom/models/meal.dart';
 
 class ItemCard extends StatelessWidget {
   final Item item;
@@ -19,14 +19,15 @@ class ItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
+        onTap: onEdit,
         title: Text(
-          '${item.name}${item.runtimeType == Pizza ? " / ${(item as Pizza).priceSmall}€ / ${(item as Pizza).priceBig}€" : ""}',
+          '${item.name}${item.runtimeType == Meal ? " / ${(item as Meal).priceSmall}€ / ${(item as Meal).priceBig}€" : ""}',
         ),
-        subtitle: item.runtimeType == Pizza
+        subtitle: item.runtimeType == Meal
             ? Text(
-                (item as Pizza).ingredients == null
+                (item as Meal).ingredients == null
                     ? 'Erreur'
-                    : (item as Pizza)
+                    : (item as Meal)
                         .ingredients!
                         .map((Ingredient ingredient) => ingredient.name)
                         .toList()

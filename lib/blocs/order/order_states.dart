@@ -1,4 +1,4 @@
-import 'package:pom/models/order.dart';
+import 'package:fom/models/order.dart';
 
 abstract class OrderState {}
 
@@ -15,6 +15,7 @@ class OrderUpdatedState extends OrderState {
 
   OrderUpdatedState({required this.orderUpdated});
 }
+
 class OrderStatusUpdatedState extends OrderState {
   final Order orderUpdated;
 

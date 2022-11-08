@@ -1,36 +1,35 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:pom/main.dart';
-import 'package:pom/models/ingredient.dart';
-import 'package:pom/models/pizza.dart';
-import 'package:pom/widgets/ingredient_with_checkbox.dart';
+import 'package:fom/main.dart';
+import 'package:fom/models/ingredient.dart';
+import 'package:fom/models/meal.dart';
+import 'package:fom/widgets/ingredient_with_checkbox.dart';
 
-class AddPizzaToOrderDialog extends StatefulWidget {
-  final Pizza pizza;
+class AddMealToOrderDialog extends StatefulWidget {
+  final Meal meal;
 
-  const AddPizzaToOrderDialog({Key? key, required this.pizza})
-      : super(key: key);
+  const AddMealToOrderDialog({Key? key, required this.meal}) : super(key: key);
 
   @override
-  State<AddPizzaToOrderDialog> createState() => _AddPizzaToOrderDialogState();
+  State<AddMealToOrderDialog> createState() => _AddMealToOrderDialogState();
 }
 
-class _AddPizzaToOrderDialogState extends State<AddPizzaToOrderDialog> {
-  late Pizza pizza;
+class _AddMealToOrderDialogState extends State<AddMealToOrderDialog> {
+  late Meal meal;
 
   @override
   void initState() {
     super.initState();
 
-    pizza = widget.pizza.copyWith();
-    pizza.ingredientsToRemove = <Ingredient>[];
-    pizza.ingredientsToAdd = <Ingredient>[];
+    meal = widget.meal.copyWith();
+    meal.ingredientsToRemove = <Ingredient>[];
+    meal.ingredientsToAdd = <Ingredient>[];
   }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('${pizza.name} / ${pizza.priceSmall} / ${pizza.priceBig}€'),
+      title: Text('${meal.name} / ${meal.priceSmall} / ${meal.priceBig}€'),
       content: SizedBox(
         width: MediaQuery.of(context).size.width > 500
             ? MediaQuery.of(context).size.width * 0.7
@@ -44,17 +43,17 @@ class _AddPizzaToOrderDialogState extends State<AddPizzaToOrderDialog> {
                   Text(
                     'Petite',
                     style: TextStyle(
-                      fontWeight: pizza.isBig != null && !pizza.isBig!
+                      fontWeight: meal.isBig != null && !meal.isBig!
                           ? FontWeight.bold
                           : FontWeight.normal,
                     ),
                   ),
                   Switch(
-                    value: pizza.isBig ?? false,
+                    value: meal.isBig ?? false,
                     onChanged: (bool value) {
                       if (mounted) {
                         setState(() {
-                          pizza.isBig = value;
+                          meal.isBig = value;
                         });
                       }
                     },
@@ -64,7 +63,7 @@ class _AddPizzaToOrderDialogState extends State<AddPizzaToOrderDialog> {
                   Text(
                     'Grande',
                     style: TextStyle(
-                      fontWeight: pizza.isBig != null && pizza.isBig!
+                      fontWeight: meal.isBig != null && meal.isBig!
                           ? FontWeight.bold
                           : FontWeight.normal,
                     ),
@@ -73,15 +72,15 @@ class _AddPizzaToOrderDialogState extends State<AddPizzaToOrderDialog> {
               ),
               Wrap(
                 spacing: 5,
-                children: pizza.ingredients!
+                children: meal.ingredients!
                     .map(
                       (Ingredient e) => ActionChip(
-                        backgroundColor: pizza.ingredientsToRemove!.contains(e)
+                        backgroundColor: meal.ingredientsToRemove!.contains(e)
                             ? Colors.red[300]
                             : Colors.green[300],
                         label: Text(
                           e.name ?? 'Error',
-                          style: pizza.ingredientsToRemove!.contains(e)
+                          style: meal.ingredientsToRemove!.contains(e)
                               ? const TextStyle(
                                   decoration: TextDecoration.lineThrough,
                                   decorationThickness: 3,
@@ -90,22 +89,22 @@ class _AddPizzaToOrderDialogState extends State<AddPizzaToOrderDialog> {
                         ),
                         onPressed: () {
                           final bool isSelected =
-                              pizza.ingredientsToRemove!.contains(e);
+                              meal.ingredientsToRemove!.contains(e);
                           if (mounted) {
                             setState(() {
                               if (isSelected) {
-                                if (pizza.ingredients!.contains(e)) {
-                                  pizza.ingredientsToRemove!.removeWhere(
+                                if (meal.ingredients!.contains(e)) {
+                                  meal.ingredientsToRemove!.removeWhere(
                                     (Ingredient element) => element.id == e.id,
                                   );
                                 } else {
-                                  pizza.ingredientsToAdd!.add(e);
+                                  meal.ingredientsToAdd!.add(e);
                                 }
                               } else {
-                                if (pizza.ingredients!.contains(e)) {
-                                  pizza.ingredientsToRemove!.add(e);
+                                if (meal.ingredients!.contains(e)) {
+                                  meal.ingredientsToRemove!.add(e);
                                 } else {
-                                  pizza.ingredientsToAdd!.removeWhere(
+                                  meal.ingredientsToAdd!.removeWhere(
                                     (Ingredient element) => element.id == e.id,
                                   );
                                 }
@@ -117,13 +116,13 @@ class _AddPizzaToOrderDialogState extends State<AddPizzaToOrderDialog> {
                     )
                     .toList(),
               ),
-              if (pizza.ingredientsToAdd!.isNotEmpty)
+              if (meal.ingredientsToAdd!.isNotEmpty)
                 Wrap(
                   spacing: 5,
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: <Widget>[
                     const Text('Suppléments: '),
-                    ...pizza.ingredientsToAdd!
+                    ...meal.ingredientsToAdd!
                         .map(
                           (Ingredient e) => ActionChip(
                             backgroundColor: Colors.blue[300],
@@ -131,7 +130,7 @@ class _AddPizzaToOrderDialogState extends State<AddPizzaToOrderDialog> {
                             onPressed: () {
                               if (mounted) {
                                 setState(() {
-                                  pizza.ingredientsToAdd!.removeWhere(
+                                  meal.ingredientsToAdd!.removeWhere(
                                     (Ingredient element) => element.id == e.id,
                                   );
                                 });
@@ -146,7 +145,6 @@ class _AddPizzaToOrderDialogState extends State<AddPizzaToOrderDialog> {
                 stream: FirebaseFirestore.instance
                     .collection('ingredients')
                     .where('userId', isEqualTo: firebaseAuth.currentUser!.uid)
-                    .orderBy('name')
                     .snapshots(),
                 builder: (
                   BuildContext context,
@@ -166,42 +164,47 @@ class _AddPizzaToOrderDialogState extends State<AddPizzaToOrderDialog> {
                             ),
                           )
                           .toList();
-
+                  if (ingredients.isNotEmpty) {
+                    ingredients.sort(
+                      (Ingredient a, Ingredient b) =>
+                          a.name.toString().compareTo(b.name.toString()),
+                    );
+                  }
                   return Column(
                     children: ingredients
                         .map(
                           (Ingredient ingredient) => IngredientWithCheckbox(
                             ingredient: ingredient,
-                            isSelected: (pizza.ingredients!
+                            isSelected: (meal.ingredients!
                                         .where(
                                           (Ingredient element) =>
                                               element.id == ingredient.id,
                                         )
                                         .isNotEmpty &&
-                                    !pizza.ingredientsToRemove!
+                                    !meal.ingredientsToRemove!
                                         .contains(ingredient)) ||
-                                pizza.ingredientsToAdd!.contains(ingredient),
+                                meal.ingredientsToAdd!.contains(ingredient),
                             onClick: (bool? isSelected) {
                               if (isSelected != null) {
                                 if (mounted) {
                                   setState(() {
                                     if (isSelected) {
-                                      if (pizza.ingredients!
+                                      if (meal.ingredients!
                                           .contains(ingredient)) {
-                                        pizza.ingredientsToRemove!.removeWhere(
+                                        meal.ingredientsToRemove!.removeWhere(
                                           (Ingredient element) =>
                                               element.id == ingredient.id,
                                         );
                                       } else {
-                                        pizza.ingredientsToAdd!.add(ingredient);
+                                        meal.ingredientsToAdd!.add(ingredient);
                                       }
                                     } else {
-                                      if (pizza.ingredients!
+                                      if (meal.ingredients!
                                           .contains(ingredient)) {
-                                        pizza.ingredientsToRemove!
+                                        meal.ingredientsToRemove!
                                             .add(ingredient);
                                       } else {
-                                        pizza.ingredientsToAdd!.removeWhere(
+                                        meal.ingredientsToAdd!.removeWhere(
                                           (Ingredient element) =>
                                               element.id == ingredient.id,
                                         );
@@ -237,7 +240,7 @@ class _AddPizzaToOrderDialogState extends State<AddPizzaToOrderDialog> {
           ),
           child: const Text('Ajouter'),
           onPressed: () {
-            Navigator.of(context).pop(pizza);
+            Navigator.of(context).pop(meal);
           },
         ),
       ],

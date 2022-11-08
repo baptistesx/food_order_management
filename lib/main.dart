@@ -6,37 +6,37 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pom/app.dart';
-import 'package:pom/blocs/auth/auth.dart';
-import 'package:pom/blocs/auth/auth_states.dart';
-import 'package:pom/blocs/ingredient/ingredient.dart';
-import 'package:pom/blocs/ingredient/ingredient_states.dart';
-import 'package:pom/blocs/ingredients/ingredients.dart';
-import 'package:pom/blocs/ingredients/ingredients_states.dart';
-import 'package:pom/blocs/order/order.dart';
-import 'package:pom/blocs/order/order_states.dart';
-import 'package:pom/blocs/orders/orders.dart';
-import 'package:pom/blocs/orders/orders_states.dart';
-import 'package:pom/blocs/pizza/pizza.dart';
-import 'package:pom/blocs/pizza/pizza_states.dart';
-import 'package:pom/blocs/pizzas/pizzas.dart';
-import 'package:pom/blocs/pizzas/pizzas_states.dart';
-import 'package:pom/blocs/settings/settings.dart';
-import 'package:pom/blocs/suggestion/suggestion.dart';
-import 'package:pom/blocs/suggestion/suggestion_states.dart';
-import 'package:pom/firebase_options.dart';
-import 'package:pom/models/settings_models.dart';
-import 'package:pom/repositories/auth/auth.dart';
-import 'package:pom/repositories/ingredient/ingredient.dart';
-import 'package:pom/repositories/ingredients/ingredients.dart';
-import 'package:pom/repositories/order/order.dart';
-import 'package:pom/repositories/orders/orders.dart';
-import 'package:pom/repositories/pizza/pizza.dart';
-import 'package:pom/repositories/pizzas/pizzas.dart';
-import 'package:pom/repositories/settings/settings.dart';
-import 'package:pom/repositories/suggestion/suggestion.dart';
-import 'package:pom/services/logger.dart';
-import 'package:pom/theme/themes.dart';
+import 'package:fom/app.dart';
+import 'package:fom/blocs/auth/auth.dart';
+import 'package:fom/blocs/auth/auth_states.dart';
+import 'package:fom/blocs/ingredient/ingredient.dart';
+import 'package:fom/blocs/ingredient/ingredient_states.dart';
+import 'package:fom/blocs/ingredients/ingredients.dart';
+import 'package:fom/blocs/ingredients/ingredients_states.dart';
+import 'package:fom/blocs/meal/meal.dart';
+import 'package:fom/blocs/meal/meal_states.dart';
+import 'package:fom/blocs/meals/meals.dart';
+import 'package:fom/blocs/meals/meals_states.dart';
+import 'package:fom/blocs/order/order.dart';
+import 'package:fom/blocs/order/order_states.dart';
+import 'package:fom/blocs/orders/orders.dart';
+import 'package:fom/blocs/orders/orders_states.dart';
+import 'package:fom/blocs/settings/settings.dart';
+import 'package:fom/blocs/suggestion/suggestion.dart';
+import 'package:fom/blocs/suggestion/suggestion_states.dart';
+import 'package:fom/firebase_options.dart';
+import 'package:fom/models/settings_models.dart';
+import 'package:fom/repositories/auth/auth.dart';
+import 'package:fom/repositories/ingredient/ingredient.dart';
+import 'package:fom/repositories/ingredients/ingredients.dart';
+import 'package:fom/repositories/meal/meal.dart';
+import 'package:fom/repositories/meals/meals.dart';
+import 'package:fom/repositories/order/order.dart';
+import 'package:fom/repositories/orders/orders.dart';
+import 'package:fom/repositories/settings/settings.dart';
+import 'package:fom/repositories/suggestion/suggestion.dart';
+import 'package:fom/services/logger.dart';
+import 'package:fom/theme/themes.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -84,16 +84,16 @@ Future<void> main() async {
                 initialState: IngredientInitialState(),
               ),
             ),
-            BlocProvider<PizzasBloc>(
-              create: (BuildContext context) => PizzasBloc(
-                PizzasRepository(),
-                initialState: PizzasInitialState(),
+            BlocProvider<MealsBloc>(
+              create: (BuildContext context) => MealsBloc(
+                MealsRepository(),
+                initialState: MealsInitialState(),
               ),
             ),
-            BlocProvider<PizzaBloc>(
-              create: (BuildContext context) => PizzaBloc(
-                PizzaRepository(),
-                initialState: PizzaInitialState(),
+            BlocProvider<MealBloc>(
+              create: (BuildContext context) => MealBloc(
+                MealRepository(),
+                initialState: MealInitialState(),
               ),
             ),
             BlocProvider<OrdersBloc>(
@@ -127,7 +127,7 @@ Future<void> main() async {
                 create: (BuildContext context) => AppTheme(),
               ),
             ],
-            child: POMApp(
+            child: FOMApp(
               observer: FirebaseAnalyticsObserver(
                 analytics: FirebaseAnalytics.instance,
               ),

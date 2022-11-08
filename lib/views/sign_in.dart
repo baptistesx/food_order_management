@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:pom/main.dart';
-import 'package:pom/utils/functions.dart';
-import 'package:pom/widgets/google_sign_in_button.dart';
-import 'package:pom/widgets/privacy_policy_button.dart';
-import 'package:pom/widgets/suggestion_button.dart';
+import 'package:fom/main.dart';
+import 'package:fom/utils/functions.dart';
+import 'package:fom/widgets/google_sign_in_button.dart';
+import 'package:fom/widgets/privacy_policy_button.dart';
+import 'package:fom/widgets/suggestion_button.dart';
 
 class SignInPage extends StatefulWidget {
   static const String routeName = '/sign-in';

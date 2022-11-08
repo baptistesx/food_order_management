@@ -3,21 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>325973755347-m6k4jb9hq7turoppsnimfa3ckdvnlnvg.apps.googleusercontent.com</string>
+	<string>1016954699062-n50394kfli6bktun54o8nojvae6ncqqg.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.325973755347-m6k4jb9hq7turoppsnimfa3ckdvnlnvg</string>
+	<string>com.googleusercontent.apps.1016954699062-n50394kfli6bktun54o8nojvae6ncqqg</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>1016954699062-6vth0coprbi3ut7jqtcbekm54raki7ui.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyDP2Vai0xyhW1JgKHwobO4wqMzI3HQR4qo</string>
+	<string>AIzaSyCnC4TWl4WI1vTTjWZj96fUe82qsf4Wrqw</string>
 	<key>GCM_SENDER_ID</key>
-	<string>325973755347</string>
+	<string>1016954699062</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.ludyb.pom</string>
+	<string>com.ludyb.fom</string>
 	<key>PROJECT_ID</key>
-	<string>pizzaordersmanagement</string>
+	<string>foodordersmanagement</string>
 	<key>STORAGE_BUCKET</key>
-	<string>pizzaordersmanagement.appspot.com</string>
+	<string>foodordersmanagement.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:325973755347:ios:347ad144bf2d0709dcdb26</string>
+	<string>1:1016954699062:ios:ba23ed45639ca9ec030797</string>
 </dict>
 </plist>

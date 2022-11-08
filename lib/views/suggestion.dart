@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pom/blocs/suggestion/suggestion.dart';
-import 'package:pom/blocs/suggestion/suggestion_events.dart';
-import 'package:pom/blocs/suggestion/suggestion_states.dart';
-import 'package:pom/models/suggestion.dart';
-import 'package:pom/theme/themes.dart';
-import 'package:pom/widgets/custom_appbar.dart';
-import 'package:pom/widgets/custom_snackbar_error_content.dart';
+import 'package:fom/blocs/suggestion/suggestion.dart';
+import 'package:fom/blocs/suggestion/suggestion_events.dart';
+import 'package:fom/blocs/suggestion/suggestion_states.dart';
+import 'package:fom/models/suggestion.dart';
+import 'package:fom/theme/themes.dart';
+import 'package:fom/widgets/custom_appbar.dart';
+import 'package:fom/widgets/custom_snackbar_error_content.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SuggestionPage extends StatefulWidget {
@@ -106,7 +106,7 @@ class _SuggestionPageState extends State<SuggestionPage> {
                             scheme: 'mailto',
                             path: 'contact@ludyb.fr',
                             query: encodeQueryParameters(<String, String>{
-                              'subject': 'Suggestion pour la POM app',
+                              'subject': 'Suggestion pour la FOM app',
                               'body': textController.text,
                             }),
                           );

@@ -1,9 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pom/blocs/order/order_events.dart';
-import 'package:pom/blocs/order/order_states.dart';
-import 'package:pom/models/exceptions.dart';
-import 'package:pom/models/order.dart';
-import 'package:pom/repositories/order/order.dart';
+import 'package:fom/blocs/order/order_events.dart';
+import 'package:fom/blocs/order/order_states.dart';
+import 'package:fom/models/exceptions.dart';
+import 'package:fom/models/order.dart';
+import 'package:fom/repositories/order/order.dart';
 
 class OrderBloc extends Bloc<OrderEvent, OrderState> {
   final OrderRepository orderRepository;
@@ -48,6 +48,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       await orderRepository.deleteOrderById(event.order);
 
       emit(OrderDeletedState());
+      emit(OrderInitialState());
     } on StandardException catch (e) {
       emit(OrderFetchedErrorState(e.message));
       emit(OrderInitialState());
@@ -111,6 +112,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       await orderRepository.createOrder(event.order);
 
       emit(OrderAddedState());
+      emit(OrderInitialState());
     } on StandardException catch (e) {
       emit(OrderFetchedErrorState(e.message));
       emit(OrderInitialState());

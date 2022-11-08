@@ -4,8 +4,8 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:pom/extensions/translation_helper.dart';
-import 'package:pom/utils/constants.dart';
+import 'package:fom/extensions/translation_helper.dart';
+import 'package:fom/utils/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class VersionChecker {

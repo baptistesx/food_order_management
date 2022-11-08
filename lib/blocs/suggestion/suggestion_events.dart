@@ -1,4 +1,4 @@
-import 'package:pom/models/suggestion.dart';
+import 'package:fom/models/suggestion.dart';
 
 abstract class SuggestionEvent {}
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pom/theme/themes.dart';
+import 'package:fom/theme/themes.dart';
 
 class ConfirmActionDialog extends StatelessWidget {
   const ConfirmActionDialog({Key? key}) : super(key: key);
@@ -19,7 +19,9 @@ class ConfirmActionDialog extends StatelessWidget {
           child: const Text('Annuler'),
         ),
         ElevatedButton(
-          style: ElevatedButton.styleFrom(primary: context.theme.errorColor),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: context.theme.errorColor,
+          ),
           onPressed: () {
             Navigator.pop(context, true);
           },

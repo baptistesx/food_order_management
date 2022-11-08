@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:pom/extensions/translation_helper.dart';
-import 'package:pom/main.dart';
-import 'package:pom/route/main_router.dart';
-import 'package:pom/theme/themes.dart';
-import 'package:pom/views/home.dart';
-import 'package:pom/views/sign_in.dart';
+import 'package:fom/extensions/translation_helper.dart';
+import 'package:fom/main.dart';
+import 'package:fom/route/main_router.dart';
+import 'package:fom/theme/themes.dart';
+import 'package:fom/views/home.dart';
+import 'package:fom/views/sign_in.dart';
 import 'package:provider/provider.dart';
 
-class POMApp extends StatelessWidget {
+class FOMApp extends StatelessWidget {
   final NavigatorObserver? observer;
 
-  const POMApp({Key? key, this.observer}) : super(key: key);
+  const FOMApp({Key? key, this.observer}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

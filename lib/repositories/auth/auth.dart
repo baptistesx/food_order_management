@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:pom/main.dart';
-import 'package:pom/models/exceptions.dart';
+import 'package:fom/main.dart';
+import 'package:fom/models/exceptions.dart';
 
 class AuthRepository {
   FirebaseFirestore db = FirebaseFirestore.instance;

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:pom/models/ingredient.dart';
-import 'package:pom/models/order.dart';
-import 'package:pom/models/pizza.dart';
-import 'package:pom/views/home.dart';
-import 'package:pom/views/ingredient.dart';
-import 'package:pom/views/ingredients.dart';
-import 'package:pom/views/order.dart';
-import 'package:pom/views/orders.dart';
-import 'package:pom/views/pizza.dart';
-import 'package:pom/views/pizzas.dart';
-import 'package:pom/views/sign_in.dart';
-import 'package:pom/views/statistics.dart';
-import 'package:pom/views/suggestion.dart';
+import 'package:fom/models/ingredient.dart';
+import 'package:fom/models/meal.dart';
+import 'package:fom/models/order.dart';
+import 'package:fom/views/home.dart';
+import 'package:fom/views/ingredient.dart';
+import 'package:fom/views/ingredients.dart';
+import 'package:fom/views/meal.dart';
+import 'package:fom/views/meals.dart';
+import 'package:fom/views/order.dart';
+import 'package:fom/views/orders.dart';
+import 'package:fom/views/sign_in.dart';
+import 'package:fom/views/statistics.dart';
+import 'package:fom/views/suggestion.dart';
 
 class MainRouter {
   static Route<dynamic>? generateRoute(RouteSettings settings) {
@@ -31,10 +31,10 @@ class MainRouter {
           settings: settings,
           builder: (BuildContext context) => const IngredientsPage(),
         );
-      case PizzasPage.routeName:
+      case MealsPage.routeName:
         return MaterialPageRoute<dynamic>(
           settings: settings,
-          builder: (BuildContext context) => const PizzasPage(),
+          builder: (BuildContext context) => const MealsPage(),
         );
       case OrdersPage.routeName:
         return MaterialPageRoute<dynamic>(
@@ -66,14 +66,14 @@ class MainRouter {
             ingredient: args?['ingredient'] as Ingredient?,
           ),
         );
-      case PizzaPage.routeName:
+      case MealPage.routeName:
         final Map<String, dynamic>? args =
             settings.arguments as Map<String, dynamic>?;
 
         return MaterialPageRoute<dynamic>(
           settings: settings,
-          builder: (BuildContext context) => PizzaPage(
-            pizza: args?['pizza'] as Pizza?,
+          builder: (BuildContext context) => MealPage(
+            meal: args?['meal'] as Meal?,
           ),
         );
       case SuggestionPage.routeName:

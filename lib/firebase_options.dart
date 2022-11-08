@@ -50,20 +50,21 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAexdBkHiPpHGgPb6Sb6vc54M73e6H_tdU',
-    appId: '1:325973755347:android:88f48fc91271c8c4dcdb26',
-    messagingSenderId: '325973755347',
-    projectId: 'pizzaordersmanagement',
-    storageBucket: 'pizzaordersmanagement.appspot.com',
+    apiKey: 'AIzaSyBJyCViHJCW5H7hkSsk9Rrcni7L5jbyYIA',
+    appId: '1:1016954699062:android:355ef5b2daff439b030797',
+    messagingSenderId: '1016954699062',
+    projectId: 'foodordersmanagement',
+    storageBucket: 'foodordersmanagement.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDP2Vai0xyhW1JgKHwobO4wqMzI3HQR4qo',
-    appId: '1:325973755347:ios:347ad144bf2d0709dcdb26',
-    messagingSenderId: '325973755347',
-    projectId: 'pizzaordersmanagement',
-    storageBucket: 'pizzaordersmanagement.appspot.com',
-    iosClientId: '325973755347-m6k4jb9hq7turoppsnimfa3ckdvnlnvg.apps.googleusercontent.com',
-    iosBundleId: 'com.ludyb.pom',
+    apiKey: 'AIzaSyCnC4TWl4WI1vTTjWZj96fUe82qsf4Wrqw',
+    appId: '1:1016954699062:ios:ba23ed45639ca9ec030797',
+    messagingSenderId: '1016954699062',
+    projectId: 'foodordersmanagement',
+    storageBucket: 'foodordersmanagement.appspot.com',
+    androidClientId: '1016954699062-6vth0coprbi3ut7jqtcbekm54raki7ui.apps.googleusercontent.com',
+    iosClientId: '1016954699062-n50394kfli6bktun54o8nojvae6ncqqg.apps.googleusercontent.com',
+    iosBundleId: 'com.ludyb.fom',
   );
 }

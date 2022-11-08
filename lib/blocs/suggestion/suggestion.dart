@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pom/blocs/suggestion/suggestion_events.dart';
-import 'package:pom/blocs/suggestion/suggestion_states.dart';
-import 'package:pom/models/exceptions.dart';
-import 'package:pom/repositories/suggestion/suggestion.dart';
+import 'package:fom/blocs/suggestion/suggestion_events.dart';
+import 'package:fom/blocs/suggestion/suggestion_states.dart';
+import 'package:fom/models/exceptions.dart';
+import 'package:fom/repositories/suggestion/suggestion.dart';
 
 class SuggestionBloc extends Bloc<SuggestionEvent, SuggestionState> {
   final SuggestionRepository suggestionRepository;

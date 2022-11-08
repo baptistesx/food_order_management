@@ -2,55 +2,53 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pom/blocs/pizza/pizza.dart';
-import 'package:pom/blocs/pizza/pizza_events.dart';
-import 'package:pom/blocs/pizza/pizza_states.dart';
-import 'package:pom/blocs/pizzas/pizzas.dart';
-import 'package:pom/blocs/pizzas/pizzas_events.dart';
-import 'package:pom/main.dart';
-import 'package:pom/models/ingredient.dart';
-import 'package:pom/models/pizza.dart';
-import 'package:pom/widgets/custom_appbar.dart';
-import 'package:pom/widgets/ingredient_chip.dart';
-import 'package:pom/widgets/ingredient_with_checkbox.dart';
-import 'package:pom/widgets/layout/scrollable_column_space_between.dart';
+import 'package:fom/blocs/meal/meal.dart';
+import 'package:fom/blocs/meal/meal_events.dart';
+import 'package:fom/blocs/meal/meal_states.dart';
+import 'package:fom/main.dart';
+import 'package:fom/models/ingredient.dart';
+import 'package:fom/models/meal.dart';
+import 'package:fom/widgets/custom_appbar.dart';
+import 'package:fom/widgets/ingredient_chip.dart';
+import 'package:fom/widgets/ingredient_with_checkbox.dart';
+import 'package:fom/widgets/layout/scrollable_column_space_between.dart';
 
-class PizzaPage extends StatefulWidget {
-  static const String routeName = '/pizza';
-  final Pizza? pizza;
+class MealPage extends StatefulWidget {
+  static const String routeName = '/meal';
+  final Meal? meal;
 
-  const PizzaPage({Key? key, this.pizza}) : super(key: key);
+  const MealPage({Key? key, this.meal}) : super(key: key);
 
   @override
-  State<PizzaPage> createState() => _PizzaPage();
+  State<MealPage> createState() => _MealPage();
 }
 
-class _PizzaPage extends State<PizzaPage> {
+class _MealPage extends State<MealPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late TextEditingController _nameController;
   late TextEditingController _priceSmallController;
   late TextEditingController _priceBigController;
-  late Pizza pizza;
+  late Meal meal;
 
   @override
   void initState() {
     super.initState();
 
     _nameController = TextEditingController(
-      text: widget.pizza != null ? widget.pizza!.name : '',
+      text: widget.meal != null ? widget.meal!.name : '',
     );
     _priceSmallController = TextEditingController(
-      text: widget.pizza != null ? widget.pizza!.priceSmall.toString() : '0',
+      text: widget.meal != null ? widget.meal!.priceSmall.toString() : '',
     );
     _priceBigController = TextEditingController(
-      text: widget.pizza != null ? widget.pizza!.priceBig.toString() : '0',
+      text: widget.meal != null ? widget.meal!.priceBig.toString() : '',
     );
 
-    pizza = widget.pizza ??
-        Pizza(
+    meal = widget.meal ??
+        Meal(
           name: '',
-          priceSmall: 0,
-          priceBig: 0,
+          priceSmall: null,
+          priceBig: null,
           ingredients: <Ingredient>[],
         );
   }
@@ -69,15 +67,15 @@ class _PizzaPage extends State<PizzaPage> {
     return Scaffold(
       appBar: CustomAppBar(
         title: Text(
-          widget.pizza != null ? 'Editer la pizza' : 'Nouvelle pizza',
+          widget.meal != null ? 'Editer l\'élément' : 'Nouvel élément',
         ),
       ),
       body: ScrollableColumnSpaceBetween(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-        content: BlocListener<PizzaBloc, PizzaState>(
-          listener: (BuildContext context, PizzaState state) {
-            if (state is PizzaAddedState || state is PizzaUpdatedState) {
-              context.read<PizzasBloc>().add(GetPizzasEvent());
+        content: BlocListener<MealBloc, MealState>(
+          listener: (BuildContext context, MealState state) {
+            if (state is MealAddedState || state is MealUpdatedState) {
+              // context.read<MealsBloc>().add(GetMealsEvent()); // TODO: normalement ok pour delete
               Navigator.pop(context);
             }
           },
@@ -93,8 +91,8 @@ class _PizzaPage extends State<PizzaPage> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
-                    hintText: 'Nom de la pizza',
-                    labelText: 'Nom de la pizza*',
+                    hintText: 'Nom',
+                    labelText: 'Nom*',
                   ),
                   validator: (String? value) {
                     if (value == null || value.isEmpty) {
@@ -157,19 +155,19 @@ class _PizzaPage extends State<PizzaPage> {
                 ),
                 const SizedBox(height: 24),
                 const Text('Ingrédients:'),
-                if (pizza.ingredients != null && pizza.ingredients!.isEmpty)
+                if (meal.ingredients != null && meal.ingredients!.isEmpty)
                   const Text('Aucun ingrédient')
                 else
                   Wrap(
                     spacing: 5,
-                    children: pizza.ingredients!
+                    children: meal.ingredients!
                         .map(
                           (Ingredient ingredient) => IngredientChip(
                             ingredient: ingredient,
                             onDelete: () {
                               if (mounted) {
                                 setState(() {
-                                  pizza.ingredients!.removeWhere(
+                                  meal.ingredients!.removeWhere(
                                     (Ingredient e) => e.id == ingredient.id,
                                   );
                                 });
@@ -183,7 +181,7 @@ class _PizzaPage extends State<PizzaPage> {
                   stream: FirebaseFirestore.instance
                       .collection('ingredients')
                       .where('userId', isEqualTo: firebaseAuth.currentUser!.uid)
-                      .orderBy('name')
+                      // .orderBy('name')
                       .snapshots(),
                   builder: (
                     BuildContext context,
@@ -203,13 +201,18 @@ class _PizzaPage extends State<PizzaPage> {
                               ),
                             )
                             .toList();
-
+                    ingredients.sort(
+                      (Ingredient a, Ingredient b) =>
+                          a.name == null || b.name == null
+                              ? -1
+                              : a.name!.compareTo(b.name!),
+                    );
                     return Column(
                       children: ingredients
                           .map(
                             (Ingredient ingredient) => IngredientWithCheckbox(
                               ingredient: ingredient,
-                              isSelected: pizza.ingredients!
+                              isSelected: meal.ingredients!
                                   .where(
                                     (Ingredient element) =>
                                         element.id == ingredient.id,
@@ -220,9 +223,9 @@ class _PizzaPage extends State<PizzaPage> {
                                   if (mounted) {
                                     setState(() {
                                       if (isSelected) {
-                                        pizza.ingredients!.add(ingredient);
+                                        meal.ingredients!.add(ingredient);
                                       } else {
-                                        pizza.ingredients!.removeWhere(
+                                        meal.ingredients!.removeWhere(
                                           (Ingredient e) =>
                                               e.id == ingredient.id,
                                         );
@@ -245,42 +248,54 @@ class _PizzaPage extends State<PizzaPage> {
           child: Row(
             children: <Widget>[
               Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      if (widget.pizza == null) {
-                        context.read<PizzaBloc>().add(
-                              CreatePizzaEvent(
-                                Pizza(
-                                  name: _nameController.text,
-                                  priceSmall:
-                                      double.parse(_priceSmallController.text),
-                                  priceBig:
-                                      double.parse(_priceBigController.text),
-                                  ingredients: pizza.ingredients,
-                                  userId: firebaseAuth.currentUser!.uid,
-                                ),
-                              ),
-                            );
-                      } else if (widget.pizza!.id != null) {
-                        context.read<PizzaBloc>().add(
-                              UpdatePizzaByIdEvent(
-                                Pizza(
-                                  id: widget.pizza!.id,
-                                  name: _nameController.text,
-                                  priceSmall:
-                                      double.parse(_priceSmallController.text),
-                                  priceBig:
-                                      double.parse(_priceBigController.text),
-                                  ingredients: pizza.ingredients,
-                                  userId: firebaseAuth.currentUser!.uid,
-                                ),
-                              ),
-                            );
-                      }
-                    }
+                child: BlocBuilder<MealBloc, MealState>(
+                  builder: (BuildContext context, MealState state) {
+                    return ElevatedButton(
+                      onPressed: state is MealLoadingState
+                          ? null
+                          : () {
+                              if (_formKey.currentState!.validate()) {
+                                if (widget.meal == null) {
+                                  context.read<MealBloc>().add(
+                                        CreateMealEvent(
+                                          Meal(
+                                            name: _nameController.text,
+                                            priceSmall: double.parse(
+                                              _priceSmallController.text,
+                                            ),
+                                            priceBig: double.parse(
+                                              _priceBigController.text,
+                                            ),
+                                            ingredients: meal.ingredients,
+                                            userId:
+                                                firebaseAuth.currentUser!.uid,
+                                          ),
+                                        ),
+                                      );
+                                } else if (widget.meal!.id != null) {
+                                  context.read<MealBloc>().add(
+                                        UpdateMealByIdEvent(
+                                          Meal(
+                                            id: widget.meal!.id,
+                                            name: _nameController.text,
+                                            priceSmall: double.parse(
+                                              _priceSmallController.text,
+                                            ),
+                                            priceBig: double.parse(
+                                              _priceBigController.text,
+                                            ),
+                                            ingredients: meal.ingredients,
+                                            userId:
+                                                firebaseAuth.currentUser!.uid,
+                                          ),
+                                        ),
+                                      );
+                                }
+                              }
+                            },
+                      child: const Text('Valider'),
+                    );
                   },
-                  child: const Text('Valider'),
                 ),
               ),
             ],

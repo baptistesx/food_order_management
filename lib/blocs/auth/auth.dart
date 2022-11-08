@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pom/blocs/auth/auth_events.dart';
-import 'package:pom/blocs/auth/auth_states.dart';
-import 'package:pom/models/exceptions.dart';
-import 'package:pom/repositories/auth/auth.dart';
+import 'package:fom/blocs/auth/auth_events.dart';
+import 'package:fom/blocs/auth/auth_states.dart';
+import 'package:fom/models/exceptions.dart';
+import 'package:fom/repositories/auth/auth.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository authRepository;
@@ -27,7 +27,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthConnectedState());
     } on FirebaseAuthException catch (e) {
       if (e.code == 'account-exists-with-different-credential') {
-        emit(AuthErrorState('Des crédentials différents sont déjà utiliés pour ce compte'));
+        emit(
+          AuthErrorState(
+            'Des crédentials différents sont déjà utiliés pour ce compte',
+          ),
+        );
         emit(AuthInitialState());
       } else if (e.code == 'invalid-credential') {
         emit(AuthErrorState('Credentials invalides'));
